@@ -28,8 +28,6 @@ The \code{window} must be in the order \code{(begin, end)}
 \author{Göran Broström}
 %\note{ ~~further notes~~ }
 
- ~Make other sections like WARNING with \section{WARNING }{....} ~
-
 \seealso{\code{\link{age.window}}, \code{\link{coxreg}}, \code{\link{mlreg}}}
 
 \examples{

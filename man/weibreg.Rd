@@ -47,8 +47,8 @@ regression coefficients with the latter, multiply them by minus the
 (estimated) shape parameter.
 
 The model is
-\deqn{h(t; p, \lambda, \beta, z) = \lambda (t / \lambda)^{(p-1)}\exp{-(
-  t / \lambda )^p} \exp({z\beta})}
+\deqn{h(t; p, \lambda, \beta, z) = \lambda (t / \lambda)^{p-1}\exp(-(
+  t / \lambda )^p) \exp(z\beta)}
 Note that this is in correspondence with \code{\link{dgamma}}, but not
 with \code{\link[survival]{survreg}}! To compare regression coefficients
 with those from \code{survreg} you need to divide by estimated shape
@@ -86,7 +86,7 @@ A list of class \code{c("weibreg", "coxreg", "coxph")} with components
   \item{fail}{Did the optimization fail? (Is \code{NULL} if not).}
   \item{pfixed}{TRUE if shape was fixed in the estimation.}
 }
-\references{}
+
 \author{Göran Broström}
 %\note{}
 

@@ -28,7 +28,7 @@ integration. This is very slow and somewhat unstable.
 \value{
 See the code!
 }
-\references{ ~put references to the literature/web site here ~ }
+
 \author{Göran Broström}
 
 \section{Warning }{Not very much tested. Can fail, and is very slow.}

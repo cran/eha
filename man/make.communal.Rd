@@ -17,7 +17,7 @@ surv=c("enter", "exit", "event", "birthdate"), tol=1e-04, fortran=TRUE)
   \item{dat}{A data frame containing interval specified survival data
     and covariates, of which one must give a "birth date", the
     connection between duration and calendat time}
-  \item{com.dat}{Data frame with communal covariates. They mus have tha
+  \item{com.dat}{Data frame with communal covariates. They must have the
     same start year and periodicity, given by \code{com.ins}}
   \item{communal}{Boolean; if TRUE, then it is a true communal (default),
     otherwise a fixed. The first component is the first
@@ -37,8 +37,8 @@ surv=c("enter", "exit", "event", "birthdate"), tol=1e-04, fortran=TRUE)
     function is used. This is the default.}
 }
 \details{
-Themain purpose of this function is to prepare a data file for use with
-\code{\link{coxreg}}, \code{\link{mlreg}}, and
+The main purpose of this function is to prepare a data file for use with
+\code{\link{coxreg}}, \code{\link{mlreg}}, \code{\link{weibreg}} and
 \code{\link[survival]{coxph}}.
 }
 \value{

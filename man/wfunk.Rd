@@ -19,7 +19,7 @@ ord = 2, pfixed = FALSE, trace = TRUE)
   \item{X}{The design (covariate) matrix.}
   \item{Y}{The response, a survival object.}
   \item{offset}{Offset.}
-  \item{ord}{ord = 0 means only lolihood, 1 means score vector as well,
+  \item{ord}{ord = 0 means only loglihood, 1 means score vector as well,
   2 loglihood, score and hessian.}
   \item{pfixed}{Logical, if TRUE the shape parameter is regarded as a known
   constant in the calculations.}
@@ -29,8 +29,8 @@ ord = 2, pfixed = FALSE, trace = TRUE)
 Note that the function returns log likelihood, score vector
 and minus hessian, i.e. the observed information.
 The model is
-\deqn{h(t; p, \lambda, \beta, z) = \lambda (t / \lambda)^{(p-1)}\exp{-(
-  t / \lambda)^p} \exp({z\beta})}
+\deqn{h(t; p, \lambda, \beta, z) = \lambda (t / \lambda)^{(p-1)}\exp{(-(
+  t / \lambda)^p}) \exp(z\beta)}
 This is in correspondence with \code{\link{dgamma}}.
 }
 \value{

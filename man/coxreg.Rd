@@ -8,7 +8,7 @@
 }
 \usage{
 coxreg(formula = formula(data), data = parent.frame(),
-na.action = getOption("na.action"), init, method = c("eftron", "breslow"),
+na.action = getOption("na.action"), init, method = c("efron", "breslow"),
 control = list(eps = 1e-08, maxiter = 10, trace = FALSE),
 singular.ok = TRUE, model = FALSE,
 x = FALSE, y = TRUE, boot = FALSE, rs, max.survs)
@@ -25,7 +25,7 @@ x = FALSE, y = TRUE, boot = FALSE, rs, max.survs)
     Default is \code{options()$na.action}.}
   \item{init}{vector of initial values of the iteration.
     Default initial value is zero for all variables.}
-  \item{method}{Method of treating ties. Currently only "breslow".}
+  \item{method}{Method of treating ties, "efron" (default) or "breslow".}
   \item{control}{a list with components \code{eps} (convergence
     criterion), \code{maxiter} (maximum number of iterations), and
     \code{silent} (logical, controlling amount of output). You can
