@@ -6,20 +6,27 @@
 Just a simple plot of the hazard functions for each stratum.
 }
 \usage{
-plot.weibreg(x, new.data = rep(0, length(x$means)), ...)
+plot.weibreg(x, main = NULL, xlim = NULL, ylim = NULL,
+           xlab = NULL, ylab = NULL, new.data = x$means, ...)
 }
 
 \arguments{
   \item{x}{A \code{weibreg} object}
-  \item{new.data}{At which covariate values? This doesn't work for the moment.}
-  \item{...}{Who knows?}
+  \item{main}{Header for the plot}
+  \item{xlim}{x limits}
+  \item{ylim}{y limits}
+  \item{xlab}{x label}
+  \item{ylab}{y label}
+  \item{new.data}{At which covariate values?}
+  
+  \item{...}{Extra parameters passed to 'plot'}
 }
 \warning{\code{new.data} does not work as intended.}
 \details{
 The plot is drawn at the mean values of the covariates.
 }
 \value{
-No return
+No return value
 }
 
 \author{Göran Broström}

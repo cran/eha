@@ -7,23 +7,23 @@
   to Greenwood's formula are drawn.
 }
 \usage{
-plot.Surv(x, strata=rep(1, length(exit)), limits=FALSE, conf=0.95,
-xlim = NULL, ylim = NULL, main="Survivor function(s)", 
-xlab="Duration",
-ylab="Remaining fraction", ...)
+plot.Surv(x, strata=NULL, fn = c("cum", "surv", "log", "loglog"),
+limits=TRUE, conf=0.95, main=NULL, xlab=NULL, ylab=NULL,
+xlim=NULL, ylim=NULL, ...)
 }
 \arguments{
   \item{x}{A \code{Surv} object.}
   \item{strata}{Defines a partition of the data. One survivor function
     for each level of \code{strata} is drawn.}
+  \item{fn}{Which type of plot?}
   \item{limits}{If TRUE, and if the number of curves is one, confidence
     limits are drawn.}
   \item{conf}{The confidence level for the confidence limits.}
-  \item{xlim}{Horizontal plot limits. If NULL, calculated by the function.}
-  \item{ylim}{Vertical plot limits. If NULL, set to \code{c(0, 1)}}.
   \item{main}{A heading for the plot.}
   \item{xlab}{Label on the x axis.}
   \item{ylab}{Label on the y-axis.}
+  \item{xlim}{Horizontal plot limits. If NULL, calculated by the function.}
+  \item{ylim}{Vertical plot limits. If NULL, set to \code{c(0, 1)}}.
   \item{...}{Anything that \code{plot} likes...}
 }
 \details{
