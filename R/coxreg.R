@@ -145,6 +145,7 @@ function (formula = formula(data),
                       boot,
                       control)
 
+    if (is.null(fit)) return(NULL) ## New 5 May 2004.
     if (!fit$fail) fit$fail <- NULL
     else
         fit$fail <- TRUE

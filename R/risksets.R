@@ -47,8 +47,8 @@ risksets <- function (x, strata = NULL, max.survs = NULL){
                ##
                n.events = integer(w.totrs),
                size = integer(w.totrs),
-               totrs = integer(1),
-               PACKAGE = "eha")
+               totrs = integer(1)
+               )
 
   counts$risktimes <- counts$risktimes[1:counts$totrs]
   counts$n.events <- counts$n.events[1:counts$totrs]
@@ -76,8 +76,8 @@ risksets <- function (x, strata = NULL, max.survs = NULL){
             size = as.integer(counts$size), ## If sampling...
             as.double(counts$risktimes),
             eventset = integer(totevents),
-            riskset = integer(totsize),
-            PACKAGE = "eha")
+            riskset = integer(totsize)
+            )
             
   list(ns = ns,
        antrs = counts$antrs,

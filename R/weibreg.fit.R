@@ -64,9 +64,9 @@ weibreg.fit <- function(X, Y, strata, offset, init, shape, control){
                 sctest = double(1),
                                         #
                 conver = integer(1),
-                fail = integer(1),
-                #DUP = FALSE,
-                PACKAGE = "eha")
+                fail = integer(1)
+                ##DUP = FALSE,
+                )
 
       if (fit$fail) return(list(fail = fit$fail,
                                 n.strata = ns,
@@ -109,9 +109,9 @@ weibreg.fit <- function(X, Y, strata, offset, init, shape, control){
                 sctest = double(1),
                                         #
                 conver = integer(1),
-                fail = integer(1),
-                                        #DUP = FALSE,
-                PACKAGE = "eha")
+                fail = integer(1)
+                ##DUP = FALSE,
+                )
       if (fit$fail) return(list(fail = fit$fail,
                                 n.strata = ns,
                                 value = fit$beta[fit$fail])

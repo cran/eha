@@ -28,7 +28,7 @@ The \code{window} must be in the order \code{(begin, end)}
 \author{Göran Broström}
 %\note{ ~~further notes~~ }
 
-\seealso{\code{\link{cal.window}}, \code{\link{coxreg}}},
+\seealso{\code{\link{cal.window}}, \code{\link{coxreg}},
 \code{\link{mlreg}}}
 
 \examples{

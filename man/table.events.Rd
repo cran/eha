@@ -9,13 +9,15 @@
   calculated. 
 }
 \usage{
-table.events(enter=rep(0, length(exit)), exit, event)
+table.events(enter=rep(0, length(exit)), exit, event, strict=TRUE )
 }
 %- maybe also `usage' for other objects documented here.
 \arguments{
   \item{enter}{Left truncation time point.}
   \item{exit}{End time point, an event or a right censoring.}
   \item{event}{Event indicator.}
+  \item{strict}{If TRUE, then tabulating is not done after a time point
+    where all individuals in a riskset failed.}
 }
 %\details{
   

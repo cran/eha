@@ -1,3 +1,21 @@
+0.93-0	(Sep 20, 2004) 
+
+	* NAMESPACE introduced for R-2.0.0.
+
+0.92-4 (May 5, 2004)
+
+	* coxreg: 'Error' changed to 'warning' for a singular hessian, in
+	which case the new return value is NULL.
+
+0.92-3 (March 19, 2004)
+
+	* table.events: New parameter: 'strict = TRUE'.
+
+	* make.communal: In case of 'communal=FALSE', spells are no longer 
+	truncated. Instead a value of NA is given if birthdate is out of
+	range. Previous behavior was unpredictable when birthdate was out 
+	of range.
+	
 0.92 (November 12, 2003)
 	
 	* mlreg: Geometric distribution (i.e., constant baseline discrete

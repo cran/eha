@@ -36,8 +36,9 @@ wfunk <- function(beta, lambda, p, X, Y,
                   #
                   f = double(1),
                   fp = double(bdim),
-                  fpp = double(bdim * bdim), ok = integer(1),
-                  PACKAGE = "eha")
+                  fpp = double(bdim * bdim),
+                  ok = integer(1)
+                  )
 
   if (ord >= 2) fit$fpp <- matrix(fit$fpp, ncol = bdim)
   if (ord <= 1) fit$fpp <- NULL

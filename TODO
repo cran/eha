@@ -1,0 +1,3 @@
+26 March 2004: Fix 'make.communal' so that truncation of spells in case of
+	'communal=TRUE' is replaced by putting NA to a communal covariate 
+        at a time point not covered by 'com.dat'.
