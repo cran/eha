@@ -60,9 +60,10 @@ void frail_ml(int *family,
     int lwork;
     double rcond;
     int info;
-    int vm_trace = 0;
+    int vm_trace;
     int true_bdim;
 
+    vm_trace = *trace;
     bdim = *p + *n_rs + 1;
 
     det = Calloc(2, double);

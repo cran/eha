@@ -7,7 +7,7 @@ Nelson-Aalen plots.
 }
 \usage{
 plot.cum(x, group=rep(1, length(exit)), 
-main="Survivor function(s)", xlab="Duration", ylab="Remaining fraction",
+main="Cumulative hazards function(s)", xlab="Duration", ylab="",
 log.scale = FALSE, ...)
 }
 \arguments{

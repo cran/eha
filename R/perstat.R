@@ -54,8 +54,8 @@ perstat <- function(surv, period, age = c(0, 200)){
     }
   }
     
-  return(events = events,
-         exposure = exposure,
-         intensity = intensity)
+  list(events = events,
+       exposure = exposure,
+       intensity = intensity)
 }
           

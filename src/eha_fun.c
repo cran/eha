@@ -198,10 +198,15 @@ static void eha_update(int level,
     }
 
     /* Add into the loglik; We allow *loglik = -Inf!! */
-/* But 'vmmin doesn't allow it!! Must do something about it. */
+/* But 'vmmin' doesn't allow it! Must do something about it. */
 
     *loglik += log(h);
-
+    if (isinf(*loglik) == -1) 
+    {
+	warning("*loglik = -inf");
+    }else if (isinf(*loglik) == 1){
+	warning("*loglik = inf");
+    }
     if (level == 0) {
 	Free(pip);
 	return;
@@ -227,7 +232,7 @@ static void eha_update(int level,
 	    }
 	}
 	if (h <= 0){
-	    error("Unable do get likelihood function POSITIVE!!!!!!!!!\n");
+	    error("Unable to get likelihood function POSITIVE!!!!!!!!!\n");
 	}
     }
 
@@ -277,6 +282,16 @@ static void eha_update(int level,
 	tmp = 0.0;
 	for (i = 0; i < ext->n_points; i++){
 	    tmp += pip[i] * xG[i + m * ext->n_points];
+	    if (!finite(tmp)){
+		Rprintf("pip[%d] = %f; xG[%d] = %f:: ", i, pip[i], 
+			i + m * ext->n_points, xG[i + m * ext->n_points]); 
+		Rprintf("tmp = %f\n", tmp);
+		Rprintf("\nNumerical problem:\n"); 
+		Rprintf("n.points (in 'control') is  %d\n",
+			ext->n_points);
+		Rprintf("Try a smaller value!\n");
+		error("Execution interrupted");
+	    }
 	}
 	hb[m] = tmp;
     }
@@ -284,8 +299,16 @@ static void eha_update(int level,
     /* Add into first derivatives: */
     for (m = 0; m <= n_rs + p; m++){
 	score[m] += hb[m] / h;
+	if (!finite(score[m])){
+	    Rprintf("Numerical problem:\n"); 
+	    Rprintf("n.points (in 'control') is  %d\n",
+		    ext->n_points);
+	    Rprintf("Try a smaller value!\n");
+	    error("Execution interrupted");
+	    error("Non-finite score\n");
+	}
     }
-
+	
     if (level == 1){
 	Free(xG);
 	Free(pip);

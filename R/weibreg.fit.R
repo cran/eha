@@ -68,9 +68,10 @@ weibreg.fit <- function(X, Y, strata, offset, init, shape, control){
                 #DUP = FALSE,
                 PACKAGE = "eha")
 
-      if (fit$fail) return(fail = fit$fail,
-                           n.strata = ns,
-                           value = fit$beta[fit$fail])
+      if (fit$fail) return(list(fail = fit$fail,
+                                n.strata = ns,
+                                value = fit$beta[fit$fail])
+                           )
       
       for (i in 1:ns) ## Really a HACK !!!!!!!!!!!!!!!
           fit$beta[ncov + 2 * i - 1] <- -fit$beta[ncov + 2 * i - 1]
@@ -111,9 +112,10 @@ weibreg.fit <- function(X, Y, strata, offset, init, shape, control){
                 fail = integer(1),
                                         #DUP = FALSE,
                 PACKAGE = "eha")
-      if (fit$fail) return(fail = fit$fail,
-                           n.strata = ns,
-                           value = fit$beta[fit$fail])
+      if (fit$fail) return(list(fail = fit$fail,
+                                n.strata = ns,
+                                value = fit$beta[fit$fail])
+                           )
       fit$shape.fixed <- TRUE
       fit$shape <- shape
       fit$shape.sd <- NULL  ## Not necessary!?!?

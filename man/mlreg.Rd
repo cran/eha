@@ -8,9 +8,10 @@
 \usage{
 mlreg(formula = formula(data), data = parent.frame(),
 na.action = getOption("na.action"), init, method = c("ML", "MPPL"),
-control = list(eps = 1e-08, maxiter = 10, trace = FALSE),
+control = list(eps = 1e-08, maxiter = 10, n.points = 12, trace = FALSE),
 singular.ok = TRUE, model = FALSE,
-x = FALSE, y = TRUE, boot = FALSE, rs, frailty = NULL, max.survs)
+x = FALSE, y = TRUE, boot = FALSE, geometric = FALSE,
+rs, frailty = NULL, max.survs)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -39,6 +40,8 @@ x = FALSE, y = TRUE, boot = FALSE, rs, frailty = NULL, max.survs)
   \item{y}{return the response in the model object?}
   \item{boot}{No. of bootstrap replicates. Defaults to FALSE, i.e., no
     bootstrapping.} 
+  \item{geometric}{If \code{TRUE}, the intensity is assumed constant
+  within strata.}
   \item{rs}{Risk set? If present, speeds up calculations considerably.}
   \item{frailty}{A grouping variable for frailty analysis. Full name is
     needed.} 

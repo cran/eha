@@ -59,7 +59,10 @@ frail.fit <- function(X,
         init <- rep(0, ncov)
     
     if (missing(control)){
-        control <- list(eps=1.e-8, maxiter = 10, trace = FALSE)
+        control <- list(eps=1.e-8,
+                        maxiter = 10,
+                        n.points = 12,
+                        trace = FALSE)
     }else{
         if (!is.numeric(control$eps)){
             stop("Error in control = list(eps = ...) ")
@@ -69,7 +72,14 @@ frail.fit <- function(X,
         if (!is.numeric(control$maxiter)){
             stop("Error in control = list(maxiter = ...) ")
         }else{
-            if (control$maxiter < 0) stop("control$maxiter must be positive")
+            if (as.integer(control$maxiter) <= 0)
+                stop("control$maxiter must be positive")
+        }
+        if (!is.numeric(control$n.points)){
+            stop("Error in control = list(n.points = ...) ")
+        }else{
+            if (as.integer(control$n.points) <= 0)
+                stop("control$maxiter must be positive")
         }
         if (!is.logical(control$trace)) stop("control$trace must be logical")
     }
@@ -90,7 +100,6 @@ frail.fit <- function(X,
     start.sigma <- 1
     n.fam <- length(fam.size)
 
-        n.points <- 12
     X <- scale(X, center = TRUE, scale = FALSE)
     if (control$trace)
         cat("Go into [frail_ml]\n")
@@ -110,7 +119,7 @@ frail.fit <- function(X,
               as.double(offset),
               as.integer(fam.size),
               as.integer(n.fam),
-              as.integer(n.points),
+              as.integer(control$n.points),  ## For Gauss-Hermite
               as.double(control$eps),
               as.integer(control$maxit),
               as.integer(control$trace),
