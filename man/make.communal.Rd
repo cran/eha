@@ -1,0 +1,65 @@
+\name{make.communal}
+\alias{make.communal}
+
+\title{Put communals in "fixed" data frame}
+\description{
+  Given an ordinary data frame suitable for survival analysis, and a
+  data frame with "communal" time series, this function includes the
+  communal covariates as fixed, by the "cutting spells" method.
+  
+}
+\usage{
+make.communal(dat, com.dat, communal = TRUE, start, period = 1, lag = 0, 
+surv=c("enter", "exit", "event", "birthdate"), tol=1e-04, fortran=TRUE)
+}
+%- maybe also `usage' for other objects documented here.
+\arguments{
+  \item{dat}{A data frame containing interval specified survival data
+    and covariates, of which one must give a "birth date", the
+    connection between duration and calendat time}
+  \item{com.dat}{Data frame with communal covariates. They mus have tha
+    same start year and periodicity, given by \code{com.ins}}
+  \item{communal}{Boolean; if TRUE, then it is a true communal (default),
+    otherwise a fixed. The first component is the first
+    year (start date in decimal form), and the second component is the
+    period length. The third is \code{lag} and the fourth is
+    \code{scale}.}
+  \item{start}{Start date in decimal form.}
+  \item{period}{Period length. Defaults to one.}
+  \item{lag}{The lag of the effect. Defaults to zero.}
+  \item{surv}{Character vector of length 4 giving the names of interval
+    start, interval end, event indicator, birth date, in that
+    order. These names must correspond to names in \code{dat}}
+  \item{tol}{Largest length of an interval considered to be of zero
+    length. The cutting sometimes produces zero length intervals, which
+    we want to discard.}
+  \item{fortran}{If \code{TRUE}, then a Fortran implementation of the
+    function is used. This is the default.}
+}
+\details{
+Themain purpose of this function is to prepare a data file for use with
+\code{\link{coxreg}}, \code{\link{mlreg}}, and
+\code{\link[survival]{coxph}}.
+}
+\value{
+The return value is a data frame with the same variables as in the
+combination of \code{dat} and \code{com.dat}. Therefore it is an error
+to have common name(s) in the two data frames.
+}
+%\references{ ~put references to the literature/web site here ~ }
+\author{Göran Broström}
+\note{Not very vigorously tested.}
+
+
+\seealso{\code{\link{coxreg}}, \code{\link{mlreg}},
+  \code{\link[survival]{coxph}}, \code{\link{cal.window}}} 
+
+\examples{
+dat <- data.frame(enter = 0, exit = 5.731, event = 1,
+birthdate = 1962.505, x = 2)
+## Birth date: July 2, 1962 (approximately).
+com.dat <- data.frame(price = c(12, 3, -5, 6, -8, -9, 1, 7))
+dat.com <- make.communal(dat, com.dat, start = 1962.000) 
+}
+\keyword{survival}
+

@@ -1,0 +1,474 @@
+C ***
+C
+      subroutine init_lik(n, loglik, dloglik, d2loglik)
+
+      implicit none
+
+      integer n
+      double precision loglik, dloglik(n), d2loglik(n, n)
+
+      integer s, m
+
+      loglik = 0.d0
+
+      do s = 1, n
+         dloglik(s) = 0.d0
+         
+         do m = 1, n
+            d2loglik(s, m) = 0.d0
+         enddo
+         
+      enddo
+
+      return
+      end
+
+C ***
+C
+      subroutine obs_lik(what, ns, antrs, totrs, antevents, size,
+     &     totevent, eventset, nn, score, 
+     &     antcov, covar,
+     &     loglik, dloglik)
+
+C +++
+C     This subroutine calculates the 'observed' part of the
+C     log likelihood function, and its first order
+C     partial derivatives.
+C +++
+
+      implicit none
+
+      integer what, ns, totrs, totevent, nn, antcov
+      integer antrs(ns), antevents(totrs), size(totrs)
+      integer eventset(totevent)
+      double precision score(nn), covar(nn, antcov)
+      double precision loglik, dloglik(antcov)
+
+      integer rsindx, indx, rs, j, i, s, who
+
+      indx = 0
+      rsindx = 0
+      do rs = 1, ns
+         do j = 1, antrs(rs)
+            rsindx = rsindx + 1
+            if (antevents(rsindx) < size(rsindx)) then
+               do i = 1, antevents(rsindx)
+                  indx = indx + 1
+                  who = eventset(indx)
+                  loglik = loglik + score(who)
+                  if (what .ge. 1) then
+                     do s = 1, antcov
+                        dloglik(s) = dloglik(s) + covar(who, s)
+                     enddo
+                  endif
+              
+               enddo
+            else
+               indx = indx + antevents(rsindx)
+            endif
+C +++ Next risk set!
+         enddo
+      enddo
+      
+      return
+      end
+
+C ***
+C
+      subroutine exp_lik(what, ns, antrs, totrs, antevents, size, 
+     &     totsize, riskset, nn, score, 
+     &     antcov, covar,
+     &     sumdscore, sumd2score,
+     &     loglik, dloglik, d2loglik)
+
+C +++
+C     This subroutine calculates the 'expected' part of the
+C     log likelihood function, and its first and second order
+C     partial derivatives.
+C ***
+
+      implicit none
+
+      integer what, ns, totrs, totsize, nn, antcov
+      integer antrs(ns), antevents(totrs), size(totrs), riskset(totsize)
+      double precision score(nn), covar(nn, antcov)
+
+      double precision sumdscore(antcov), sumd2score(antcov, antcov)
+      double precision loglik, dloglik(antcov)
+      double precision d2loglik(antcov, antcov)
+
+      integer rsindx, indx, rs, j, i, s, m, who
+      double precision sumscore
+
+      rsindx = 0
+      indx = 0
+      do rs = 1, ns
+         do j = 1, antrs(rs)
+            rsindx = rsindx + 1
+C     Reset to zero:
+            sumscore = 0.d0
+            if (what .ge. 1) then
+               do s = 1, antcov
+                  sumdscore(s) = 0.d0
+                  if (what .eq. 2) then
+                     do m = 1, s
+                        sumd2score(s, m) = 0.d0
+                     enddo
+                  endif
+               enddo
+            endif
+C     Go thru riskset(rs, j):
+C +++ Not Removed! We don't go thru 'single' risksets too
+            if (antevents(rsindx) < size(rsindx)) then
+               do i = 1, size(rsindx)
+                  indx = indx +  1
+                  who = riskset(indx)
+                  sumscore = sumscore + score(who)
+                  if (what .ge. 1) then
+                     do s = 1, antcov
+                        sumdscore(s) = sumdscore(s) + 
+     &                       covar(who, s) * score(who)
+                        if (what .eq. 2) then
+                           do m = 1, s
+                              sumd2score(s, m) = sumd2score(s, m) +
+     &                             covar(who, s) * covar(who, m) * 
+     &                             score(who)
+                           enddo
+                        endif
+                     enddo 
+                  endif
+               
+               enddo
+C     Add into loglik:
+               loglik = loglik - antevents(rsindx) * log(sumscore)
+               if (what .ge. 1) then
+C     Add into dloglik:
+                  do s = 1, antcov
+                     dloglik(s) = dloglik(s) - antevents(rsindx) * 
+     &                    sumdscore(s) / sumscore
+                     if (what .eq. 2) then
+C     Add into d2loglik:
+                        do m = 1, s
+C     Note the sign here!! It is a plus in mlfun! (Correctly) Changed back!!
+                           d2loglik(s, m) = d2loglik(s, m) + 
+     &                          antevents(rsindx) * 
+     &                          ( sumd2score(s, m) / sumscore -
+     &                          sumdscore(s) * sumdscore(m) /
+     &                          sumscore**2 )
+                        enddo
+                     endif
+                  enddo
+               endif
+            else
+               indx = indx + size(rsindx)
+            endif
+C     Done adding in; next riskset.
+         enddo
+      enddo
+
+      return
+      end
+
+C     ***
+C     
+      subroutine efron_lik(what, ns, antrs, totrs, antevents, size, 
+     &     totevent, totsize, eventset, riskset, nn, score, 
+     &     antcov, covar,
+     &     sumdscore, sumd2score,
+     &     loglik, dloglik, d2loglik)
+
+C     +++
+C     This subroutine calculates the 'expected' part of the
+C     log likelihood function, and its first and second order
+C     partial derivatives.
+C     ***
+
+      implicit none
+
+      integer what, ns, totrs, totevent, totsize, nn, antcov
+      integer antrs(ns), antevents(totrs), size(totrs)
+      integer eventset(totevent), riskset(totsize)
+      double precision score(nn), covar(nn, antcov)
+
+      double precision sumdscore(antcov), sumd2score(antcov, antcov)
+      double precision loglik, dloglik(antcov)
+      double precision d2loglik(antcov, antcov)
+
+      integer rsindx, indx, eindx, rs, j, i, r, s, m, who
+      double precision sumscore
+
+C     +++
+C     Local (note the deviation from strict standard here!):
+      double precision escore, edscore(antcov), ed2score(antcov, antcov)
+      double precision w, ws
+      rsindx = 0
+      indx = 0
+      eindx = 0
+
+      do rs = 1, ns
+         do j = 1, antrs(rs)
+            rsindx = rsindx + 1
+C     Reset to zero:
+            sumscore = 0.d0
+            escore = 0.d0
+            if (what .ge. 1) then
+               do s = 1, antcov
+                  sumdscore(s) = 0.d0
+                  edscore(s) = 0.d0
+                  if (what .eq. 2) then
+                     do m = 1, s
+                        sumd2score(s, m) = 0.d0
+                        ed2score(s, m) = 0.d0
+                     enddo
+                  endif
+               enddo
+            endif
+C     Go thru eventset(rs, j):
+            if (antevents(rsindx) < size(rsindx)) then
+               do i = 1, antevents(rsindx)
+                  eindx = eindx +  1
+                  who = eventset(eindx)
+                  escore = escore + score(who)
+                  if (what .ge. 1) then
+                     do s = 1, antcov
+                        edscore(s) = edscore(s) + 
+     &                       covar(who, s) * score(who)
+                        if (what .eq. 2) then
+                           do m = 1, s
+                              ed2score(s, m) = ed2score(s, m) +
+     &                             covar(who, s) * covar(who, m) * 
+     &                             score(who)
+                           enddo
+                        endif
+                     enddo 
+                  endif
+C     endif
+               enddo
+C     Go thru riskset(rs, j):
+               do i = 1, size(rsindx)
+                  indx = indx +  1
+C     +++ Removed! We go thru 'single' risksets too
+C     if (antevents(rsindx) < size(rsindx)) then
+                  who = riskset(indx)
+                  sumscore = sumscore + score(who)
+                  if (what .ge. 1) then
+                     do s = 1, antcov
+                        sumdscore(s) = sumdscore(s) + 
+     &                       covar(who, s) * score(who)
+                        if (what .eq. 2) then
+                           do m = 1, s
+                              sumd2score(s, m) = sumd2score(s, m) +
+     &                             covar(who, s) * covar(who, m) * 
+     &                             score(who)
+                           enddo
+                        endif
+                     enddo 
+                  endif
+C     endif
+               enddo
+               
+               if (antevents(rsindx) .eq. 1) then
+C     Add into loglik:
+                  loglik = loglik - log(sumscore)
+                  if (what .ge. 1) then
+C     Add into dloglik:
+                     do s = 1, antcov
+                        dloglik(s) = dloglik(s) - 
+     &                       sumdscore(s) / sumscore
+                        if (what .eq. 2) then
+C     Add into d2loglik:
+                           do m = 1, s
+                              d2loglik(s, m) = d2loglik(s, m) +
+     &                             antevents(rsindx) * 
+     &                             ( sumd2score(s, m) / sumscore -
+     &                             sumdscore(s) * sumdscore(m) /
+     &                             sumscore**2 )
+                           enddo
+                        endif
+                     enddo
+                  endif
+C     Done adding in; next riskset.
+               else
+
+C     +++ IF TIES:
+
+                  do r = 1, antevents(rsindx)
+                     w = dble(r - 1) / dble(antevents(rsindx))
+                     ws = w * escore
+C     Add into loglik:
+                     loglik = loglik - log(sumscore - ws)
+                     if (what .ge. 1) then
+C     Add into dloglik:
+                        do s = 1, antcov
+                           dloglik(s) = dloglik(s) - 
+     &                          (sumdscore(s) - w * edscore(s)) / 
+     &                          (sumscore - ws)
+                           if (what .eq. 2) then
+C     Add into d2loglik:
+                              do m = 1, s
+                                 d2loglik(s, m) = d2loglik(s, m) + 
+     &                                ( (sumd2score(s, m) - 
+     &                                w * ed2score(s, m)) 
+     &                                / (sumscore - ws) -
+     &                                (sumdscore(s) - 
+     &                                w * edscore(s)) * 
+     &                                (sumdscore(m) - 
+     &                                w * edscore(m)) /
+     &                                (sumscore - ws)**2 )
+                              enddo
+                           endif
+                        enddo
+                     endif
+                  enddo
+C     Done adding in; next riskset.
+               endif
+            else
+               eindx = eindx + antevents(rsindx)
+               indx = indx + size(rsindx)
+            endif
+         enddo
+      enddo
+
+      return
+      end
+
+C ***
+C
+      subroutine coxfun(what, method,
+     &     totevent, totrs, ns, 
+     &     antrs, antevents, size,
+     &     totsize, eventset, riskset, 
+     &     nn, antcov, covar, offset,
+     &     beta,
+     &     loglik, dloglik, d2loglik,
+     &     score, sumdscore, sumd2score)
+
+C +++ 
+C     what     : 0 = Only loglihood.
+C                1 = Loglihood and first derivatives.
+C                2 = Loglihood, first derivatives, and the negative hessian.
+C            other = Nothing.
+C     method   : 0 = breslow,
+C                1 = efron.
+C     totevent : Total number of events.
+C     totrs    : Total number of risk sets.
+C     ns       : Number of strata.
+C
+C     antrs     : antrs(i) = No. of risk sets in stratum i, i = 1, ns.
+C     antevents : number of events in each riskset.
+C     size      : Size of each risk set.
+C
+C     totsize  : Sum of the risk set sizes.
+C     eventset : pointers to events of risk sets (length totevents).
+C     riskset  : pointers to members of risk sets (length totsize).
+C
+c     nn     : No. of spells.
+C     antcov : No. of covariates.
+C     covar  : matrix of covariates (nn x antcov).
+C     offset : Vector of offsets (nn).
+C     beta   : Vector of coefficients (antciv).
+C
+C     loglik   : return value.
+C     dloglik  : return value.
+C     d2loglik : return value.
+C
+C     score, sumdscore, sumd2score: 'Work areas', avoiding local
+C                                   dynamic memory allocation.
+C +++
+
+      implicit none
+
+      integer what, method
+      integer totevent, totrs, ns, totsize, nn, antcov
+      integer antrs(ns), antevents(totrs), size(totrs)
+      integer eventset(totevent), riskset(totsize)
+      double precision covar(nn, antcov)
+      double precision  offset(nn)
+
+      double precision beta(antcov)
+
+      double precision loglik, dloglik(antcov)
+      double precision d2loglik(antcov, antcov)
+
+C +++ Work areas:
+      double precision score(nn)
+      double precision sumdscore(antcov) 
+      double precision sumd2score(antcov, antcov)
+C ************************************************************
+C     Local:
+C
+      double precision zero, one
+      parameter (zero = 0.d0, one = 1.d0) 
+      integer ione
+      parameter (ione = 1)
+      character*1 trans
+      parameter (trans = 'N')
+
+      integer i, s, m
+
+C      integer indx, rsindx
+
+C      double precision sumscore 
+C
+C *************************************************************
+
+      call init_lik(antcov, loglik, dloglik, d2loglik)
+
+      if ( (what .lt. 0) .or. (what .gt. 2) ) return
+
+C +++ Calculate score(i), i = 1, nn:
+      call dcopy(nn, offset, ione, score, ione)
+      call dgemv(trans, nn, antcov, one, covar, nn, beta, ione, one,  
+     &     score, ione)
+      
+C +++ 
+C     First,add in the 'observed' parts of loglik and dloglik
+C     No calculations for d2loglik here (is analytically zero).
+C
+
+      call obs_lik(what, ns, antrs, totrs, antevents, size, 
+     &     totevent, eventset, nn, score, 
+     &     antcov, covar,
+     &     loglik, dloglik)
+
+C +++
+C     Then, exponentiate 'score':
+C
+      do i = 1, nn
+         score(i) = exp(score(i))
+      enddo
+
+C +++
+C     and add in the 'expected' parts of loglik, dloglik, and
+C     d2loglik.
+C
+      if (method .eq. 0) then
+         call exp_lik(what, ns, antrs, totrs, antevents, size, 
+     &        totsize, riskset, nn, score, 
+     &        antcov, covar,
+     &        sumdscore, sumd2score,
+     &        loglik, dloglik, d2loglik)
+      else
+         call efron_lik(what, ns, antrs, totrs, antevents, size, 
+     &        totevent, totsize, eventset, riskset, nn, score, 
+     &        antcov, covar,
+     &        sumdscore, sumd2score,
+     &        loglik, dloglik, d2loglik)
+      endif
+C +++
+C     Fill in the upper triangle part of d2loglik (symmetry!):
+C
+
+      if (what .eq. 2) then
+
+         do s = 1, antcov
+            do m = s + 1, antcov
+               d2loglik(s, m) = d2loglik(m, s)
+            enddo
+         enddo
+
+      endif
+
+      
+      return
+      end

@@ -1,0 +1,26 @@
+age.window              Age cut of survival data
+cal.window              Calendar time cut of survival data
+clean                   Clean a survival data frame
+coxreg                  Cox regression
+coxreg.fit              Cox regression
+cro                     Creates a minimal representation of a data
+                        frame.
+frail.fit               Fits a frailty proportional hazards model
+make.communal           Put communals in "fixed" data frame
+mlreg                   ML proportional hazards regression
+mlreg.fit               ML proportional hazards regression
+perstat                 Period statistics
+piecewise               Piecewise hazards
+plot.Surv               Plots of survivor functions.
+plot.cum                Plots of Cumulative Hazards Functions.
+plot.weibreg            Plots output from a Weibull regression
+print.coxreg            Prints coxreg objects
+print.weibreg           Prints weibreg objects
+risksets                Finds the compositions and sizes of risk sets
+summary.coxreg          Prints coxreg objects
+summary.weibreg         Prints a weibreg object
+table.events            Calculating failure times, risk set sizes and
+                        No. of events in each risk set
+weibreg                 Weibull regression
+weibreg.fit             Weibull regression
+wfunk                   Loglihood function of a Weibull regression
