@@ -1,30 +1,20 @@
-plot.Surv <- function(x,  ## A survival object
-                      strata = rep( 1, length(exit) ),
-                      limits = FALSE,
+plot.Surv <- function(x,
+                      strata = NULL,
+                      fn = c("cum", "surv", "log", "loglog"),
+                      limits = TRUE,
                       conf = 0.95,
+                      main = NULL,
+                      xlab = NULL,
+                      ylab = NULL,
                       xlim = NULL,
                       ylim = NULL,
-                      main = "Survivor function(s)",
-                      xlab = "Duration",
-                      ylab = "Remaining fraction",
-                      ...)
-  {
-    require(survival)
-    ## Input data:
-    ##
-    ## enter : left truncation point
-    ## exit  : exit time point
-    ## event : if zero, a censored observation; otherwise an event.
-    ## strata : one curve for each value of strata.
-    ## limits: if TRUE, and only one strata, pointwise confidence
-    ##         limits (Greenwoods formula, log(-log) type.
-    ## conf  : confidence level. Can be given as a percentage.
-    
+                      ...){
     ## Check input data:
-    if (!inherits(x, "Surv")) 
-      stop("First arg must be of type 'Surv'")
 
-    if (ncol(x) == 3){
+    if (!inherits(x, "Surv"))
+        stop("First argument must be of type 'Surv'")
+
+        if (ncol(x) == 3){
       enter <- x[, 1]
       exit <- x[, 2]
       event <- x[, 3]
@@ -36,96 +26,143 @@ plot.Surv <- function(x,  ## A survival object
       event <- x[, 2]
     }
 
-    if (is.na(strata)) strata <- rep(1, n)
-    if (length(enter) != n)stop("enter and exit must have equal length.")
-    if (length(event) != n)
-      stop("event and exit must have equal length.")
-    if (length(strata) != n)
-      stop("strata and exit must have equal length.")
-    if (min(exit - enter) <= 0) stop("Interval length must be positive.")
-    if (conf > 1) conf <- conf / 100 ## conf given as a percentage(?)
-    if ( (conf < 0.5) | (conf >=1) ) stop("Bad conf value")
-
-    grupp <- as.character(strata)
-   
-    strata <- sort(unique(grupp))
-    no.of.groups <- length(strata)
-    if (no.of.groups > 9)
-      stop("Too many groups. No more than 9 are allowed.")
-    
-    ##
-    if (length(strata) > 1) limits <- FALSE # No limits if multiple curves.
-
-    ## Check xmin, xmax:
-
-    if ( is.null(xlim) ){
-      x.max <- max(exit) ## Must be better?!
-      x.min <- 0
-      xlim = c(0, x.max)
+    n <- length(exit)
+    if (is.null(strata)) group <- rep(1, n)
+    else group <- strata
+    if (is.factor(group)){
+        strata <- levels(group)
     }else{
-      x.min <- xlim[1]
-      x.max <- xlim[2]
+        group <- as.character(group)
+        strata <- sort(unique(group))
     }
+    noOfGroups <- length(strata)
+    if (noOfGroups > 1) limits <- FALSE 
 
+    fn <- fn[1] # What type of plot?
+    ##
     
-    if ( is.null(ylim) ){
-      ylim = c(0, 1)
+    times <- list()
+    atoms <- list()
+
+    i <- 0
+    if (is.null(xlim)){
+        x.min <- min(enter)
+        x.max <- max(exit)
+        if (fn == "loglog"){
+            x.min <- log(min(exit) / 2)
+            x.max <- log(x.max)
+        }
+        xlim <- c(x.min, x.max)
     }
-      
-    gang <- 0
+    if (is.null(ylim)){
+        y.max <- -1e103
+        y.min <- 1.e103
+    }
 
-    for (stratum in strata)
-      {
-        atom <- table.events(enter[grupp == stratum],
-                             exit[grupp == stratum],
-                             event[grupp == stratum])
-        
-        gang <- gang + 1
-        surv <- c( 1, cumprod(1 - atom$events / atom$riskset.sizes) )
-        if (gang == 1)
-          {
-            X <- rep(c(0, atom$times), each = 2)[-1]
-            Y <- rep(surv, each = 2)[-2*length(surv)]
-            plot(X, Y, type = "l",
-                 xlab = xlab, ylab = ylab,
-                 main = main, xlim = xlim, ylim = ylim,
-                 lty = gang%%no.of.groups + 1, ...)
-            if (limits) ## Greenwood's formula,
-                        ## Kalbfleisch & Prentice, p. 15 (note error!).
-              {
-                q.alpha <- abs(qnorm((1 - conf) / 2))
-                survived <- (atom$riskset.size - atom$events)
-                se <- sqrt(cumsum(atom$events /
-                                  ( atom$riskset.sizes * survived )
-                                  )
-                           )/
-                            cumsum(-log(survived / atom$riskset.sizes))
-                upper <- surv ^ exp(q.alpha * c(0, se))
-                lower <- surv ^ exp(-q.alpha * c(0, se))
-                X <- rep(c(0, atom$times), each = 2)[-1]
-                Y <- rep(upper, each = 2)[-2*length(upper)]
+    yVal <- function(x){
+        if (fn == "cum") return(cumsum(x))
+        if (fn %in% c("log", "loglog")) return(log(cumsum(x)))
+        n <- length(x)
+        s <- numeric(n)
+        s[1] <- 1 - x[1]
+        if (n > 1){
+            for (rs in 2:n){
+                s[rs] <- s[rs - 1] *(1 - x[rs])
+            }
+        }
+        return(s)
+    }
+    
+    for (stratum in strata){
+        i <- i + 1
+        atom <- table.events(enter[group == stratum],
+                             exit[group == stratum],
+                             event[group == stratum]
+                             )
+        times[[i]] <- atom$times
+        atoms[[i]] <- atom$events / atom$riskset.sizes
+        if (fn %in% c("surv", "cum")){
+            times[[i]] <- c(x.min, times[[i]])
+            atoms[[i]] <- c(0, atoms[[i]])
+        }
+        nat <- length(times[[i]])
+        mnat <- max(exit[group == stratum])
+        if (times[[i]][nat] < mnat){
+            times[[i]] <- c(times[[i]], mnat)
+            atoms[[i]] <- c(atoms[[i]], 0)
+        }
+        if (fn == "loglog") times[[i]] <- log(times[[i]])
+        atoms[[i]] <- yVal(atoms[[i]])
+        if (is.null(ylim) && (fn != "surv")){
+            y.max <- max(y.max, atoms[[i]][nat])
+            y.min <- min(y.min, atoms[[i]][i])
+        }
+    }
 
-                lines(X, Y, type = "l",
-                      lty = gang%%no.of.groups + 2)
-                Y <- rep(lower, each = 2)[-2*length(lower)]
-                lines(X, Y, type = "l",
-                      lty = gang%%no.of.groups + 2)
-              }
-          }
-        else
-          {
-            X <- rep(c(0, atom$times), each = 2)[-1]
-            Y <- rep(surv, each = 2)[-2*length(surv)]
-            lines(X, Y, type = "l", 
-                  lty = gang%%no.of.groups + 1)
-          }
-      }
-    abline(h = 0)
-    abline(v = 0)
-    if (no.of.groups > 1)
-      {
-        colors <- (1:no.of.groups)%%no.of.groups + 1
-        legend(x.min, 0, xjust = 0, yjust = 0,
-               legend = strata, lty = colors)
-      }
-  }
+    if (fn == "surv"){
+        y.min <- 0
+        y.max <- 1
+        ylim <- c(0, 1)
+    }else{
+        if (fn == "cum") y.min <- 0
+        ylim <- c(y.min, y.max)
+    }
+
+    if (is.null(ylab)) ylab <- ""
+    if (is.null(xlab)) xlab <- "Duration"
+    if (is.null(main)){
+        if (fn == "cum") main <- "Cumulative hazard function"
+        else if (fn == "surv") main <- "Survivor function"
+        else{
+            main <- "Log cumulative hazard function"
+            if (fn == "loglog") xlab <- "Log(duration)"
+        }
+    }
+
+    plot(times[[1]], atoms[[1]],
+         main = main, xlab = xlab, ylab = ylab,
+         xlim = xlim, ylim = ylim, type = "s", lty = 1, col = 1, ...)
+    if (noOfGroups > 1){
+        for (st in 2:noOfGroups){
+            lines(times[[st]], atoms[[st]], type = "s", lty = st, col = st)
+        }
+        x <- 0.7 * (x.max - x.min) + x.min
+        if (fn == "surv"){
+            y <- 0.9 * (y.max - y.min) + y.min
+        }else{
+            y <- 0.4 * (y.max - y.min) + y.min
+        }
+        ##cat("x = ", x, ", y = ", y, "\n")
+        legend(x, y, legend = strata,
+               lty = 1:noOfGroups,
+               col = 1:noOfGroups)            
+    }
+
+    if (fn %in% c("surv", "cum")) abline(h = 0)
+
+    if (limits && (fn == "surv")){
+        q.alpha <- abs(qnorm((1 - conf) / 2))
+        survived <- (atom$riskset.size - atom$events)
+        se <- sqrt(cumsum(atom$events /
+                          ( atom$riskset.sizes * survived )
+                          )
+                   )/
+                       cumsum(-log(survived / atom$riskset.sizes))
+        se <- c(0, se)
+        surv <- atoms[[1]]
+        n <- length(se)
+        if (length(surv) > n) se <- c(se, se[n])
+        upper <- surv ^ exp(q.alpha * se)
+        lower <- surv ^ exp(-q.alpha * se)
+        n <- length(upper)
+        if (length(times[[1]]) > n){
+            upper <- c(upper, upper[n])
+            lower <- c(lower, upper[n])
+        }
+        lines(times[[1]], upper, type = "s", lty = 2, col = 2)
+        lines(times[[1]], lower, type = "s", lty = 2, col = 2)
+    }
+}
+    
+                                           
+            
