@@ -34,7 +34,9 @@ surv=c("enter", "exit", "event", "birthdate"), tol=1e-04, fortran=TRUE)
     length. The cutting sometimes produces zero length intervals, which
     we want to discard.}
   \item{fortran}{If \code{TRUE}, then a Fortran implementation of the
-    function is used. This is the default.}
+    function is used. This is the default. This possibility is only for
+    debugging purposes. You should of course get identical results with
+    the two methods.}
 }
 \details{
 The main purpose of this function is to prepare a data file for use with

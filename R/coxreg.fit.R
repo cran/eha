@@ -80,14 +80,14 @@ coxreg.fit <- function(X, Y, rs, strats, offset, init, max.survs,
                   conver = integer(1),
                   f.conver = integer(1),
                   fail = integer(1),
-                  DUP = FALSE,
-                  PACKAGE = "eha")
+                  DUP = FALSE)
 
   if (fit$fail){
       out <- paste("Singular hessian; suspicious variable No. ",
                    as.character(fit$fail), ":\n",
                    colnames(X)[fit$fail], sep = "")
-      stop(out)
+      warning(out)## New
+      return(NULL)## 5 May 2004.
   }else if (!fit$conver){
       fit$conver <- 1
       if (!fit$f.conver){
@@ -115,10 +115,10 @@ coxreg.fit <- function(X, Y, rs, strats, offset, init, max.survs,
                                         #
                      as.double(fit$beta),
                      as.double(score),
-                     hazard = double(sum(rs$antrs)),
+                     hazard = double(sum(rs$antrs))
                                         #
-                     #DUP = FALSE,
-                     PACKAGE = "eha")$hazard
+                     #DUP = FALSE
+                     )$hazard
 
   resid <- .Fortran("martres",
                     as.integer(sum(rs$n.events)),
@@ -136,9 +136,8 @@ coxreg.fit <- function(X, Y, rs, strats, offset, init, max.survs,
                     #
                     as.double(score),       ## 'score'
                     as.double(hazard),
-                    resid = double(nn),
-                    #DUP = FALSE,
-                    PACKAGE = "eha"
+                    resid = double(nn)
+                    #DUP = FALSE
                     )$resid
 
   if (!fit$fail)
@@ -194,9 +193,9 @@ coxreg.fit <- function(X, Y, rs, strats, offset, init, max.survs,
                            double(ncov * ncov),
                                         #
                            conver = integer(1),
-                           fail = integer(1),
-                                        #DUP = FALSE,
-                           PACKAGE = "eha")
+                           fail = integer(1)
+                           ##DUP = FALSE,
+                           )
       bootstrap <- matrix(fit.boot$boot.sample, ncol = ncov, byrow = TRUE)
       boot.sd <- matrix(fit.boot$boot.sd, ncol = ncov, byrow = TRUE)
     }      

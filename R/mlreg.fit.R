@@ -83,9 +83,9 @@ mlreg.fit <- function(X, Y, rs, strats, offset, init, max.survs,
                   #
                   conver = integer(1),
                   f.conver = integer(1),
-                  fail = integer(1),
-                  #DUP = FALSE,
-                  PACKAGE = "eha")
+                  fail = integer(1)
+                  ##DUP = FALSE,
+                  )
   if (fit$fail){
       out <- paste("Singular hessian; suspicious variable No. ",
                    as.character(fit$fail), ":\n",
@@ -122,9 +122,8 @@ mlreg.fit <- function(X, Y, rs, strats, offset, init, max.survs,
                                         #
                       as.double(score),       ## 'score'
                       as.double(hazard),
-                      resid = double(nn),
-                                        #DUP = FALSE,
-                      PACKAGE = "eha"
+                      resid = double(nn)
+                      ##DUP = FALSE,
                       )$resid
   }
       
@@ -179,9 +178,9 @@ mlreg.fit <- function(X, Y, rs, strats, offset, init, max.survs,
                            double(ncov * ncov),
                                         #
                            conver = integer(1),
-                           fail = integer(1),
-                                        #DUP = FALSE,
-                           PACKAGE = "eha")
+                           fail = integer(1)
+                           ##DUP = FALSE,
+                           )
       bootstrap <- matrix(fit.boot$boot.sample, ncol = ncov, byrow = TRUE)
       boot.sd <- matrix(fit.boot$boot.sd, ncol = ncov, byrow = TRUE)
     }      

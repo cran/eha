@@ -24,7 +24,7 @@ No value is returned.
   \code{\link[survival]{print.coxph}} in that case.} 
 
 % ~Make other sections like Warning with \section{Warning }{....} ~ 
- \seealso{\code{\link{weibreg}}}, \code{\link[survival]{print.coxph}}}
+ \seealso{\code{\link{weibreg}}, \code{\link[survival]{print.coxph}}}
 %\examples{
 
 %}

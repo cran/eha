@@ -132,9 +132,8 @@ frail.fit <- function(X,
               frail = double(n.fam),
            ##   mu = double(n),
               convergence = integer(1),
-              fail = integer(1),
-              PACKAGE = "eha"
-            )  
+              fail = integer(1)
+              )  
 
     if (fit$fail){
         warning("Singular hessian (returned); no S.E. estimates.")

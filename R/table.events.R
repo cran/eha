@@ -1,6 +1,7 @@
 table.events <- function(enter = rep(0, length(exit)),
                          exit,
-                         event)
+                         event,
+                         strict = TRUE)
 {
   n <- length(exit)
 
@@ -25,10 +26,11 @@ table.events <- function(enter = rep(0, length(exit)),
     }
 
   stop.at <- which(rs.size == n.events)
-  if (length(stop.at))
+  if (strict & length(stop.at))
     {
       stop.at <- min(stop.at) - 1
-      if (stop.at <= 0) stop("Bad data. All died immediately!")
+      if (stop.at <= 0)
+          stop("First risk set is all events! Try 'strict = FALSE'")
       times <- times[1:stop.at]
       n.events <- n.events[1:stop.at]
       rs.size <- rs.size[1:stop.at]

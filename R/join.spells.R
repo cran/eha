@@ -42,9 +42,9 @@ join.spells <- function(dat, eps = 1.e-8){
                     enter = double(n.rec),
                     exit = double(n.rec),
                     event = integer(n.rec),
-                    id = integer(n.rec),
+                    id = integer(n.rec)
                     ##DUP = FALSE,
-                    PACKAGE = "eha")
+                    )
     
   
     out <- data.frame(new.id = res$id[1:res$new.n.rec],
