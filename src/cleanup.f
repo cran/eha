@@ -1,5 +1,5 @@
       subroutine cleanup(ocovar, oenter, oexit, oevent, oid,
-     1     ncov, onrec, onn,
+     1     ncov, onrec, onn, eps,
      2     rec, covar, enter, exi, event, id)
 
 C     ocovar = old covariate matrix
@@ -25,7 +25,7 @@ C     id = new id
 
       double precision ocovar(ncov, onrec), covar(ncov, onrec)
       double precision oenter(onrec), oexit(onrec)
-      double precision enter(onrec), exi(onrec)
+      double precision enter(onrec), exi(onrec), eps
       integer oevent(onrec), event(onrec), oid(onrec), id(onrec)
 
       integer i, pers, oldpers, startrec, start
@@ -50,7 +50,8 @@ C      logical equal, cequal
 
       start = 1
       call persout(oid(start), oenter, oexit, oevent, ncov, antrec(1), 
-     &     ocovar(1, start), onrec, id, enter, exi, event, covar, rec)
+     &     ocovar(1, start), onrec, id, enter, exi, event, covar, rec, 
+     &     eps)
  
       
       do i = 2, onn
@@ -58,7 +59,7 @@ C      logical equal, cequal
          call persout(oid(start), oenter(start), oexit(start), 
      &        oevent(start), 
      &        ncov, antrec(i), ocovar(1, start), onrec, id, 
-     &        enter, exi, event, covar, rec)
+     &        enter, exi, event, covar, rec, eps)
  
       enddo
 
@@ -68,13 +69,12 @@ C      logical equal, cequal
 
 C ***
 C
-      logical function equal(x, y)
+      logical function equal(x, y, eps)
 
       implicit none
 
       double precision x, y
       double precision  eps
-      parameter (eps = 0.0000001)
 
       equal = (abs(x - y) .lt. eps)
       
@@ -84,18 +84,15 @@ C
 
 C ***
 C
-      logical function cequal(n, x, y)
+      logical function cequal(n, x, y, eps)
 
       implicit none
 
       integer n
 
-      double precision x(n), y(n)
+      double precision x(n), y(n), eps
       integer i
       logical res
-
-      double precision eps
-      parameter (eps = 0.0000001)
 
       res = .TRUE.
       i = 0
@@ -140,14 +137,14 @@ C
 C ***
 C
       subroutine persout(oid, oenter, oexit, oevent, ncov, dim, ocovar, 
-     1     onrec, id, enter, exi, event, covar, rec)
+     1     onrec, id, enter, exi, event, covar, rec, eps)
 
       implicit none
 
       integer oid, ncov, dim, onrec, rec
       integer oevent(dim), event(onrec), id(onrec) 
       double precision oenter(dim), oexit(dim), enter(onrec), exi(onrec)
-      double precision ocovar(ncov, dim), covar(ncov, onrec)
+      double precision ocovar(ncov, dim), covar(ncov, onrec), eps
 
       integer i, antdead
 
@@ -175,8 +172,8 @@ C
             antdead = 0
          endif
          
-         if (equal( exi(rec), oenter(i) )) then
-            if (cequal(ncov, covar(1, rec), ocovar(1, i) )) then
+         if (equal( exi(rec), oenter(i), eps )) then
+            if (cequal(ncov, covar(1, rec), ocovar(1, i), eps )) then
                exi(rec) = oexit(i)
                event(rec) = oevent(i)
             else
@@ -194,7 +191,7 @@ C
 C     *** This is the critical case; overlapping spells?
             if ( (oexit(i) .ge. exi(rec)) .or. (antdead .eq. 1) ) then
                exi(rec) = oenter(i)
-               if (cequal(ncov, covar(1, rec), ocovar(1, i) )) then
+               if (cequal(ncov, covar(1, rec), ocovar(1, i), eps )) then
                   exi(rec) = oexit(i)
                   event(rec) = oevent(i)
                else

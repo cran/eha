@@ -1,0 +1,15 @@
+0.92 (November 12, 2003)
+	
+	* mlreg: Geometric distribution (i.e., constant baseline discrete
+	hazard) added. Not for frailty models, yet (on the TODO list).
+
+	* mlreg: New argument, 'n.points', added to 'control'. Controls
+	the number of points used in the Gauss-Hermite quadrature.
+
+	* mlreg: Stricter control of numerical problems, especially in the
+	frailty fit.
+	
+	* clean: Replaced by check.spells and join.spells.
+
+	* Return values changed to conform with R-1.8.0 (and later).
+

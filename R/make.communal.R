@@ -132,7 +132,7 @@ make.communal <- function(dat,
       {
         n.rows <- nn.out[i]
         if (n.rows == 1){
-          return( c(xx[i, ], ind.iv[i, 1]) )
+          return(list( c(xx[i, ], ind.iv[i, 1]) ))
         }else{
           x.i <- xx[i, ]
           out <- matrix(0, nrow = n.rows, ncol = ncol(yy))

@@ -1,6 +1,6 @@
 plot.cum <- function(x, ## A survival object
                      group = rep(1, length(exit)),
-                     main = "Cumulative hazards functions",
+                     main = "Cumulative hazards function(s)",
                      xlab = "Duration",
                      ylab = "",
                      log.scale = FALSE, ...

@@ -7,12 +7,15 @@ function (formula = formula(data),
           na.action = getOption("na.action"),
           init,
           method = c("ML", "MPPL"),
-          control = list(eps = 1e-8, maxiter = 10, trace = FALSE),
+          control = list(eps = 1e-8,
+          maxiter = 10, n.points = 12,
+          trace = FALSE),
           singular.ok = TRUE,
           model = FALSE, 
           x = FALSE,
           y = TRUE,
           boot = FALSE,
+          geometric = FALSE,
           rs,
           frailty = NULL,
           max.survs) 
@@ -22,7 +25,7 @@ function (formula = formula(data),
     m <- match.call(expand.dots = FALSE)
     temp <- c("", "formula", "data", "na.action")
     m <- m[match(temp, names(m), nomatch = 0)]
- 
+    
     special <- "strata"
     Terms <- if (missing(data)) 
         terms(formula, special)
@@ -30,7 +33,7 @@ function (formula = formula(data),
     m$formula <- Terms
     m[[1]] <- as.name("model.frame")
     m <- eval(m, parent.frame())
-
+    
     Y <- model.extract(m, "response")
     if (!inherits(Y, "Surv")) 
         stop("Response must be a survival object")
@@ -50,7 +53,7 @@ function (formula = formula(data),
     attr(Terms, "intercept") <- 1
     strats <- attr(Terms, "specials")$strata
     dropx <- NULL
-
+    
     if (length(strats)) {
         temp <- untangle.specials(Terms, "strata", 1)
         dropx <- c(dropx, temp$terms)
@@ -64,84 +67,100 @@ function (formula = formula(data),
     else newTerms <- Terms
     X <- model.matrix(newTerms, m)
     assign <- lapply(attrassign(X, newTerms)[-1], function(x) x - 
-        1)
+                     1)
     X <- X[, -1, drop = FALSE]
-
-    #########################################
-
+    
+#########################################
+    
     if (length(dropx)){
-      covars <- names(m)[-c(1, (dropx + 1))]
+        covars <- names(m)[-c(1, (dropx + 1))]
     }else{
-      covars <- names(m)[-1]
+        covars <- names(m)[-1]
     }
 
     isF <- logical(length(covars))
     for (i in 1:length(covars)){
-      if (length(dropx)){
-        isF[i] <- ( is.factor(m[, -(dropx + 1)][, (i + 1)]) ||
-                   is.logical(m[, -(dropx + 1)][, (i + 1)]) )
-      }else{
-        isF[i] <- ( is.factor(m[, (i + 1)]) ||
-                   is.logical(m[, (i + 1)]) )
-      }      
-    }
-
-    if (ant.fak <- sum(isF)){
-      levels <- list()
-      index <- 0
-      for ( i in 1:length(covars) ){
-        if (isF[i]){
-          index <- index + 1
-          if (length(dropx)){
-            levels[[i]] <- levels(m[, -(dropx + 1)][, (i + 1)])
-          }else{
-            levels[[i]] <- levels(m[, (i + 1)])
-          }
+        if (length(dropx)){
+            isF[i] <- ( is.factor(m[, -(dropx + 1)][, (i + 1)]) ||
+                       is.logical(m[, -(dropx + 1)][, (i + 1)]) )
         }else{
-          ##cat("NULL level no  ", i, "\n")
-          levels[[i]] <- NULL
+            isF[i] <- ( is.factor(m[, (i + 1)]) ||
+                       is.logical(m[, (i + 1)]) )
+        }      
+    }
+    
+    if (ant.fak <- sum(isF)){
+        levels <- list()
+        index <- 0
+        for ( i in 1:length(covars) ){
+            if (isF[i]){
+                index <- index + 1
+                if (length(dropx)){
+                    levels[[i]] <- levels(m[, -(dropx + 1)][, (i + 1)])
+                }else{
+                    levels[[i]] <- levels(m[, (i + 1)])
+                }
+            }else{
+                ##cat("NULL level no  ", i, "\n")
+                levels[[i]] <- NULL
+            }
         }
-      }
     }else{
-      levels <- NULL
+        levels <- NULL
     }
 
     ##########################################
     type <- attr(Y, "type")
     if (type != "right" && type != "counting") 
         stop(paste("Cox model doesn't support \"", type, "\" survival data", 
-            sep = ""))
-
+                   sep = ""))
+    
     if (NCOL(Y) == 2){
-      Y <- cbind(numeric(NROW(Y)), Y)
+        Y <- cbind(numeric(NROW(Y)), Y)
     }
-
+    
     n.events <- sum(Y[, 3] != 0)
     if (n.events == 0) stop("No events; no sense in continuing!")
     if (missing(init)) 
         init <- NULL
-
+    
     if (missing(rs)) 
         rs <- NULL
-
+    
     if (is.list(control)){
-      if (is.null(control$eps)) control$eps <- 1e-4
-      if (is.null(control$maxiter)) control$maxiter <- 10
-      if (is.null(control$trace)) control$trace <- FALSE
+        if (is.null(control$eps)) control$eps <- 1e-8
+        if (is.null(control$maxiter)) control$maxiter <- 10
+        if (is.null(control$n.points)) control$n.points <- 12
+        if (is.null(control$trace)) control$trace <- FALSE
     }else{
-      stop("control must be a list")
+        stop("control must be a list")
     }
-
-    fit <- mlreg.fit(X,
-                     Y,
-                     rs,
-                     strats,
-                     offset,
-                     init,
-                     max.survs,
-                     method,
-                     boot,
-                     control)
+    
+    if (geometric) {
+        if (!is.null(frailty))
+            error("Frailty not implemented for geometric yet")
+        fit <- geome.fit(X,
+                         Y,
+                         rs,
+                         strats,
+                         offset,
+                         init,
+                         max.survs,
+                         method,
+                         boot,
+                         control)
+    }else{
+        fit <- mlreg.fit(X,
+                         Y,
+                         rs,
+                         strats,
+                         offset,
+                         init,
+                         max.survs,
+                         method,
+                         boot,
+                         control)
+    }
     
     if (!fit$fail) fit$fail <- NULL
     else
@@ -183,7 +202,7 @@ function (formula = formula(data),
         if (!is.null(fit$coef) && any(is.na(fit$coef))) {
             vars <- (1:length(fit$coef))[is.na(fit$coef)]
             msg <- paste("X matrix deemed to be singular; variable", 
-                paste(vars, collapse = " "))
+                         paste(vars, collapse = " "))
             if (singular.ok) 
                 warning(msg)
             else stop(msg)
@@ -192,15 +211,15 @@ function (formula = formula(data),
         fit$terms <- Terms
         fit$assign <- assign
         if (FALSE){ ##AAAAAARRRRRRRRRRGGGGGGGGHHHHHHH!!!!!!!!!!!!
-        if (length(fit$coef) && is.null(fit$wald.test)) {
-            nabeta <- !is.na(fit$coef)
-            if (is.null(init)) 
-                temp <- fit$coef[nabeta]
-            else temp <- (fit$coef - init)[nabeta]
-            fit$wald.test <- coxph.wtest(fit$var[nabeta, nabeta], 
-                temp, control$toler.chol)$test
+            if (length(fit$coef) && is.null(fit$wald.test)) {
+                nabeta <- !is.na(fit$coef)
+                if (is.null(init)) 
+                    temp <- fit$coef[nabeta]
+                else temp <- (fit$coef - init)[nabeta]
+                fit$wald.test <- coxph.wtest(fit$var[nabeta, nabeta], 
+                                             temp, control$toler.chol)$test
+            }
         }
-      }
         na.action <- attr(m, "na.action")
         if (length(na.action)) 
             fit$na.action <- na.action
@@ -214,7 +233,7 @@ function (formula = formula(data),
         if (y) 
             fit$y <- Y
     }
-
+    
     ##########################################
 
     fit$isF <- isF
@@ -223,19 +242,19 @@ function (formula = formula(data),
     fit$ttr <- sum(s.wght)
     fit$w.means <- list()
     for (i in 1:length(fit$covars)){
-      nam <- fit$covars[i]
-      col.m <- which(nam == names(m))
-      if (isF[i]){
-        n.lev <- length(levels[[i]])
-        fit$w.means[[i]] <- numeric(n.lev)
-        for (j in 1:n.lev){
-          who <- m[, col.m] == levels[[i]][j]
-          fit$w.means[[i]][j] <-
-          sum( s.wght[who] ) / fit$ttr ## * 100, if in per cent
+        nam <- fit$covars[i]
+        col.m <- which(nam == names(m))
+        if (isF[i]){
+            n.lev <- length(levels[[i]])
+            fit$w.means[[i]] <- numeric(n.lev)
+            for (j in 1:n.lev){
+                who <- m[, col.m] == levels[[i]][j]
+                fit$w.means[[i]][j] <-
+                    sum( s.wght[who] ) / fit$ttr ## * 100, if in per cent
+            }
+        }else{
+            fit$w.means[[i]] <- sum(s.wght * m[, col.m]) / fit$ttr
         }
-      }else{
-        fit$w.means[[i]] <- sum(s.wght * m[, col.m]) / fit$ttr
-      }
     }
 
     ##########################################

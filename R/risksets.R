@@ -1,4 +1,4 @@
-# Calculate pointers form risk sets to their members.
+# Calculate pointers from risk sets to their members.
 # (C) Göran Broström (2002).
 
 risksets <- function (x, strata = NULL, max.survs = NULL){
@@ -6,20 +6,23 @@ risksets <- function (x, strata = NULL, max.survs = NULL){
 
   nn <- NROW(x)
   if (is.null(strata)){
-    strata <- rep(1, nn)
+      strata <- rep(1, nn)
   }else{
-    strata <- as.integer(factor(strata))
+      if (length(strata) != nn) stop("'strata' has wrong length")
+      else
+          strata <- as.integer(factor(strata))
   }
 
   if (is.null(max.survs)) max.survs <- nn - 1
   if (NCOL(x) == 2){
-    enter <- numeric(nn)
-    exit <- x[, 1]
-    event <- (x[, 2] != 0)
+      enter <- numeric(nn)
+      exit <- x[, 1]
+      event <- (x[, 2] != 0)
   }else{
-    enter <- x[, 1]
-    exit <- x[, 2]
-    event <- (x[, 3] != 0)
+      if (NCOL(x) != 3) stop("'x' is not a Surv object")
+      enter <- x[, 1]
+      exit <- x[, 2]
+      event <- (x[, 3] != 0) ## TRUE == event
   }
 
   ord <- order(strata, exit, -event)
@@ -76,11 +79,11 @@ risksets <- function (x, strata = NULL, max.survs = NULL){
             riskset = integer(totsize),
             PACKAGE = "eha")
             
-  return(ns = ns,
-         antrs = counts$antrs,
-         risktimes = counts$risktimes,
-         n.events = counts$n.events,
-         size = res$size,
-         eventset = ord[res$eventset],
-         riskset = ord[res$riskset[1:res$new.totrs]])
+  list(ns = ns,
+       antrs = counts$antrs,
+       risktimes = counts$risktimes,
+       n.events = counts$n.events,
+       size = res$size,
+       eventset = ord[res$eventset],
+       riskset = ord[res$riskset[1:res$new.totrs]])
 }
