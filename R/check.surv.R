@@ -31,7 +31,7 @@ check.surv <- function(enter, exit, event, id = NULL, eps = 1.e-8){
                    as.integer(event),      ## length = n
                    as.double(eps),
                    sane = integer(n.ind),  ## boolean; TRUE: good individual
-                   package = "eha")
+                   PACKAGE = "eha")
 
     bad.id <- levels(id)[xx$sane == 0]
     bad.id
