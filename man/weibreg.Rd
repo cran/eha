@@ -41,20 +41,22 @@ singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE)
 
 \details{
 The parameterization is the same as in \code{\link{coxreg}},
-\code{\link{coxreg}}, and \code{\link[survival]{coxph}}, but different
-from the one used by \code{\link[survival]{survreg}}. To compare
-regression coefficients with the latter, multiply them by minus the
-(estimated) shape parameter.
-
+\code{\link{mlreg}}, and \code{\link[survival]{coxph}}, but different
+from the one used by \code{\link[survival]{survreg}}.
 The model is
-\deqn{h(t; p, \lambda, \beta, z) = \lambda (t / \lambda)^{p-1}\exp(-(
-  t / \lambda )^p) \exp(z\beta)}
-Note that this is in correspondence with \code{\link{dgamma}}, but not
-with \code{\link[survival]{survreg}}! To compare regression coefficients
+\deqn{h(t; a, b, \beta, z) = (a/b) (t/b)^{a-1}\exp(z\beta)}{%
+      h(t; a, b, beta, z) =  (a/b) (t/b)^(a-1)\exp(z beta)}
+This is in correspondence with \code{\link{Weibull}}. To compare
+regression coefficients 
 with those from \code{survreg} you need to divide by estimated shape
-(\eqn{\hat{p}}) and change sign. The p-values and test statistics are
+(\eqn{\hat{a}}{a}) and change sign. The p-values and test statistics are
 however the same, with one exception; the score test is done at
-maximized scale and shape in \code{weibreg}. 
+maximized scale and shape in \code{weibreg}.
+
+This model is a Weibull distribution with shape parameter \eqn{a} and
+scale parameter
+\eqn{b \Gamma (1 + 1/a) \exp(-z\beta / a)}{%
+     b Gamma(1 + 1/a) exp(-z beta / a)}
 }
 
 \value{
@@ -98,10 +100,10 @@ threeway or higher order interactions are present. Use
 \seealso{\code{\link{coxreg}}, \code{\link{mlreg}}, \code{\link{print.weibreg}}}
 
 \examples{
- dat <- data.frame(time=  c(4, 3,1,1,2,2,3),
-                status=c(1,1,1,0,1,1,0),
-                x=     c(0, 2,1,1,1,0,0),
-                sex=   c(0, 0,0,0,1,1,1))
+ dat <- data.frame(time = c(4, 3, 1, 1, 2, 2, 3),
+                status = c(1, 1, 1, 0, 1, 1, 0),
+                x = c(0, 2, 1, 1, 1, 0, 0),
+                sex = c(0, 0, 0, 0, 1, 1, 1))
  weibreg( Surv(time, status) ~ x + strata(sex), data = dat) #stratified model
 }
 \keyword{survival}% at least one, from doc/KEYWORDS

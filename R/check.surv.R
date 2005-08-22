@@ -18,9 +18,9 @@ check.surv <- function(enter, exit, event, id = NULL, eps = 1.e-8){
     exit <- exit[ord]
     event <- as.logical(event[ord])
 
+    id <- factor(id) 
     id.size <- table(id)
 
-    id <- factor(id)
     xx <- .Fortran("chek",
                    as.integer(n),
                    as.integer(n.ind),
