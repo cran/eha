@@ -1,3 +1,12 @@
+0.94-3	(Aug 22, 2005)
+
+	* 'check.surv': If the 'id' was a factor with unused labels,
+	the result was unpredictable. Corrected.
+
+0.94-2  (Jun 27, 2005)
+
+	* Errors in the documentation of 'weibreg' corrected.
+	
 0.93-0	(Sep 20, 2004) 
 
 	* NAMESPACE introduced for R-2.0.0.

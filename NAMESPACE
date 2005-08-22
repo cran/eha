@@ -6,7 +6,7 @@ export(age.window, cal.window, check.surv, coxreg,
        make.communal, mlreg, mlreg.fit, perstat, piecewise,
        plot.cum, plot.Surv, plot.weibreg, print.coxreg, print.weibreg,
        risksets, summary.coxreg, summary.weibreg, table.events,
-       weibreg, weibreg.fit, wfunk)
+       toDate, toTime, weibreg, weibreg.fit, wfunk)
 S3method(plot, Surv)
 S3method(plot, cum)
 S3method(plot, weibreg)
