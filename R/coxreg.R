@@ -1,8 +1,7 @@
 ## Cox regression. (C) Göran Broström (2003). Initial code borrowed from
 ## 'coxph' in 'survival. Thanks to Terry Therneau and Thomas Lumley. 
 
-coxreg <-
-function (formula = formula(data),
+coxreg <- function (formula = formula(data),
           data = parent.frame(), 
           na.action = getOption("na.action"),
           init,
