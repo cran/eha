@@ -74,7 +74,8 @@ print.weibreg <-
                 cat(covar.names[covar.no], "\n")
 
                 no.lev <- length(x$levels[[covar.no]])
-                cat(format.char(x$levels[[covar.no]][1], 16, "+"),
+                cat(formatC(x$levels[[covar.no]][1], width = 16, flag =
+                "+"), 
                     formatC(x$w.means[[covar.no]][1],
                             width = 8, digits = 3, format = "f"),
                     noll,
@@ -83,13 +84,14 @@ print.weibreg <-
                 for (lev in 2:no.lev){
 
                     index <- index + 1
-                    cat(format.char(x$levels[[covar.no]][lev], 16, "+"),
+                    cat(formatC(x$levels[[covar.no]][lev], width = 16,
+                    flag = "+"),
                         formatC(x$w.means[[covar.no]][lev],
                                 width = 8, digits = 3, format = "f"),
                         coef[index],
                         e.coef[index],
 
-                        format.char(" ", 9),
+                        formatC(" ", width = 9),
                         formatC(wald.p[index],
                                 digits = 3,
                                 width = digits + 2,
@@ -99,14 +101,14 @@ print.weibreg <-
                 }
             }else{ ## Covariates:
                 index <- index + 1
-                cat(format.char(covar.names[covar.no], 16),
+                cat(formatC(covar.names[covar.no], width = 16, flag = "-"),
                     formatC(x$w.means[[covar.no]],
                             width = 8, digits = 3, format = "f"),
                     coef[index],
                     e.coef[index],
                                         #exp(coef[index]),
                     ##se[index],
-                    format.char(" ", 9),
+                    formatC(" ", width = 9),
                     formatC(wald.p[index],
                             digits = 3,
                             width = digits + 2,
@@ -115,7 +117,7 @@ print.weibreg <-
                     "\n")
             }
         }else if (ord[term.no] > 1){ ## Interactions:
-            cat(format.char(term.names[term.no], 16), "\n")
+            cat(format(term.names[term.no], width = 16), "\n")
             niv <- numeric(ord[term.no])
             covar.no <- which(factors[, term.no] == 1)
 
@@ -133,13 +135,13 @@ print.weibreg <-
                     vn <- sub(covar.names[covar.no[i]], "", vn)
                 }
 
-                cat(format.char(" ", 2),
-                    format.char(substring(vn, 1, 22), 22, "-"),
-                    ## format.char(" ", 8),
+                cat(formatC(" ", width = 2),
+                    formatC(substring(vn, 1, 22), width = 22, flag = "-"),
+                    ## format(" ", 8),
                     coef[index],
                     e.coef[index],
                     ##se[index],
-                    format.char(" ", 9),
+                    formatC(" ", width = 9),
                     formatC(wald.p[index],
                             digits = 3,
                             width = digits + 2,
@@ -156,14 +158,14 @@ print.weibreg <-
         ss.names <- names(x$coef[(jup - n.slsh + 1):jup])
         index <- index + 1
         covar.no <- covar.no + 1
-        cat(format.char(ss.names[i], 16),
+        cat(formatC(ss.names[i], width = 16, flag = "-"),
             formatC(0,
                     width = 8, digits = 3, format = "f"),
             coef[index],
             e.coef[index],
                                         #exp(coef[index]),
             ##se[index],
-            format.char(" ", 9),
+            formatC(" ", width = 9),
             formatC(wald.p[index],
                     digits = 3,
                     width = digits + 2,
@@ -185,16 +187,16 @@ print.weibreg <-
     if (is.null(x$df)) df <- sum(!is.na(coef))
     else  df <- round(sum(x$df),2)
     cat("\n")
-    cat(format.char("Events", 25), x$events, "\n")
-    cat(format.char("Total time at risk", 25),
+    cat(formatC("Events", width = 25, flag = "-"), x$events, "\n")
+    cat(formatC("Total time at risk", width = 25, flag = "-"),
         formatC(x$ttr, digits = 5, format = "fg"), "\n")
-    cat(format.char("Max. log. likelihood", 25),
+    cat(formatC("Max. log. likelihood", width = 25, flag = "-"),
         formatC(x$loglik[2], digits = 5, format = "fg"), "\n")
-    cat(format.char("LR test statistic", 25),
+    cat(formatC("LR test statistic", width = 25, flag = "-"),
         format(round(logtest, 2)), "\n")
-    cat(format.char("Degrees of freedom", 25),
+    cat(formatC("Degrees of freedom", width = 25, flag = "-"),
         formatC(df, digits = 0, format = "f"), "\n")
-    cat(format.char("Overall p-value", 25),
+    cat(formatC("Overall p-value", width = 25, flag = "-"),
         format.pval(1 - pchisq(logtest, df), digits = 6, "\n"))
     cat("\n")
     if (length(x$icc))

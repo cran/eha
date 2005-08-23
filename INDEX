@@ -24,6 +24,10 @@ summary.coxreg          Prints coxreg objects
 summary.weibreg         Prints a weibreg object
 table.events            Calculating failure times, risk set sizes and
                         No. of events in each risk set
+toDate                  Convert time in years since "0000-01-01" to a
+                        date.
+toTime                  Calculate duration in years from "0000-01-01"
+                        to a given date
 weibreg                 Weibull regression
 weibreg.fit             Weibull regression
 wfunk                   Loglihood function of a Weibull regression
