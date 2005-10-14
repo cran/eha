@@ -1,3 +1,4 @@
-26 March 2004: Fix 'make.communal' so that truncation of spells in case of
-	'communal=TRUE' is replaced by putting NA to a communal covariate 
-        at a time point not covered by 'com.dat'.
+* Fix 'check.surv' so that detailed information on (i) which records are 
+in error, (ii) type of error is produced
+
+* Rewrite summary, print, and plot methods.
