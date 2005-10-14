@@ -1,25 +1,23 @@
-C ***
-C
-      subroutine init_lik(n, loglik, dloglik, d2loglik)
+static void init_lik(int n, double loglik, 
+		     double *dloglik, double **d2loglik){
+    int s, m;
+	
+    loglik = 0.d0;
+    
+    for (s = 0; s < n; s++){
+	dloglik(s) = 0.d0;
+	for (m = 0; n < n; m++){
+	    d2loglik(s, m) = 0.d0;
+	}
+    }  
+    
+}
 
-      implicit none
-
-      integer n
-      double precision loglik, dloglik(n), d2loglik(n, n)
-
-      loglik = 0.d0
-      call dcopy(n, 0.d0, 0, dloglik, 1)
-      call dcopy(n * n, 0.d0, 0, d2loglik, 1)
-
-      return
-      end
-
-C ***
-C
       subroutine obs_lik(what, ns, antrs, totrs, antevents, size,
      &     totevent, eventset, nn, score, 
      &     antcov, covar,
      &     loglik, dloglik)
+    static void obs_lik(int what, int ns, int *antrs, 
 
 C +++
 C     This subroutine calculates the 'observed' part of the
@@ -48,9 +46,11 @@ C +++
                   who = eventset(indx)
                   loglik = loglik + score(who)
                   if (what .ge. 1) then
-                     call daxpy(antcov, 1.d0, covar(who, 1), nn,
-     &                    dloglik, 1)
+                     do s = 1, antcov
+                        dloglik(s) = dloglik(s) + covar(who, s)
+                     enddo
                   endif
+              
                enddo
             else
                indx = indx + antevents(rsindx)
@@ -89,9 +89,6 @@ C ***
       integer rsindx, indx, rs, j, i, s, m, who
       double precision sumscore
 
-      character*1 UPLO
-      parameter (UPLO = 'L')
-
       rsindx = 0
       indx = 0
       do rs = 1, ns
@@ -99,9 +96,16 @@ C ***
             rsindx = rsindx + 1
 C     Reset to zero:
             sumscore = 0.d0
-            if (what .ge. 1) call dcopy(antcov, 0.d0, 0, sumdscore, 1)
-            if (what .eq. 2) call dcopy(antcov * antcov, 0.d0, 0, 
-     &           sumd2score, 1)
+            if (what .ge. 1) then
+               do s = 1, antcov
+                  sumdscore(s) = 0.d0
+                  if (what .eq. 2) then
+                     do m = 1, s
+                        sumd2score(s, m) = 0.d0
+                     enddo
+                  endif
+               enddo
+            endif
 C     Go thru riskset(rs, j):
 C +++ Not Removed! We don't go thru 'single' risksets too
             if (antevents(rsindx) < size(rsindx)) then
@@ -109,34 +113,40 @@ C +++ Not Removed! We don't go thru 'single' risksets too
                   indx = indx +  1
                   who = riskset(indx)
                   sumscore = sumscore + score(who)
-                  if (what .ge. 1) call daxpy(antcov, score(who), 
-     &                 covar(who, 1), nn, sumdscore, 1)
-                  if (what .eq. 2) then
-                     call dsyr(UPLO, antcov, score(who), 
-     &                    covar(who, 1), nn, sumd2score, antcov)
-C                     call dger(antcov, antcov, score(who), 
-C     &                    covar(who, 1), nn, covar(who, 1), nn, 
-C     &                    sumd2score, antcov)
+                  if (what .ge. 1) then
+                     do s = 1, antcov
+                        sumdscore(s) = sumdscore(s) + 
+     &                       covar(who, s) * score(who)
+                        if (what .eq. 2) then
+                           do m = 1, s
+                              sumd2score(s, m) = sumd2score(s, m) +
+     &                             covar(who, s) * covar(who, m) * 
+     &                             score(who)
+                           enddo
+                        endif
+                     enddo 
                   endif
+               
                enddo
 C     Add into loglik:
                loglik = loglik - antevents(rsindx) * log(sumscore)
                if (what .ge. 1) then
 C     Add into dloglik:
-                  call daxpy(antcov, -antevents(rsindx) / sumscore,
-     &                 sumdscore, 1, dloglik, 1)
-               endif
-               if (what .eq. 2) then
-                  call daxpy(antcov * antcov, 
-     &                 antevents(rsindx) / sumscore, sumd2score, 1,
-     &                 d2loglik, 1)
-                  call dsyr(UPLO, antcov, 
-     &                 -antevents(rsindx) / sumscore**2, sumdscore, 1,
-     &                 d2loglik, antcov)
- 
-C                  call dger(antcov, antcov, 
-C     &                 -antevents(rsindx) / sumscore**2, sumdscore, 1,
-C     &                 sumdscore, 1, d2loglik, antcov)
+                  do s = 1, antcov
+                     dloglik(s) = dloglik(s) - antevents(rsindx) * 
+     &                    sumdscore(s) / sumscore
+                     if (what .eq. 2) then
+C     Add into d2loglik:
+                        do m = 1, s
+C     Note the sign here!! It is a plus in mlfun! (Correctly) Changed back!!
+                           d2loglik(s, m) = d2loglik(s, m) + 
+     &                          antevents(rsindx) * 
+     &                          ( sumd2score(s, m) / sumscore -
+     &                          sumdscore(s) * sumdscore(m) /
+     &                          sumscore**2 )
+                        enddo
+                     endif
+                  enddo
                endif
             else
                indx = indx + size(rsindx)
@@ -144,7 +154,7 @@ C     &                 sumdscore, 1, d2loglik, antcov)
 C     Done adding in; next riskset.
          enddo
       enddo
-      
+
       return
       end
 
@@ -178,132 +188,135 @@ C     ***
 
 C     +++
 C     Local (note the deviation from strict standard here!):
-
       double precision escore, edscore(antcov), ed2score(antcov, antcov)
       double precision w, ws
-
-      character*1 UPLO
-      parameter (UPLO = 'L')
-
-      double precision temp(antcov)
-
       rsindx = 0
       indx = 0
       eindx = 0
 
-      do 1000, rs = 1, ns
-         do 900, j = 1, antrs(rs)
+      do rs = 1, ns
+         do j = 1, antrs(rs)
             rsindx = rsindx + 1
 C     Reset to zero:
             sumscore = 0.d0
             escore = 0.d0
             if (what .ge. 1) then
-               call dcopy(antcov, 0.d0, 0, sumdscore, 1)
-               call dcopy(antcov, 0.d0, 0, edscore, 1)
-               if (what .eq. 2) then
-                  call dcopy(antcov * antcov, 0.d0, 0, sumd2score, 1)
-                  call dcopy(antcov * antcov, 0.d0, 0, ed2score, 1)
-               endif
+               do s = 1, antcov
+                  sumdscore(s) = 0.d0
+                  edscore(s) = 0.d0
+                  if (what .eq. 2) then
+                     do m = 1, s
+                        sumd2score(s, m) = 0.d0
+                        ed2score(s, m) = 0.d0
+                     enddo
+                  endif
+               enddo
             endif
 C     Go thru eventset(rs, j):
             if (antevents(rsindx) < size(rsindx)) then
-               do 600, i = 1, antevents(rsindx)
+               do i = 1, antevents(rsindx)
                   eindx = eindx +  1
                   who = eventset(eindx)
                   escore = escore + score(who)
                   if (what .ge. 1) then
-                     call daxpy(antcov, score(who), covar(who, 1), nn,
-     &                    edscore, 1)
-                     if (what .eq. 2) then
-                     call dsyr(UPLO, antcov, score(who), 
-     &                    covar(who, 1), 1, ed2score, antcov)
-
-C                        call dger(antcov, antcov, score(who), 
-C     &                       covar(who, 1), nn, covar(who, 1), nn,
-C    &                       ed2score, antcov)
-                     endif
+                     do s = 1, antcov
+                        edscore(s) = edscore(s) + 
+     &                       covar(who, s) * score(who)
+                        if (what .eq. 2) then
+                           do m = 1, s
+                              ed2score(s, m) = ed2score(s, m) +
+     &                             covar(who, s) * covar(who, m) * 
+     &                             score(who)
+                           enddo
+                        endif
+                     enddo 
                   endif
- 600           continue
+C     endif
+               enddo
 C     Go thru riskset(rs, j):
-               do 700, i = 1, size(rsindx)
+               do i = 1, size(rsindx)
                   indx = indx +  1
 C     +++ Removed! We go thru 'single' risksets too
 C     if (antevents(rsindx) < size(rsindx)) then
                   who = riskset(indx)
                   sumscore = sumscore + score(who)
                   if (what .ge. 1) then
-                     call daxpy(antcov, score(who), covar(who, 1), nn,
-     &                    sumdscore, 1)
-                     if (what .eq. 2) then
-                        call dsyr(UPLO, antcov, score(who),
-     &                       covar(who, 1), nn, sumd2score, antcov)
-C                        call dger(antcov, antcov, score(who),
-C     &                       covar(who, 1), nn, covar(who, 1), nn,
-C     &                       sumd2score, antcov)
-                     endif
+                     do s = 1, antcov
+                        sumdscore(s) = sumdscore(s) + 
+     &                       covar(who, s) * score(who)
+                        if (what .eq. 2) then
+                           do m = 1, s
+                              sumd2score(s, m) = sumd2score(s, m) +
+     &                             covar(who, s) * covar(who, m) * 
+     &                             score(who)
+                           enddo
+                        endif
+                     enddo 
                   endif
- 700           continue
+C     endif
+               enddo
                
                if (antevents(rsindx) .eq. 1) then
 C     Add into loglik:
                   loglik = loglik - log(sumscore)
                   if (what .ge. 1) then
 C     Add into dloglik:
-                     call daxpy(antcov, -1.d0 / sumscore, 
-     &                    sumdscore, 1, dloglik, 1)
-                     if (what .eq. 2) then
+                     do s = 1, antcov
+                        dloglik(s) = dloglik(s) - 
+     &                       sumdscore(s) / sumscore
+                        if (what .eq. 2) then
 C     Add into d2loglik:
-                        call daxpy(antcov * antcov, 
-     &                       antevents(rsindx) / sumscore, 
-     &                       sumd2score, 1, d2loglik, 1)
-                        call dsyr(UPLO, antcov, 
-     &                       -antevents(rsindx) / sumscore**2,
-     &                       sumdscore, 1, d2loglik, antcov)
-C                        call dger(antcov, antcov, 
-C     &                       -antevents(rsindx) / sumscore**2, 
-C     &                       sumdscore, 1, sumdscore, 1, 
-C     &                       d2loglik, antcov)
+                           do m = 1, s
+                              d2loglik(s, m) = d2loglik(s, m) +
+     &                             antevents(rsindx) * 
+     &                             ( sumd2score(s, m) / sumscore -
+     &                             sumdscore(s) * sumdscore(m) /
+     &                             sumscore**2 )
+                           enddo
                         endif
+                     enddo
                   endif
 C     Done adding in; next riskset.
                else
 
 C     +++ IF TIES:
 
-                  do 800, r = 1, antevents(rsindx)
+                  do r = 1, antevents(rsindx)
                      w = dble(r - 1) / dble(antevents(rsindx))
                      ws = w * escore
 C     Add into loglik:
                      loglik = loglik - log(sumscore - ws)
                      if (what .ge. 1) then
 C     Add into dloglik:
-                        call dcopy(antcov, sumdscore, 1, temp, 1)
-                        call daxpy(antcov, -w, edscore, 1, temp, 1)
-                        call dscal(antcov, 1.d0 / (sumscore -ws), 
-     &                       temp, 1)
-                        call daxpy(antcov, -1.d0,
-     &                       temp, 1, dloglik, 1)
-                        if (what .eq. 2) then
+                        do s = 1, antcov
+                           dloglik(s) = dloglik(s) - 
+     &                          (sumdscore(s) - w * edscore(s)) / 
+     &                          (sumscore - ws)
+                           if (what .eq. 2) then
 C     Add into d2loglik:
-                           call daxpy(antcov * antcov, 
-     &                          1.d0/(sumscore - ws), sumd2score, 1,
-     &                          d2loglik, 1)
-                           call daxpy(antcov * antcov, 
-     &                          -w/(sumscore - ws), ed2score, 1,
-     &                          d2loglik, 1)
-                           call dsyr(UPLO, antcov, -1.d0, temp, 1,
-     &                          d2loglik, antcov)
-                        endif
+                              do m = 1, s
+                                 d2loglik(s, m) = d2loglik(s, m) + 
+     &                                ( (sumd2score(s, m) - 
+     &                                w * ed2score(s, m)) 
+     &                                / (sumscore - ws) -
+     &                                (sumdscore(s) - 
+     &                                w * edscore(s)) * 
+     &                                (sumdscore(m) - 
+     &                                w * edscore(m)) /
+     &                                (sumscore - ws)**2 )
+                              enddo
+                           endif
+                        enddo
                      endif
- 800              continue
+                  enddo
 C     Done adding in; next riskset.
                endif
             else
                eindx = eindx + antevents(rsindx)
                indx = indx + size(rsindx)
             endif
- 900     continue
- 1000 continue
+         enddo
+      enddo
 
       return
       end
@@ -433,7 +446,7 @@ C
       endif
 C +++
 C     Fill in the upper triangle part of d2loglik (symmetry!):
-C     already done above! (Maybe shouldnt...) Change Back:
+C
 
       if (what .eq. 2) then
 

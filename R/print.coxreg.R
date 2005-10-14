@@ -23,7 +23,7 @@ print.coxreg <-
     if(is.null(coef) | is.null(se))
         stop("Input is not valid")
 #####################################
-    cat("Covariate           Mean       Coef  Rel.Risk      L-R p   Wald p\n")
+    cat("Covariate           Mean       Coef     S.E.   Rel.Risk    Wald p\n")
     e.coef <- formatC(exp(coef), width = 9, digits = 3, format = "f")
     coef <- formatC(coef, width = 9, digits = 3, format = "f")
     se <- formatC(se, width = 9, digits = 3, format = "f")
@@ -68,22 +68,23 @@ print.coxreg <-
                 no.lev <- length(x$levels[[covar.no]])
                 x$levels[[covar.no]] <-
                     substring(x$levels[[covar.no]], 1, 16)
-                cat(formatC(x$levels[[covar.no]][1], 16, flag = "+"),
+                cat(formatC(x$levels[[covar.no]][1], width = 16, flag = "+"),
                     formatC(x$w.means[[covar.no]][1],
                             width = 8, digits = 3, format = "f"),
                     noll,
                     ett,
-                    "          (reference)\n")
+                    "(reference)\n")
                 for (lev in 2:no.lev){
             ##cat("lev = ", lev, "\n")
                     index <- index + 1
-                    cat(formatC(x$levels[[covar.no]][lev], width = 16, flag = "+"),
+                    cat(formatC(x$levels[[covar.no]][lev], width = 16,
+                                flag = "+"),
                         formatC(x$w.means[[covar.no]][lev],
                                 width = 8, digits = 3, format = "f"),
                         coef[index],
                         e.coef[index],
-                        ## se[index],
-                        formatC(" ", width = 9),
+                         se[index],
+                        ##formatC(" ", width = 9),
                         formatC(wald.p[index],
                                 digits = 3,
                                 width = digits + 2,
@@ -99,8 +100,8 @@ print.coxreg <-
                     coef[index],
                     e.coef[index],
                                         #exp(coef[index]),
-                    ##se[index],
-                    formatC(" ", width = 9),
+                    se[index],
+                    ##formatC(" ", width = 9),
                     formatC(wald.p[index],
                             digits = 3,
                             width = digits + 2,
@@ -132,8 +133,8 @@ print.coxreg <-
                     ##format(" ", 8),
                     coef[index],
                     e.coef[index],
-                    ##se[index],
-                    formatC(" ", width = 9),
+                    se[index],
+                    ##formatC(" ", width = 9),
                     formatC(wald.p[index],
                             digits = 3,
                             width = digits + 2,
