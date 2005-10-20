@@ -39,8 +39,6 @@ No value is returned.
 
 % ~Make other sections like WARNING with \section{WARNING }{....} ~
 
-\seealso{\code{\link{plot.cum}}}
-
 \examples{
 time0 <- numeric(50)
 group <- c(rep(0, 25), rep(1, 25))
