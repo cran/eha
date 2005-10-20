@@ -23,7 +23,7 @@ print.coxreg <-
     if(is.null(coef) | is.null(se))
         stop("Input is not valid")
 #####################################
-    cat("Covariate           Mean       Coef     S.E.   Rel.Risk    Wald p\n")
+    cat("Covariate           Mean       Coef     Rel.Risk   S.E.    Wald p\n")
     e.coef <- formatC(exp(coef), width = 9, digits = 3, format = "f")
     coef <- formatC(coef, width = 9, digits = 3, format = "f")
     se <- formatC(se, width = 9, digits = 3, format = "f")
