@@ -191,7 +191,8 @@ function (formula = formula(data),
                 if (is.null(init)) 
                     temp <- fit$coef[nabeta]
                 else temp <- (fit$coef - init)[nabeta]
-                fit$wald.test <- coxph.wtest(fit$var[nabeta, nabeta], 
+                fit$wald.test <-
+                  survival:::coxph.wtest(fit$var[nabeta, nabeta],   
                                              temp, control$toler.chol)$test
             }
         }

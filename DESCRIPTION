@@ -1,6 +1,6 @@
 Package: eha
-Version: 0.95-3
-Date: 2005-10-20
+Version: 0.95-4
+Date: 2005-10-22
 Title: Event History Analysis.
 Description: A package for survival and event history analysis.
 License: GPL version 2 or newer.
@@ -8,4 +8,4 @@ URL: http://www.stat.umu.se/~goran.brostrom/eha/
 Author: Göran Broström.
 Depends: R (>= 2.0.0), survival, graphics
 Maintainer: Göran Broström <gb@stat.umu.se>
-Packaged: Thu Oct 20 20:05:22 2005; gb
+Packaged: Sun Oct 23 00:57:32 2005; gb
