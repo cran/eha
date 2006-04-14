@@ -15,7 +15,6 @@ mlreg.fit               ML proportional hazards regression
 perstat                 Period statistics
 piecewise               Piecewise hazards
 plot.Surv               Plots of survivor functions.
-plot.cum                Plots of Cumulative Hazards Functions.
 plot.weibreg            Plots output from a Weibull regression
 print.coxreg            Prints coxreg objects
 print.weibreg           Prints weibreg objects
