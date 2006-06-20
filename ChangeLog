@@ -1,3 +1,14 @@
+0.96-1  (May 15, 2006) 
+
+	* plot.Surv improved. Suggestions by Dimitri Szerman. (Thanks!)
+
+0.96-0  (April 14, 2006)
+
+	* Weibull regression updated; It is now possible to fit a Weibull
+	model to left-truncated and right-censored data without
+	covariates. A small error in the documentation of 'weibreg'
+	corrected. 
+
 0.94-3	(Aug 22, 2005)
 
 	* 'check.surv': If the 'id' was a factor with unused labels,

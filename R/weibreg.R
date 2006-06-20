@@ -63,44 +63,46 @@ function (formula = formula(data),
     assign <- lapply(attrassign(X, newTerms)[-1], function(x) x - 
         1)
     X <- X[, -1, drop = FALSE]
-
+    ncov <- NCOL(X)
     #########################################
 
-    if (length(dropx)){
-      covars <- names(m)[-c(1, (dropx + 1))]
-    }else{
-      covars <- names(m)[-1]
-    }
-
-    isF <- logical(length(covars))
-    for (i in 1:length(covars)){
-      if (length(dropx)){
-        isF[i] <- ( is.factor(m[, -(dropx + 1)][, (i + 1)]) ||
-                   is.logical(m[, -(dropx + 1)][, (i + 1)]) )
-      }else{
-        isF[i] <- ( is.factor(m[, (i + 1)]) ||
-                   is.logical(m[, (i + 1)]) )
-      }      
-    }
-
-    if (ant.fak <- sum(isF)){
-      levels <- list()
-      index <- 0
-      for ( i in 1:length(covars) ){
-        if (isF[i]){
-          index <- index + 1
-          if (length(dropx)){
-            levels[[i]] <- levels(m[, -(dropx + 1)][, (i + 1)])
-          }else{
-            levels[[i]] <- levels(m[, (i + 1)])
-          }
+    if (ncov){
+        if (length(dropx)){
+            covars <- names(m)[-c(1, (dropx + 1))]
         }else{
-          ##cat("NULL level no  ", i, "\n")
-          levels[[i]] <- NULL
+            covars <- names(m)[-1]
         }
-      }
-    }else{
-      levels <- NULL
+        
+        isF <- logical(length(covars))
+        for (i in 1:length(covars)){
+            if (length(dropx)){
+                isF[i] <- ( is.factor(m[, -(dropx + 1)][, (i + 1)]) ||
+                           is.logical(m[, -(dropx + 1)][, (i + 1)]) )
+            }else{
+                isF[i] <- ( is.factor(m[, (i + 1)]) ||
+                           is.logical(m[, (i + 1)]) )
+            }      
+        }
+
+        if (ant.fak <- sum(isF)){
+            levels <- list()
+            index <- 0
+            for ( i in 1:length(covars) ){
+                if (isF[i]){
+                    index <- index + 1
+                    if (length(dropx)){
+                        levels[[i]] <- levels(m[, -(dropx + 1)][, (i + 1)])
+                    }else{
+                        levels[[i]] <- levels(m[, (i + 1)])
+                    }
+                }else{
+                    ##cat("NULL level no  ", i, "\n")
+                    levels[[i]] <- NULL
+                }
+            }
+        }else{
+            levels <- NULL
+        }
     }
 
     ##########################################
@@ -213,36 +215,37 @@ function (formula = formula(data),
     ##    fit$weights <- weights
 
     ##########################################
-
-    fit$isF <- isF
-    fit$covars <- covars
     s.wght <- (Y[, 2] - Y[, 1])## * weights
-    fit$ttr <- sum(s.wght)
-    fit$w.means <- list()
-    for (i in 1:length(fit$covars)){
-        nam <- fit$covars[i]
-        col.m <- which(nam == names(m))
-        if (isF[i]){
-            n.lev <- length(levels[[i]])
-            fit$w.means[[i]] <- numeric(n.lev)
-            for (j in 1:n.lev){
-                who <- m[, col.m] == levels[[i]][j]
-                fit$w.means[[i]][j] <-
-                    sum( s.wght[who] ) / fit$ttr ## * 100, if in per cent
+    if (ncov){
+        fit$isF <- isF
+        fit$covars <- covars
+        fit$w.means <- list()
+        for (i in 1:length(fit$covars)){
+            nam <- fit$covars[i]
+            col.m <- which(nam == names(m))
+            if (isF[i]){
+                n.lev <- length(levels[[i]])
+                fit$w.means[[i]] <- numeric(n.lev)
+                for (j in 1:n.lev){
+                    who <- m[, col.m] == levels[[i]][j]
+                    fit$w.means[[i]][j] <-
+                      sum( s.wght[who] ) / fit$ttr ## * 100, if in per cent
+                }
+            }else{
+                fit$w.means[[i]] <- sum(s.wght * m[, col.m]) / fit$ttr
             }
-        }else{
-            fit$w.means[[i]] <- sum(s.wght * m[, col.m]) / fit$ttr
         }
+        fit$means <- apply(X, 2, mean)
+        
     }
-
     ##########################################
+    fit$ttr <- sum(s.wght)
+    names(fit$coefficients) <- coef.names 
     fit$levels <- levels
     fit$formula <- formula(Terms)
     fit$call <- call
     fit$events <- n.events 
-    names(fit$coefficients) <- coef.names 
     class(fit) <- c("weibreg", "coxreg", "coxph")
-    fit$means <- apply(X, 2, mean)
     fit$pfixed <- pfixed
     fit
 }
