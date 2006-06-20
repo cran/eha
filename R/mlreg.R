@@ -79,14 +79,16 @@ function (formula = formula(data),
     }
 
     isF <- logical(length(covars))
-    for (i in 1:length(covars)){
-        if (length(dropx)){
-            isF[i] <- ( is.factor(m[, -(dropx + 1)][, (i + 1)]) ||
-                       is.logical(m[, -(dropx + 1)][, (i + 1)]) )
-        }else{
-            isF[i] <- ( is.factor(m[, (i + 1)]) ||
-                       is.logical(m[, (i + 1)]) )
-        }      
+    if (length(covars)){
+        for (i in 1:length(covars)){
+            if (length(dropx)){
+                isF[i] <- ( is.factor(m[, -(dropx + 1)][, (i + 1)]) ||
+                           is.logical(m[, -(dropx + 1)][, (i + 1)]) )
+            }else{
+                isF[i] <- ( is.factor(m[, (i + 1)]) ||
+                           is.logical(m[, (i + 1)]) )
+            }      
+        }
     }
     
     if (ant.fak <- sum(isF)){
@@ -161,7 +163,10 @@ function (formula = formula(data),
                          boot,
                          control)
     }
-    
+##    if (!length(fit$coefficients)) {
+##        class(fit) <- c("mlreg", "coxreg", "coxph")
+##        return (fit)
+##    }
     if (!fit$fail) fit$fail <- NULL
     else
         fit$fail <- TRUE
@@ -199,7 +204,7 @@ function (formula = formula(data),
         class(fit) <- "mlreg"
     }
     else if (is.null(fit$fail)){
-        if (!is.null(fit$coef) && any(is.na(fit$coef))) {
+        if (length(fit$coef) && any(is.na(fit$coef))) {
             vars <- (1:length(fit$coef))[is.na(fit$coef)]
             msg <- paste("X matrix deemed to be singular; variable", 
                          paste(vars, collapse = " "))
@@ -241,31 +246,35 @@ function (formula = formula(data),
     s.wght <- (Y[, 2] - Y[, 1])## * weights
     fit$ttr <- sum(s.wght)
     fit$w.means <- list()
-    for (i in 1:length(fit$covars)){
-        nam <- fit$covars[i]
-        col.m <- which(nam == names(m))
-        if (isF[i]){
-            n.lev <- length(levels[[i]])
-            fit$w.means[[i]] <- numeric(n.lev)
-            for (j in 1:n.lev){
-                who <- m[, col.m] == levels[[i]][j]
-                fit$w.means[[i]][j] <-
-                    sum( s.wght[who] ) / fit$ttr ## * 100, if in per cent
+    if (length(fit$covars)){
+        for (i in 1:length(fit$covars)){
+            nam <- fit$covars[i]
+            col.m <- which(nam == names(m))
+            if (isF[i]){
+                n.lev <- length(levels[[i]])
+                fit$w.means[[i]] <- numeric(n.lev)
+                for (j in 1:n.lev){
+                    who <- m[, col.m] == levels[[i]][j]
+                    fit$w.means[[i]][j] <-
+                      sum( s.wght[who] ) / fit$ttr ## * 100, if in per cent
+                }
+            }else{
+                fit$w.means[[i]] <- sum(s.wght * m[, col.m]) / fit$ttr
             }
-        }else{
-            fit$w.means[[i]] <- sum(s.wght * m[, col.m]) / fit$ttr
         }
-    }
 
+    }
     ##########################################
     fit$levels <- levels
     fit$formula <- formula(Terms)
     fit$call <- call
-    fit$events <- n.events 
-    names(fit$coefficients) <- colnames(X)
+    fit$events <- n.events
+    if (length(fit$coefficients)){
+        names(fit$coefficients) <- colnames(X)
+        fit$means <- apply(X, 2, mean)
+    }
     fit$method <- method
     class(fit) <- c("mlreg", "coxreg", "coxph")
-    fit$means <- apply(X, 2, mean)
 
     fit
 }

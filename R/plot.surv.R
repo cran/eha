@@ -8,24 +8,27 @@ plot.Surv <- function(x,
                       ylab = NULL,
                       xlim = NULL,
                       ylim = NULL,
+                      lty.con = NULL,
+                      col.con = NULL,
+                      x.axis = TRUE,
                       ...){
     ## Check input data:
 
     if (!inherits(x, "Surv"))
         stop("First argument must be of type 'Surv'")
 
-        if (ncol(x) == 3){
-      enter <- x[, 1]
-      exit <- x[, 2]
-      event <- x[, 3]
-      n <- length(exit)
+    if (ncol(x) == 3){
+        enter <- x[, 1]
+        exit <- x[, 2]
+        event <- x[, 3]
+        n <- length(exit)
     }else{
-      exit <- x[, 1]
-      n <- length(exit)
-      enter <- rep(0, n)
-      event <- x[, 2]
+        exit <- x[, 1]
+        n <- length(exit)
+        enter <- rep(0, n)
+        event <- x[, 2]
     }
-
+    
     n <- length(exit)
     if (is.null(strata)) group <- rep(1, n)
     else group <- strata
@@ -37,23 +40,23 @@ plot.Surv <- function(x,
     }
     noOfGroups <- length(strata)
     if (noOfGroups > 1) limits <- FALSE 
-
+    
     fn <- fn[1] # What type of plot?
     ##
     
     times <- list()
     atoms <- list()
-
+    
     i <- 0
-    if (is.null(xlim)){
+    ##if (is.null(xlim)){
         x.min <- min(enter)
         x.max <- max(exit)
         if (fn == "loglog"){
             x.min <- log(min(exit) / 2)
             x.max <- log(x.max)
         }
-        xlim <- c(x.min, x.max)
-    }
+    if (is.null(xlim))  xlim <- c(x.min, x.max)
+    ##}
     if (is.null(ylim)){
         y.max <- -1e103
         y.min <- 1.e103
@@ -99,13 +102,15 @@ plot.Surv <- function(x,
         }
     }
 
-    if (fn == "surv"){
-        y.min <- 0
-        y.max <- 1
-        ylim <- c(0, 1)
-    }else{
-        if (fn == "cum") y.min <- 0
-        ylim <- c(y.min, y.max)
+    if (is.null(ylim)){
+        if (fn == "surv"){
+            y.min <- 0
+            y.max <- 1
+            ylim <- c(0, 1)
+        }else{
+            if (fn == "cum") y.min <- 0
+            ylim <- c(y.min, y.max)
+        }
     }
 
     if (is.null(ylab)) ylab <- ""
@@ -138,7 +143,7 @@ plot.Surv <- function(x,
                col = 1:noOfGroups)            
     }
 
-    if (fn %in% c("surv", "cum")) abline(h = 0)
+    if (fn %in% c("surv", "cum") & x.axis) abline(h = 0)
 
     if (limits && (fn == "surv")){
         q.alpha <- abs(qnorm((1 - conf) / 2))
@@ -159,8 +164,12 @@ plot.Surv <- function(x,
             upper <- c(upper, upper[n])
             lower <- c(lower, upper[n])
         }
-        lines(times[[1]], upper, type = "s", lty = 2, col = 2)
-        lines(times[[1]], lower, type = "s", lty = 2, col = 2)
+        if (is.null(lty.con)) {lty.con=2}
+        if (is.null(col.con)) {col.con=2}
+        lines(times[[1]], upper, type = "s", lty = lty.con, col = col.con)
+        lines(times[[1]], lower, type = "s", lty = lty.con, col = col.con)
+        ##lines(times[[1]], upper, type = "s", lty = 2, col = 2)
+        ##lines(times[[1]], lower, type = "s", lty = 2, col = 2)
     }
 }
     

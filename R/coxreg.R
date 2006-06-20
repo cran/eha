@@ -74,65 +74,66 @@ coxreg <- function (formula = formula(data),
     }
 
     isF <- logical(length(covars))
-    for (i in 1:length(covars)){
-      if (length(dropx)){
-        isF[i] <- ( is.factor(m[, -(dropx + 1)][, (i + 1)]) ||
-                   is.logical(m[, -(dropx + 1)][, (i + 1)]) )
-      }else{
-        isF[i] <- ( is.factor(m[, (i + 1)]) ||
-                   is.logical(m[, (i + 1)]) )
-      }      
-    }
-
-    if (ant.fak <- sum(isF)){
-      levels <- list()
-      index <- 0
-      for ( i in 1:length(covars) ){
-        if (isF[i]){
-          index <- index + 1
-          if (length(dropx)){
-            levels[[i]] <- levels(m[, -(dropx + 1)][, (i + 1)])
-          }else{
-            levels[[i]] <- levels(m[, (i + 1)])
-          }
-        }else{
-          levels[[i]] <- NULL
+    if (length(covars)){
+        for (i in 1:length(covars)){
+            if (length(dropx)){
+                isF[i] <- ( is.factor(m[, -(dropx + 1)][, (i + 1)]) ||
+                           is.logical(m[, -(dropx + 1)][, (i + 1)]) )
+            }else{
+                isF[i] <- ( is.factor(m[, (i + 1)]) ||
+                           is.logical(m[, (i + 1)]) )
+            }      
         }
-      }
+    }
+    
+    if (ant.fak <- sum(isF)){
+        levels <- list()
+        index <- 0
+        for ( i in 1:length(covars) ){
+            if (isF[i]){
+                index <- index + 1
+                if (length(dropx)){
+                    levels[[i]] <- levels(m[, -(dropx + 1)][, (i + 1)])
+                }else{
+                    levels[[i]] <- levels(m[, (i + 1)])
+                }
+            }else{
+                levels[[i]] <- NULL
+            }
+        }
     }else{
-      levels <- NULL
+        levels <- NULL
     }
 
     ##########################################
     type <- attr(Y, "type")
     if (type != "right" && type != "counting") 
-        stop(paste("Cox model doesn't support \"", type, "\" survival data", 
-            sep = ""))
-
+      stop(paste("Cox model doesn't support \"", type, "\" survival data", 
+                 sep = ""))
+    
     if (NCOL(Y) == 2){
-      Y <- cbind(numeric(NROW(Y)), Y)
+        Y <- cbind(numeric(NROW(Y)), Y)
     }
-
+    
     n.events <- sum(Y[, 3] != 0)
     if (n.events == 0) stop("No events; no sense in continuing!")
     if (missing(init)){ 
-      init <- NULL
+        init <- NULL
     }else{
-      if (length(init) != NCOL(X)) stop("Wrong length of 'init'")
+        if (length(init) != NCOL(X)) stop("Wrong length of 'init'")
     }
-
+    
     if (missing(rs)) 
-        rs <- NULL
-
+      rs <- NULL
+    
     if (is.list(control)){
-      if (is.null(control$eps)) control$eps <- 1e-8
-      if (is.null(control$maxiter)) control$maxiter <- 10
-      if (is.null(control$trace)) control$trace <- FALSE
+        if (is.null(control$eps)) control$eps <- 1e-8
+        if (is.null(control$maxiter)) control$maxiter <- 10
+        if (is.null(control$trace)) control$trace <- FALSE
     }else{
-      stop("control must be a list")
+        stop("control must be a list")
     }
-    #if (is.numeric(control$eps)
-
+    
     fit <- coxreg.fit(X,
                       Y,
                       rs,
@@ -144,6 +145,10 @@ coxreg <- function (formula = formula(data),
                       boot,
                       control)
 
+##    if (!length(fit$coefficients)){
+##        class(fit) <- c("coxreg", "coxph")
+##        return(fit)
+##    }
     if (is.null(fit)) return(NULL) ## New 5 May 2004.
     if (!fit$fail) fit$fail <- NULL
     else
@@ -160,7 +165,7 @@ coxreg <- function (formula = formula(data),
         class(fit) <- "coxreg"
     }
     else if (is.null(fit$fail)){
-        if (!is.null(fit$coef) && any(is.na(fit$coef))) {
+        if (length(fit$coef) && any(is.na(fit$coef))) {
             vars <- (1:length(fit$coef))[is.na(fit$coef)]
             msg <- paste("X matrix deemed to be singular; variable", 
                 paste(vars, collapse = " "))
@@ -181,7 +186,7 @@ coxreg <- function (formula = formula(data),
             fit$wald.test <- survival:::coxph.wtest(fit$var[nabeta, nabeta], 
                 temp, control$toler.chol)$test
         }
-      }
+    }
         na.action <- attr(m, "na.action")
         if (length(na.action)) 
             fit$na.action <- na.action
@@ -205,30 +210,33 @@ coxreg <- function (formula = formula(data),
     s.wght <- (Y[, 2] - Y[, 1])## * weights
     fit$ttr <- sum(s.wght)
     fit$w.means <- list()
-    for (i in 1:length(fit$covars)){
-      nam <- fit$covars[i]
-      col.m <- which(nam == names(m))
-      if (isF[i]){
-        n.lev <- length(levels[[i]])
-        fit$w.means[[i]] <- numeric(n.lev)
-        for (j in 1:n.lev){
-          who <- m[, col.m] == levels[[i]][j]
-          fit$w.means[[i]][j] <-
-          sum( s.wght[who] ) / fit$ttr ## * 100, if in per cent
+    if (length(fit$covars)){
+        for (i in 1:length(fit$covars)){
+            nam <- fit$covars[i]
+            col.m <- which(nam == names(m))
+            if (isF[i]){
+                n.lev <- length(levels[[i]])
+                fit$w.means[[i]] <- numeric(n.lev)
+                for (j in 1:n.lev){
+                    who <- m[, col.m] == levels[[i]][j]
+                    fit$w.means[[i]][j] <-
+                      sum( s.wght[who] ) / fit$ttr ## * 100, if in per cent
+                }
+            }else{
+                fit$w.means[[i]] <- sum(s.wght * m[, col.m]) / fit$ttr
+            }
         }
-      }else{
-        fit$w.means[[i]] <- sum(s.wght * m[, col.m]) / fit$ttr
-      }
     }
-
     ##########################################
     fit$levels <- levels
     fit$formula <- formula(Terms)
     fit$call <- call
-    fit$events <- n.events 
-    names(fit$coefficients) <- colnames(X)
+    fit$events <- n.events
+    if (length(fit$coefficients)){
+        names(fit$coefficients) <- colnames(X)
+        fit$means <- apply(X, 2, mean)
+    }
     fit$method <- method
     class(fit) <- c("coxreg", "coxph")
-    fit$means <- apply(X, 2, mean)
     fit
 }

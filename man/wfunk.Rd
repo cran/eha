@@ -8,7 +8,7 @@ derivatives for data from a Weibull regression model. Is called by
 \code{\link{weibreg}}. 
 }
 \usage{
-wfunk(beta, lambda, p, X, Y, offset = rep(0, NROW(X)),
+wfunk(beta = NULL, lambda, p, X = NULL, Y, offset = rep(0, length(Y)),
 ord = 2, pfixed = FALSE, trace = TRUE)
 }
 
@@ -29,9 +29,9 @@ ord = 2, pfixed = FALSE, trace = TRUE)
 Note that the function returns log likelihood, score vector
 and minus hessian, i.e. the observed information.
 The model is
-\deqn{h(t; p, \lambda, \beta, z) = \lambda (t / \lambda)^{(p-1)}\exp{(-(
+\deqn{h(t; p, \lambda, \beta, z) = p / \lambda (t / \lambda)^{(p-1)}\exp{(-(
   t / \lambda)^p}) \exp(z\beta)}
-This is in correspondence with \code{\link{dgamma}}.
+This is in correspondence with \code{\link{dweibull}}.
 }
 \value{
 A list with components

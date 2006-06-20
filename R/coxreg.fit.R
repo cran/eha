@@ -37,7 +37,16 @@ coxreg.fit <- function(X, Y, rs, strats, offset, init, max.survs,
       }
       if (!is.logical(control$trace)) stop("control$trace must be logical")
   }
-      
+
+  nullModel <- NCOL(X) == 0
+
+  if (nullModel){
+      ## faking a simple model with no iterations
+      ncov <- 1
+      X <- matrix(0, ncol = 1, nrow = nn)
+      control$maxiter <- 0
+      init <- 0
+  }
 
   printlevel <- control$trace
       ## NOTE: silent == TRUE ===> printlevel = 0
@@ -82,6 +91,13 @@ coxreg.fit <- function(X, Y, rs, strats, offset, init, max.survs,
                   fail = integer(1),
                   DUP = FALSE)
 
+  if (nullModel){
+      X <- matrix(0, ncol = 0, nrow = nn)
+      fit$beta <- numeric(0)
+      ncov <- 0
+      fit$conver <- TRUE
+      fit$fail <- FALSE
+  }
   if (fit$fail){
       out <- paste("Singular hessian; suspicious variable No. ",
                    as.character(fit$fail), ":\n",
@@ -147,60 +163,61 @@ coxreg.fit <- function(X, Y, rs, strats, offset, init, max.survs,
 
   bootstrap <- NULL
   boot.sd <- NULL
-  if (boot & (fit$fail == 0)){
-    if (!is.numeric(boot)){
-      cat("boot must be numeric (number of bootstrap replicates)")
-    }else{
-      init <- fit$beta
-      iter <- control$maxiter
-      fit.boot <- .Fortran("bootcox",
-                           as.integer(1), ## means 'coxreg'
-                           as.integer(boot),
-                           boot.sample = double(boot * ncov),
-                           boot.sd = double(boot * ncov),
-                           as.integer(method == "efron"),
-                           iter = as.integer(iter),
-                           as.double(control$eps),
-                           as.integer(printlevel),
+  if (!nullModel){
+      if (boot & (fit$fail == 0)){
+          if (!is.numeric(boot)){
+              cat("boot must be numeric (number of bootstrap replicates)")
+          }else{
+              init <- fit$beta
+              iter <- control$maxiter
+              fit.boot <- .Fortran("bootcox",
+                                   as.integer(1), ## means 'coxreg'
+                                   as.integer(boot),
+                                   boot.sample = double(boot * ncov),
+                                   boot.sd = double(boot * ncov),
+                                   as.integer(method == "efron"),
+                                   iter = as.integer(iter),
+                                   as.double(control$eps),
+                                   as.integer(printlevel),
                                         #
-                           as.integer(sum(rs$n.events)), 
-                           as.integer(sum(rs$antrs)),  
-                           as.integer(length(rs$antrs)),
+                                   as.integer(sum(rs$n.events)), 
+                                   as.integer(sum(rs$antrs)),  
+                                   as.integer(length(rs$antrs)),
                                         #
-                           as.integer(rs$antrs),
-                           as.integer(rs$n.events),
-                           as.integer(rs$size),
+                                   as.integer(rs$antrs),
+                                   as.integer(rs$n.events),
+                                   as.integer(rs$size),
                                         #
-                           as.integer(length(rs$riskset)), 
-                           as.integer(rs$eventset),
-                           as.integer(rs$riskset),
+                                   as.integer(length(rs$riskset)), 
+                                   as.integer(rs$eventset),
+                                   as.integer(rs$riskset),
                                         #
-                           as.integer(nn),
-                           as.integer(ncov),
-                           as.double(scale(X, center = TRUE, scale = FALSE)),
-                           as.double(offset),
+                                   as.integer(nn),
+                                   as.integer(ncov),
+                                   as.double(scale(X, center = TRUE, scale = FALSE)),
+                                   as.double(offset),
                                         #
-                           as.double(init),     
-                           as.double(fit$beta), ## Estimated beta
+                                   as.double(init),     
+                                   as.double(fit$beta), ## Estimated beta
                                         #
-                           loglik = double(2), 
-                           dloglik = double(ncov),
-                           variance = double(ncov * ncov),
-                           sctest = double(1),
+                                   loglik = double(2), 
+                                   dloglik = double(ncov),
+                                   variance = double(ncov * ncov),
+                                   sctest = double(1),
                                         #
-                           double(nn),     
-                           double(ncov),   
-                           double(ncov * ncov),
+                                   double(nn),     
+                                   double(ncov),   
+                                   double(ncov * ncov),
                                         #
-                           conver = integer(1),
-                           fail = integer(1)
-                           ##DUP = FALSE,
+                                   conver = integer(1),
+                                   fail = integer(1)
+                                   ##DUP = FALSE,
                            )
-      bootstrap <- matrix(fit.boot$boot.sample, ncol = ncov, byrow = TRUE)
-      boot.sd <- matrix(fit.boot$boot.sd, ncol = ncov, byrow = TRUE)
-    }      
-   }   
-
+              bootstrap <- matrix(fit.boot$boot.sample, ncol = ncov, byrow = TRUE)
+              boot.sd <- matrix(fit.boot$boot.sd, ncol = ncov, byrow = TRUE)
+          }      
+      }   
+  }
   list(coefficients = fit$beta,
        var = var,
        loglik = fit$loglik,
@@ -216,6 +233,5 @@ coxreg.fit <- function(X, Y, rs, strats, offset, init, max.survs,
        conver = fit$conver,
        fail = fit$fail,
        iter = fit$iter
-       )
-       
+       )    
   }

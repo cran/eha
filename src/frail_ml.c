@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <R_ext/Applic.h>
+#include <R_ext/Linpack.h>
 
 #include "frail_ml.h"
 #include "eha_fun.h"

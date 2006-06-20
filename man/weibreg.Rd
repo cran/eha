@@ -95,9 +95,20 @@ A list of class \code{c("weibreg", "coxreg", "coxph")} with components
 
 \section{Warning}{The print method \code{\link{print.weibreg}} doesn't work if
 threeway or higher order interactions are present. Use
-\code{\link[survival]{print.coxph}} in that case.}
+\code{\link[survival]{print.coxph}} in that case.
 
-\seealso{\code{\link{coxreg}}, \code{\link{mlreg}}, \code{\link{print.weibreg}}}
+Note further that covariates are internally centered by this function,
+and this is not corrected for in the output. This affects the estimate
+of \code{\log(scale)}, but nothing else. In particular, this means that
+it is pointless to center covariates manually before calling
+\code{weibreg}.}
+
+
+
+\seealso{\code{\link{coxreg}}, \code{\link{mlreg}},
+  \code{\link{print.weibreg}}}
+
+
 
 \examples{
  dat <- data.frame(time = c(4, 3, 1, 1, 2, 2, 3),

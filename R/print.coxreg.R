@@ -6,10 +6,17 @@ print.coxreg <-
 	dput(cl)
 	cat("\n")
 	}
+
     if (!is.null(x$fail)) {
 	cat(" coxreg failed.\n")
 	return()
 	}
+
+    if (!length(x$coefficients)){
+        cat("Null log likelihood = ", x$loglik[2], "\n")
+        return()
+    }
+
     savedig <- options(digits = digits)
     on.exit(options(savedig))
 
