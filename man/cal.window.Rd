@@ -1,3 +1,4 @@
+%\encoding{UTF-8}
 \name{cal.window}
 \alias{cal.window}
 

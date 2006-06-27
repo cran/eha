@@ -1,3 +1,4 @@
+%\encoding{UTF-8}
 \name{plot.Surv}
 \alias{plot.Surv}
 %- Also NEED an `\alias' for EACH other topic documented here.

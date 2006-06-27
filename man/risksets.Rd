@@ -1,3 +1,4 @@
+%\encoding{UTF-8}
 \name{risksets}
 \alias{risksets}
 %- Also NEED an `\alias' for EACH other topic documented here.
@@ -32,7 +33,7 @@ risksets(x, strata, max.survs)
   \item{size}{The sizes of the risk sets.}
   \item{n.events}{The number of events in each risk set.}
 }
-%\references{Broström, G.}
+%\references{BrostrÃ¶m, G.}
 \author{Göran Broström}
 \note{can be used to "sample the risk sets".}
 

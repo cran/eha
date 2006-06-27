@@ -1,3 +1,4 @@
+%\encoding{UTF-8}
 \name{summary.coxreg}
 \alias{summary.coxreg}
 

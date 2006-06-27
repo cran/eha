@@ -1,3 +1,4 @@
+%\encoding{UTF-8}
 \name{cro}
 \alias{cro}
 \title{Creates a minimal representation of a data frame.}

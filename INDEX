@@ -23,6 +23,8 @@ summary.coxreg          Prints coxreg objects
 summary.weibreg         Prints a weibreg object
 table.events            Calculating failure times, risk set sizes and
                         No. of events in each risk set
+toBinary                Transforms a "survival" data frame into a data
+                        frame suitable for binary (logistic) regression
 toDate                  Convert time in years since "0000-01-01" to a
                         date.
 toTime                  Calculate duration in years from "0000-01-01"

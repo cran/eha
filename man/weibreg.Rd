@@ -1,3 +1,4 @@
+%\encoding{UTF-8}
 \name{weibreg}
 \alias{weibreg}
 %- Also NEED an '\alias' for EACH other topic documented here.
@@ -10,7 +11,7 @@
 weibreg(formula = formula(data), data = parent.frame(),
 na.action = getOption("na.action"), init, shape = 0,
 control = list(eps = 1e-04, maxiter = 10, trace = FALSE),
-singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE)
+singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE, center = TRUE)
 }
 
 
@@ -37,6 +38,8 @@ singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE)
   \item{model}{Not used.}
   \item{x}{Return the design matrix in the model object?}
   \item{y}{Return the response in the model object?}
+  \item{center}{Should covariates be centered? This affects the estimate
+    of scale only, but will often stabilize the numerical calculations.}
 }
 
 \details{
@@ -97,11 +100,11 @@ A list of class \code{c("weibreg", "coxreg", "coxph")} with components
 threeway or higher order interactions are present. Use
 \code{\link[survival]{print.coxph}} in that case.
 
-Note further that covariates are internally centered by this function,
+Note further that covariates are internally centered, if \code{center =
+  TRUE}, by this function, 
 and this is not corrected for in the output. This affects the estimate
-of \code{\log(scale)}, but nothing else. In particular, this means that
-it is pointless to center covariates manually before calling
-\code{weibreg}.}
+of \code{\log(scale)}, but nothing else. If you don't like this, set
+\code{center = FALSE}.}
 
 
 

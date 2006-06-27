@@ -1,3 +1,4 @@
+%\encoding{UTF-8}
 \name{weibreg.fit}
 \alias{weibreg.fit}
 %- Also NEED an '\alias' for EACH other topic documented here.
@@ -7,7 +8,7 @@ This function is called by \code{\link{weibreg}}, but it can also be
 directly called by a user.
 }
 \usage{
-weibreg.fit(X, Y, strata, offset, init, shape, control)
+weibreg.fit(X, Y, strata, offset, init, shape, control, center = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -19,6 +20,7 @@ weibreg.fit(X, Y, strata, offset, init, shape, control)
   \item{shape}{If positive, a fixed value of the shape parameter in the
     Weibull distribution. Otherwise, the shape is estimated.}
   \item{control}{Controls convergence and output.}
+  \item{center}{Should covariates be centered?}
 }
 \details{
 See \code{\link{weibreg}} for more detail.
