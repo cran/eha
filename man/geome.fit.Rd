@@ -1,3 +1,4 @@
+%\encoding{UTF-8}
 \name{geome.fit}
 \alias{geome.fit}
 

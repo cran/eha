@@ -1,3 +1,4 @@
+%\encoding{UTF-8}
 \name{print.weibreg}
 \alias{print.weibreg}
 %- Also NEED an '\alias' for EACH other topic documented here.

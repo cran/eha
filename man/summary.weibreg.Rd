@@ -1,3 +1,4 @@
+%\encoding{UTF-8}
 \name{summary.weibreg}
 \alias{summary.weibreg}
 

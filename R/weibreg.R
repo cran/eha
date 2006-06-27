@@ -11,7 +11,8 @@ function (formula = formula(data),
           singular.ok = TRUE,
           model = FALSE, 
           x = FALSE,
-          y = TRUE) 
+          y = TRUE,
+          center = TRUE) 
 {
 
     pfixed <- (shape > 0)
@@ -134,7 +135,8 @@ function (formula = formula(data),
                        offset,
                        init,
                        shape,
-                       control)
+                       control,
+                       center)
     if (pfixed){
         coef.names <- c(colnames(X), "log(scale)")
     }else{

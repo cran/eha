@@ -1,3 +1,4 @@
+%\encoding{UTF-8}
 \name{coxreg}
 \alias{coxreg}
 %- Also NEED an '\alias' for EACH other topic documented here.
@@ -78,7 +79,9 @@ A list of class \code{c("coxreg", "coxph")} with components
   \item{fail}{Did the optimization fail? (Is \code{NULL} if not).}
 }
 \references{}
+
 \author{Göran Broström}
+
 \note{This function starts by creating risksets, if no riskset is
   supplied via \code{rs}, with the aid of
   \code{\link{risksets}}. Supplying output from \code{risksets} via \code{rs}

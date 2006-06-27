@@ -1,3 +1,4 @@
+%\encoding{UTF-8}
 \name{plot.weibreg}
 \alias{plot.weibreg}
 

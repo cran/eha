@@ -1,4 +1,7 @@
-weibreg.fit <- function(X, Y, strata, offset, init, shape, control){
+weibreg.fit <- function(X, Y,
+                        strata, offset,
+                        init, shape,
+                        control, center = TRUE){
 
   nn <- NROW(X)
   ncov <- NCOL(X)
@@ -79,7 +82,7 @@ weibreg.fit <- function(X, Y, strata, offset, init, shape, control){
   }else{  ## Exponential regression:
       if (ns >= 2) warning("'strata' is not meaningful for exponential regression.\n Include stratum variable as a factor in the model instead.")
       bdim <- ncov + 1
-      X <- scale(X, center = TRUE, scale = FALSE)
+      if (center) X <- scale(X, center = TRUE, scale = FALSE)
 
       fit <- .C("expsup",
                 iter = as.integer(iter), #maxit on ip, actual on op.

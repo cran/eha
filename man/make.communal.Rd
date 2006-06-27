@@ -1,3 +1,4 @@
+%\encoding{UTF-8}
 \name{make.communal}
 \alias{make.communal}
 

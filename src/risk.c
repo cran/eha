@@ -15,7 +15,7 @@ static void Sample_wtr(int k, int n, int *y)
     
     for (i = 0; i < k; i++) {
 	j = n * unif_rand();
-	printf("n = %d::j = %d\n",n, j);
+	/* printf("n = %d::j = %d\n",n, j); */
 	y[i] = x[j]; /* Note: '+ 1' removed */ 
 	x[j] = x[--n];
     }

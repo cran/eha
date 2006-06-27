@@ -1,3 +1,4 @@
+%\encoding{UTF-8}
 \name{age.window}
 \alias{age.window}
 %- Also NEED an `\alias' for EACH other topic documented here.
@@ -25,7 +26,7 @@ The \code{window} must be in the order \code{(begin, end)}
 
 }
 %\references{ ~put references to the literature/web site here ~ }
-\author{Göran Broström}
+\author{GÃ¶ran BrostrÃ¶m}
 %\note{ ~~further notes~~ }
 
 \seealso{\code{\link{cal.window}}, \code{\link{coxreg}},
@@ -37,4 +38,3 @@ window <- c(2, 5.3)
 dat.trim <- age.window(dat, window)  
 }
 \keyword{survival}% at least one, from doc/KEYWORDS
-

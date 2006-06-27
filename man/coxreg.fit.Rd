@@ -1,3 +1,4 @@
+%\encoding{UTF-8}
 \name{coxreg.fit}
 \alias{coxreg.fit}
 

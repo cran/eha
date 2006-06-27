@@ -1,3 +1,4 @@
+%\encoding{UTF-8}
 \name{join.spells}
 \alias{join.spells}
 

@@ -1,3 +1,4 @@
+%\encoding{UTF-8}
 \name{print.coxreg}
 \alias{print.coxreg}
 

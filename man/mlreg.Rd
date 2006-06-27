@@ -1,3 +1,4 @@
+%\encoding{UTF-8}
 \name{mlreg}
 \alias{mlreg}
 %- Also NEED an '\alias' for EACH other topic documented here.
