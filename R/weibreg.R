@@ -137,6 +137,8 @@ function (formula = formula(data),
                        shape,
                        control,
                        center)
+
+    
     if (pfixed){
         coef.names <- c(colnames(X), "log(scale)")
     }else{
@@ -154,7 +156,7 @@ function (formula = formula(data),
         
     }
 
-    cat("fit$fail = ", fit$fail, "\n")
+
     if (!fit$fail){
         fit$fail <- NULL
     }else{
@@ -218,6 +220,7 @@ function (formula = formula(data),
 
     ##########################################
     s.wght <- (Y[, 2] - Y[, 1])## * weights
+    fit$ttr <- sum(s.wght)
     if (ncov){
         fit$isF <- isF
         fit$covars <- covars
@@ -240,6 +243,7 @@ function (formula = formula(data),
         fit$means <- apply(X, 2, mean)
         
     }
+
     ##########################################
     fit$ttr <- sum(s.wght)
     names(fit$coefficients) <- coef.names 
