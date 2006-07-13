@@ -135,7 +135,7 @@ weibreg.fit <- function(X, Y,
   else
     var <- NULL
 
-  
+
   list(coefficients = fit$beta,
        var = var,
        loglik = fit$loglik,
