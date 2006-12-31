@@ -111,6 +111,10 @@ plot.Surv <- function(x,
             if (fn == "cum") y.min <- 0
             ylim <- c(y.min, y.max)
         }
+    }else{
+        if (length(ylim) != 2) error("ylim must have length 2.")
+        y.min <- min(ylim)
+        y.max <- max(ylim)
     }
 
     if (is.null(ylab)) ylab <- ""
@@ -138,7 +142,7 @@ plot.Surv <- function(x,
             y <- 0.4 * (y.max - y.min) + y.min
         }
         ##cat("x = ", x, ", y = ", y, "\n")
-        legend(x, y, legend = strata,
+        legend(x, y, legend = strata, bty = "n",
                lty = 1:noOfGroups,
                col = 1:noOfGroups)            
     }

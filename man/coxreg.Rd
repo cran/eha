@@ -93,7 +93,7 @@ A list of class \code{c("coxreg", "coxph")} with components
 \section{Warning}{The use of \code{rs} is dangerous, see note. It
   can however speed up computing time considerably for huge data sets.} 
 
-\seealso{\code{\link{coxph}}, \code{\link{risksets}}}
+\seealso{\code{\link[survival]{coxph}}, \code{\link{risksets}}}
 \examples{
 
  dat <- data.frame(time=  c(4, 3,1,1,2,2,3),

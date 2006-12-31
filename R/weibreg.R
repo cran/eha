@@ -1,45 +1,45 @@
 # Weibull regression for left truncated and right censored data.
-# (C) Göran Broström (1982-2003).
+# (C) Göran Broström (1982-2006).
 
 weibreg <-
-function (formula = formula(data),
-          data = parent.frame(), 
-          na.action = getOption("na.action"),
-          init,
-          shape = 0, ## Means shape is estimated, ie true Weibull; > 0 fixed!
-          control = list(eps = 1e-4, maxiter = 10, trace = FALSE),
-          singular.ok = TRUE,
-          model = FALSE, 
-          x = FALSE,
-          y = TRUE,
-          center = TRUE) 
+  function (formula = formula(data),
+            data = parent.frame(), 
+            na.action = getOption("na.action"),
+            init,
+            shape = 0, ## Means shape is estimated, ie true Weibull; > 0 fixed!
+            control = list(eps = 1e-4, maxiter = 10, trace = FALSE),
+            singular.ok = TRUE,
+            model = FALSE, 
+            x = FALSE,
+            y = TRUE,
+            center = TRUE) 
 {
-
+    
     pfixed <- (shape > 0)
     call <- match.call()
     m <- match.call(expand.dots = FALSE)
     temp <- c("", "formula", "data", "na.action")
     m <- m[match(temp, names(m), nomatch = 0)]
- 
+    
     special <- "strata"
     Terms <- if (missing(data)) 
-        terms(formula, special)
+      terms(formula, special)
     else terms(formula, special, data = data)
     m$formula <- Terms
     m[[1]] <- as.name("model.frame")
     m <- eval(m, parent.frame())
-
+    
     Y <- model.extract(m, "response")
     if (!inherits(Y, "Surv")) 
-        stop("Response must be a survival object")
-
+      stop("Response must be a survival object")
+    
     weights <- model.extract(m, "weights")
     offset <- attr(Terms, "offset")
     tt <- length(offset)
     offset <- if (tt == 0) 
-        rep(0, nrow(Y))
+      rep(0, nrow(Y))
     else if (tt == 1) 
-        m[[offset]]
+      m[[offset]]
     else {
         ff <- m[[offset[1]]]
         for (i in 2:tt) ff <- ff + m[[offset[i]]]
@@ -48,21 +48,20 @@ function (formula = formula(data),
     attr(Terms, "intercept") <- 1
     strats <- attr(Terms, "specials")$strata
     dropx <- NULL
-
+    
     if (length(strats)) {
         temp <- untangle.specials(Terms, "strata", 1)
         dropx <- c(dropx, temp$terms)
         if (length(temp$vars) == 1) 
-            strata.keep <- m[[temp$vars]]
+          strata.keep <- m[[temp$vars]]
         else strata.keep <- strata(m[, temp$vars], shortlabel = TRUE)
         strats <- as.numeric(strata.keep)
     }
     if (length(dropx)) 
-        newTerms <- Terms[-dropx]
+      newTerms <- Terms[-dropx]
     else newTerms <- Terms
     X <- model.matrix(newTerms, m)
-    assign <- lapply(attrassign(X, newTerms)[-1], function(x) x - 
-        1)
+    assign <- lapply(attrassign(X, newTerms)[-1], function(x) x - 1)
     X <- X[, -1, drop = FALSE]
     ncov <- NCOL(X)
     #########################################
@@ -84,7 +83,7 @@ function (formula = formula(data),
                            is.logical(m[, (i + 1)]) )
             }      
         }
-
+        
         if (ant.fak <- sum(isF)){
             levels <- list()
             index <- 0
@@ -105,31 +104,32 @@ function (formula = formula(data),
             levels <- NULL
         }
     }
-
-    ##########################################
+    
+##########################################
     type <- attr(Y, "type")
     if (type != "right" && type != "counting") 
-        stop(paste("Cox model doesn't support \"", type, "\" survival data", 
-            sep = ""))
-
+      stop(paste("Cox model doesn't support \"", type, "\" survival data", 
+                 sep = ""))
+    
     if (NCOL(Y) == 2){
-      Y <- cbind(numeric(NROW(Y)), Y)
+        Y <- cbind(numeric(NROW(Y)), Y)
     }
-
+    
     n.events <- sum(Y[, 3] != 0)
     if (n.events == 0) stop("No events; no sense in continuing!")
     if (missing(init)) 
-        init <- NULL
-
+      init <- NULL
+    
     if (is.list(control)){
-      if (is.null(control$eps)) control$eps <- 1e-4
-      if (is.null(control$maxiter)) control$maxiter <- 10
-      if (is.null(control$trace)) control$trace <- FALSE
+        if (is.null(control$eps)) control$eps <- 1e-4
+        if (is.null(control$maxiter)) control$maxiter <- 10
+        if (is.null(control$trace)) control$trace <- FALSE
     }else{
-      stop("control must be a list")
+        stop("control must be a list")
     }
-
-    fit <- weibreg.fit(X,
+    
+    
+    fit <- weibreg.fit(X, 
                        Y,
                        strats,
                        offset,
@@ -137,24 +137,10 @@ function (formula = formula(data),
                        shape,
                        control,
                        center)
-
     
-    if (pfixed){
-        coef.names <- c(colnames(X), "log(scale)")
-    }else{
-        coef.names <- colnames(X)
-        if (fit$n.strata > 1){
-            for (i in 1:fit$n.strata){
-                coef.names <- c(coef.names,
-                                paste("log(scale)", as.character(i), sep =":"),
-                                paste("log(shape)", as.character(i), sep =":"))
-            }
-        }else{
-            coef.names <- c(coef.names,
-                            "log(scale)", "log(shape)")
-        }                
-        
-    }
+    fit$linear.predictors <- offset + X %*% fit$coefficients[1:ncov]
+    ##score <- exp(lp)
+    fit$means <- apply(X, 2, mean)
 
 
     if (!fit$fail){
@@ -162,18 +148,18 @@ function (formula = formula(data),
     }else{
         out <- paste("Singular hessian; suspicious variable No. ",
                      as.character(fit$fail), ":\n",
-                     coef.names[fit$fail], " = ",
+                     names(coefficients)[fit$fail], " = ",
                      as.character(fit$value),
                      "\nTry running with fixed shape", sep = "")
         stop(out)
-      }
-
-
+    }
+    
+    
     fit$convergence <- as.logical(fit$conver)
     fit$conver <- NULL ## Ugly!
-
+    
 ###########################################################################    
-## Crap dealt with ......
+    ## Crap dealt with ......
     
     if (is.character(fit)) {
         fit <- list(fail = fit)
@@ -183,9 +169,9 @@ function (formula = formula(data),
         if (!is.null(fit$coef) && any(is.na(fit$coef))) {
             vars <- (1:length(fit$coef))[is.na(fit$coef)]
             msg <- paste("X matrix deemed to be singular; variable", 
-                paste(vars, collapse = " "))
+                         paste(vars, collapse = " "))
             if (singular.ok) 
-                warning(msg)
+              warning(msg)
             else stop(msg)
         }
         fit$n <- nrow(Y)
@@ -195,30 +181,30 @@ function (formula = formula(data),
             if (length(fit$coef) && is.null(fit$wald.test)) {
                 nabeta <- !is.na(fit$coef)
                 if (is.null(init)) 
-                    temp <- fit$coef[nabeta]
+                  temp <- fit$coef[nabeta]
                 else temp <- (fit$coef - init)[nabeta]
                 fit$wald.test <-
                   survival:::coxph.wtest(fit$var[nabeta, nabeta],   
-                                             temp, control$toler.chol)$test
+                                         temp, control$toler.chol)$test
             }
         }
         na.action <- attr(m, "na.action")
         if (length(na.action)) 
-            fit$na.action <- na.action
+          fit$na.action <- na.action
         if (model) 
-            fit$model <- m
+          fit$model <- m
         if (x) {
             fit$x <- X
             if (length(strats)) 
-                fit$strata <- strata.keep
+              fit$strata <- strata.keep
         }
         if (y) 
-            fit$y <- Y
+          fit$y <- Y
     }
     ##if (!is.null(weights) && any(weights != 1)) 
     ##    fit$weights <- weights
-
-    ##########################################
+    
+##########################################
     s.wght <- (Y[, 2] - Y[, 1])## * weights
     fit$ttr <- sum(s.wght)
     if (ncov){
@@ -240,13 +226,13 @@ function (formula = formula(data),
                 fit$w.means[[i]] <- sum(s.wght * m[, col.m]) / fit$ttr
             }
         }
-        fit$means <- apply(X, 2, mean)
+        fit$means <- colMeans(X)
         
     }
-
-    ##########################################
+    
+##########################################
     fit$ttr <- sum(s.wght)
-    names(fit$coefficients) <- coef.names 
+    ##names(fit$coefficients) <- coef.names 
     fit$levels <- levels
     fit$formula <- formula(Terms)
     fit$call <- call

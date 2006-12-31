@@ -1,3 +1,15 @@
+0.96-7	(Dec 29, 2006)
+
+	* Corrected a bug in the documentation of 'weibreg'.
+	
+0.96-6	(Dec 28, 2006)
+
+	* Corrected a bug in weibreg concerning 'center = FALSE'.
+
+0.96-5  (Oct 24, 2006)
+
+        * added a 'terms' object to the output of coxreg and mlreg.
+
 0.96-1  (May 15, 2006) 
 
 	* plot.Surv improved. Suggestions by Dimitri Szerman. (Thanks!)

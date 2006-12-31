@@ -230,6 +230,7 @@ coxreg <- function (formula = formula(data),
     ##########################################
     fit$levels <- levels
     fit$formula <- formula(Terms)
+    fit$terms <- Terms
     fit$call <- call
     fit$events <- n.events
     if (length(fit$coefficients)){
