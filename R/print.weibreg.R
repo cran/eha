@@ -29,7 +29,7 @@ print.weibreg <- function(x, digits=max(options()$digits - 4, 3), ...){
     if(is.null(coef) | is.null(se))
       stop("Input is not valid")
 #####################################
-    cat("Covariate           Mean       Coef Exp(Coef)      L-R p   Wald p\n")
+    cat("Covariate           Mean       Coef Exp(Coef)  se(Coef)    Wald p\n")
     e.coef <- formatC(exp(coef), width = 9, digits = 3, format = "f")
     coef <- formatC(coef, width = 9, digits = 3, format = "f")
     se <- formatC(se, width = 9, digits = 3, format = "f")
@@ -92,8 +92,9 @@ print.weibreg <- function(x, digits=max(options()$digits - 4, 3), ...){
                                     width = 8, digits = 3, format = "f"),
                             coef[index],
                             e.coef[index],
-                            
-                            formatC(" ", width = 9),
+                            se[index],
+                            #formatC(" ", width = 1),
+                            #formatC(" ", width = 9),
                             formatC(wald.p[index],
                                     digits = 3,
                                     width = digits + 2,
@@ -109,8 +110,8 @@ print.weibreg <- function(x, digits=max(options()$digits - 4, 3), ...){
                         coef[index],
                         e.coef[index],
                                         #exp(coef[index]),
-                        ##se[index],
-                        formatC(" ", width = 9),
+                        se[index],
+                        #formatC(" ", width = 1),
                         formatC(wald.p[index],
                                 digits = 3,
                                 width = digits + 2,
@@ -142,8 +143,8 @@ print.weibreg <- function(x, digits=max(options()$digits - 4, 3), ...){
                         ## format(" ", 8),
                         coef[index],
                         e.coef[index],
-                        ##se[index],
-                        formatC(" ", width = 9),
+                        se[index],
+                        #formatC(" ", width = 1),
                         formatC(wald.p[index],
                                 digits = 3,
                                 width = digits + 2,
@@ -167,8 +168,8 @@ print.weibreg <- function(x, digits=max(options()$digits - 4, 3), ...){
             coef[index],
             e.coef[index],
                                         #exp(coef[index]),
-            ##se[index],
-            formatC(" ", width = 9),
+            se[index],
+            #formatC(" ", width = 1),
             formatC(wald.p[index],
                     digits = 3,
                     width = digits + 2,
@@ -187,20 +188,26 @@ print.weibreg <- function(x, digits=max(options()$digits - 4, 3), ...){
         prmatrix(tmp)
     }
     logtest <- -2 * (x$loglik[1] - x$loglik[2])
-    if (is.null(x$df)) df <- sum(!is.na(coef))
-    else  df <- round(sum(x$df),2)
+    if (is.null(x$df)) df <- sum(!is.na(coef)) - n.slsh
+    else  df <- round(sum(x$df), 2)
     cat("\n")
+    if (x$pfixed) {
+        cat(" Shape is fixed at ", x$shape, "\n\n")
+    }
     cat(formatC("Events", width = 25, flag = "-"), x$events, "\n")
     cat(formatC("Total time at risk", width = 25, flag = "-"),
         formatC(x$ttr, digits = 5, format = "fg"), "\n")
     cat(formatC("Max. log. likelihood", width = 25, flag = "-"),
         formatC(x$loglik[2], digits = 5, format = "fg"), "\n")
-    cat(formatC("LR test statistic", width = 25, flag = "-"),
-        format(round(logtest, 2)), "\n")
-    cat(formatC("Degrees of freedom", width = 25, flag = "-"),
-        formatC(df, digits = 0, format = "f"), "\n")
-    cat(formatC("Overall p-value", width = 25, flag = "-"),
-        format.pval(1 - pchisq(logtest, df), digits = 6, "\n"))
+    if (df > 0.5){
+        cat(formatC("LR test statistic", width = 25, flag = "-"),
+            format(round(logtest, 2)), "\n")
+        cat(formatC("Degrees of freedom", width = 25, flag = "-"),
+            formatC(df, digits = 0, format = "f"), "\n")
+
+        cat(formatC("Overall p-value", width = 25, flag = "-"),
+          format.pval(1 - pchisq(logtest, df), digits = 6, "\n"))
+    }      
     cat("\n")
     if (length(x$icc))
       cat("   number of clusters=", x$icc[1],

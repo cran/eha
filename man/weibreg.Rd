@@ -58,8 +58,8 @@ maximized scale and shape in \code{weibreg}.
 
 This model is a Weibull distribution with shape parameter \eqn{a} and
 scale parameter
-\eqn{b \Gamma (1 + 1/a) \exp(-z\beta / a)}{%
-     b Gamma(1 + 1/a) exp(-z beta / a)}
+\eqn{b \exp(-z\beta / a)}{%
+     b exp(-z beta / a)}
 }
 
 \value{

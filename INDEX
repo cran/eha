@@ -8,6 +8,9 @@ cro                     Creates a minimal representation of a data
 frail.fit               Fits a frailty proportional hazards model
 geome.fit               Constant intensity discrete time proportional
                         hazards
+hweibull                The hazard function of a Weibull distribution
+Hweibull                Cumulative hazard function for the Weibull
+                        distribution
 join.spells             Straighten up a survival data frame
 make.communal           Put communals in "fixed" data frame
 mlreg                   ML proportional hazards regression

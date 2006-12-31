@@ -28,7 +28,7 @@ No value is returned.
 %\note{}
 
 
-\seealso{\code{\link{coxreg}}, \code{\link{print.coxph}}}
+\seealso{\code{\link{coxreg}}, \code{\link[survival]{print.coxph}}}
 %\examples{
 
 }
