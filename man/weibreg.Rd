@@ -2,9 +2,9 @@
 \name{weibreg}
 \alias{weibreg}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{Weibull regression}
+\title{Weibull Regression}
 \description{Proportional hazards model with baseline hazard(s) from the Weibull
-  family of distributions. Allows for stratification with different
+  family of distributions.  Allows for stratification with different
   scale and shape in each stratum, and left truncated and right censored data.
 }
 \usage{
@@ -17,7 +17,7 @@ singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE, center = TRUE)
 
 \arguments{
   \item{formula}{a formula object, with the response on the left of
-    a ~ operator, and the terms on the right. The response must be
+    a ~ operator, and the terms on the right.  The response must be
     a survival object as returned by the Surv function.}
   \item{data}{a data.frame in which to interpret the variables named
     in the formula.}
@@ -27,19 +27,18 @@ singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE, center = TRUE)
   \item{init}{vector of initial values of the iteration.
     Default initial value is zero for all variables.}
   \item{shape}{If positive, the shape parameter is fixed at that value
-    (in each stratum). If zero or negative, the shape parameter is
-    estimated. If more than one stratum is present in data, each stratum
+    (in each stratum).  If zero or negative, the shape parameter is
+    estimated.  If more than one stratum is present in data, each stratum
     gets its own estimate.}
     \item{control}{a list with components \code{eps} (convergence
     criterion), \code{maxiter} (maximum number of iterations), and
-    \code{silent} (logical, controlling amount of output). You can
+    \code{silent} (logical, controlling amount of output).  You can
     change any component without mention the other(s).}
   \item{singular.ok}{Not used.}
   \item{model}{Not used.}
   \item{x}{Return the design matrix in the model object?}
   \item{y}{Return the response in the model object?}
-  \item{center}{Should covariates be centered? This affects the estimate
-    of scale only, but will often stabilize the numerical calculations.}
+  \item{center}{Deprecated, and not used.  Will be removed in the future.}
 }
 
 \details{

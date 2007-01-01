@@ -86,7 +86,7 @@ coxreg <- function (formula = formula(data),
         }
     }
     
-    if (ant.fak <- sum(isF)){
+    if (any(isF)){
         levels <- list()
         index <- 0
         for ( i in 1:length(covars) ){
