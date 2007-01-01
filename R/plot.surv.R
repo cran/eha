@@ -112,7 +112,7 @@ plot.Surv <- function(x,
             ylim <- c(y.min, y.max)
         }
     }else{
-        if (length(ylim) != 2) error("ylim must have length 2.")
+        if (length(ylim) != 2) stop("ylim must have length 2.")
         y.min <- min(ylim)
         y.max <- max(ylim)
     }

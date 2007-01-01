@@ -8,15 +8,20 @@ plot.weibreg <- function(x,
                          new.data = x$means,
                          ...){
     if (!inherits(x, "weibreg")) stop("Works only with 'weibreg' objects.")
-    if (x$pfixed) stop("True exponential hazards are not plotted")
+    ##if (x$pfixed) stop("True exponential hazards are not plotted")
     if (length(what) == 4){
         oldpar <- par(mfrow = c(2, 2))
         on.exit(par(oldpar))
     }
     ncov <- length(x$means)
     ns <- x$n.strata
-    p <- exp(x$coefficients[ncov + (1:ns) * 2])
-    lambda <- exp(x$coefficients[ncov + (1:ns) * 2 - 1])
+    if (x$pfixed){
+        p <- rep(x$shape, ns)
+        lambda <- exp(x$coefficients[ncov + (1:ns)])
+    }else{
+        p <- exp(x$coefficients[ncov + (1:ns) * 2])
+        lambda <- exp(x$coefficients[ncov + (1:ns) * 2 - 1])
+    }
     if (ncov){
         uppe <- exp(-sum(new.data[1:ncov] * x$coefficients[1:ncov]) / p)
         lambda <- lambda * uppe
