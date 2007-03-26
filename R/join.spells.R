@@ -1,4 +1,4 @@
-join.spells <- function(dat, eps = 1.e-8){
+join.spells <- function(dat, strict = FALSE, eps = 1.e-8){
     ## Survival data: (enter, exit], event (0-1, or TRUE/FALSE),
     ## birthdate in years since 1 jan 0, eg 1877.500 = 1 july 1877
     ## Assumes: enter, exit, event, id, birthdate
@@ -11,13 +11,19 @@ join.spells <- function(dat, eps = 1.e-8){
     koll <- match(c("id"), names(dat))
     if (any(is.na(resp))) stop("No 'id' in variable names")
 
-    ## First, check data:
-    res.check <- check.surv(dat$enter, dat$exit, dat$event, dat$id)
-    if (length(res.check)){
-        cat("Error in individual(s). Return value is id of the bad.")
-        return(res.check)
+    ## First, if strict, check data:
+    if (strict){
+        res.check <- check.surv(dat$enter, dat$exit, dat$event, dat$id)
+        if (length(res.check)){
+            cat("Error in individual(s). Return value is id of the bad.\n")
+            return(res.check)
+        }
     }
     covar <- dat[ , -resp]
+    if (na.cov <- any(is.na(covar))){
+         warning("NA's in covariates: temporarily replaced by -999")
+        covar[is.na(covar)] <- -999
+    }
     n.cov <- ncol(covar)
     n.rec <- nrow(covar)
     all <- unique(dat$id)
@@ -58,6 +64,6 @@ join.spells <- function(dat, eps = 1.e-8){
                           ncol = n.cov))[1:res$new.n.rec, , drop = FALSE]
     
     names(new.cov) <- names(covar)
-    
+    if (na.cov) covar[covar == -999] <- NA
     cbind(out, new.cov)
 }

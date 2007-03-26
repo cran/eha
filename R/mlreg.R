@@ -167,12 +167,15 @@ function (formula = formula(data),
 ##        class(fit) <- c("mlreg", "coxreg", "coxph")
 ##        return (fit)
 ##    }
-    if (!fit$fail) fit$fail <- NULL
-    else
-        fit$fail <- TRUE
+    
+##    if (!fit$fail) fit$fail <- NULL # Removed 19 Feb 2007
+##    else
+##        fit$fail <- TRUE
     
     fit$convergence <- as.logical(fit$conver)
     fit$conver <- NULL ## Ugly!
+    fit$f.convergence <- as.logical(fit$f.conver)
+    fit$f.conver <- NULL ## Ugly!
     if (!is.null(frailty)){
         if (length(frailty) != NROW(X)) stop("Wrong length of 'frailty'")
 
@@ -188,12 +191,14 @@ function (formula = formula(data),
                          control
                          )
         
-    if (!fit$fail) fit$fail <- NULL
-    else
-        fit$fail <- TRUE
+##    if (!fit$fail) fit$fail <- NULL # Removed 19 Feb 2007.
+##    else
+##        fit$fail <- TRUE
 
-    fit$convergence <- as.logical(fit$conver)
-    fit$conver <- NULL ## Ugly!
+        fit$convergence <- as.logical(fit$conver)
+        fit$conver <- NULL ## Ugly!
+        fit$f.convergence <- as.logical(fit$f.conver)
+        fit$f.conver <- NULL ## Ugly!
     }        
 
 ###########################################################################    

@@ -8,16 +8,21 @@
  "polished", etc. 
 }
 \usage{
-join.spells(dat, eps = 1.e-8)
+join.spells(dat, strict = FALSE, eps = 1.e-8)
 }
 
 \arguments{
   \item{dat}{A data frame with names enter, exit, event, id.}
-  \item{eps}{Tolerance for equality of two event times.}
+  \item{strict}{If TRUE, nothing is changed if errors in spells
+    (non-positive length, overlapping intervals, etc.) are
+    detected. Otherwise (the default), bad spells are removed, with
+    "earlier life" having higher priority.}
+  \item{eps}{Tolerance for equality of two event times. Should be kept
+    small.}
 }
 \details{
  In case of overlapping intervals (i.e., a data error), the appropriate
- id's are returned.
+ id's are returned if \code{strict} is \code{TRUE}.
 }
 \value{
   A data frame with the same variables as the input, but individual

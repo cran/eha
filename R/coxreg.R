@@ -143,20 +143,24 @@ coxreg <- function (formula = formula(data),
                       max.survs,
                       method,
                       boot,
-                      control)
+                      calc.hazards = TRUE,
+                      calc.martres = TRUE,
+                      control,
+                      verbose = TRUE)
 
 ##    if (!length(fit$coefficients)){
 ##        class(fit) <- c("coxreg", "coxph")
 ##        return(fit)
 ##    }
-    if (is.null(fit)) return(NULL) ## New 5 May 2004.
-    if (!fit$fail) fit$fail <- NULL
-    else
-        fit$fail <- TRUE
+    ##if (is.null(fit)) return(NULL) ## Removed 19 Feb 2007
+    ##if (!fit$fail) fit$fail <- NULL
+    ##else
+    ##    fit$fail <- TRUE
 
     fit$convergence <- as.logical(fit$conver)
     fit$conver <- NULL ## Ugly!
-
+    fit$f.convergence <- as.logical(fit$f.conver)
+    fit$f.conver <- NULL
 ###########################################################################    
 ## Crap dealt with ......
     
@@ -164,7 +168,7 @@ coxreg <- function (formula = formula(data),
         fit <- list(fail = fit)
         class(fit) <- "coxreg"
     }
-    else if (is.null(fit$fail)){
+    else if (fit$fail){
         if (length(fit$coef) && any(is.na(fit$coef))) {
             vars <- (1:length(fit$coef))[is.na(fit$coef)]
             msg <- paste("X matrix deemed to be singular; variable", 

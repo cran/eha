@@ -7,7 +7,7 @@ print.coxreg <-
 	cat("\n")
 	}
 
-    if (!is.null(x$fail)) {
+    if (x$fail) {
 	cat(" coxreg failed.\n")
 	return()
 	}

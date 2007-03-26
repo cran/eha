@@ -26,7 +26,7 @@ function (dat, com.dat, communal = TRUE, start, period = 1, lag = 0,
     cuts <- start + c(0, (1:n.years) * period) - lag
     beg.per <- cuts[1]
     end.per <- cuts[n.years + 1]
-    cat("beg.per = ", beg.per, "end.per = ", end.per, "\n")
+    ##cat("beg.per = ", beg.per, "end.per = ", end.per, "\n")
     iv.length <- period
     if (communal){ ## Added 26 March 2004 ##
         spell.tot <- sum(dat[, surv.indices[2]] - dat[, surv.indices[1]])
