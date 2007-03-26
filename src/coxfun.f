@@ -42,7 +42,10 @@ C +++
       do rs = 1, ns
          do j = 1, antrs(rs)
             rsindx = rsindx + 1
-            if (antevents(rsindx) < size(rsindx)) then
+C +++ The following is not correct for variance estimates!!
+C     So we change; "atomic" risksets can be renoverd.
+C            if (antevents(rsindx) < size(rsindx)) then
+            if (size(rsindx) .ge. 2) then
                do i = 1, antevents(rsindx)
                   indx = indx + 1
                   who = eventset(indx)
@@ -104,7 +107,8 @@ C     Reset to zero:
      &           sumd2score, 1)
 C     Go thru riskset(rs, j):
 C +++ Not Removed! We don't go thru 'single' risksets too
-            if (antevents(rsindx) < size(rsindx)) then
+C            if (antevents(rsindx) < size(rsindx)) then
+            if (size(rsindx) .ge. 2) then
                do i = 1, size(rsindx)
                   indx = indx +  1
                   who = riskset(indx)
@@ -206,7 +210,8 @@ C     Reset to zero:
                endif
             endif
 C     Go thru eventset(rs, j):
-            if (antevents(rsindx) < size(rsindx)) then
+C            if (antevents(rsindx) < size(rsindx)) then
+            if (size(rsindx) .ge. 2) then
                do 600, i = 1, antevents(rsindx)
                   eindx = eindx +  1
                   who = eventset(eindx)
@@ -215,12 +220,12 @@ C     Go thru eventset(rs, j):
                      call daxpy(antcov, score(who), covar(who, 1), nn,
      &                    edscore, 1)
                      if (what .eq. 2) then
-                     call dsyr(UPLO, antcov, score(who), 
-     &                    covar(who, 1), 1, ed2score, antcov)
+C                     call dsyr(UPLO, antcov, score(who), 
+C     &                    covar(who, 1), 1, ed2score, antcov)
 
-C                        call dger(antcov, antcov, score(who), 
-C     &                       covar(who, 1), nn, covar(who, 1), nn,
-C    &                       ed2score, antcov)
+                        call dger(antcov, antcov, score(who), 
+     &                       covar(who, 1), nn, covar(who, 1), nn,
+     &                       ed2score, antcov)
                      endif
                   endif
  600           continue
@@ -229,17 +234,20 @@ C     Go thru riskset(rs, j):
                   indx = indx +  1
 C     +++ Removed! We go thru 'single' risksets too
 C     if (antevents(rsindx) < size(rsindx)) then
-                  who = riskset(indx)
-                  sumscore = sumscore + score(who)
-                  if (what .ge. 1) then
-                     call daxpy(antcov, score(who), covar(who, 1), nn,
-     &                    sumdscore, 1)
-                     if (what .eq. 2) then
-                        call dsyr(UPLO, antcov, score(who),
-     &                       covar(who, 1), nn, sumd2score, antcov)
-C                        call dger(antcov, antcov, score(who),
-C     &                       covar(who, 1), nn, covar(who, 1), nn,
-C     &                       sumd2score, antcov)
+C     Added: skip "atomic" risksets:
+                  if (size(rsindx) .ge. 2) then
+                     who = riskset(indx)
+                     sumscore = sumscore + score(who)
+                     if (what .ge. 1) then
+                        call daxpy(antcov, score(who), covar(who, 1),
+     &                       nn, sumdscore, 1)
+                        if (what .eq. 2) then
+C                           call dsyr(UPLO, antcov, score(who),
+C     &                          covar(who, 1), nn, sumd2score, antcov)
+                           call dger(antcov, antcov, score(who),
+     &                          covar(who, 1), nn, covar(who, 1), nn,
+     &                          sumd2score, antcov)
+                        endif
                      endif
                   endif
  700           continue
@@ -256,13 +264,13 @@ C     Add into d2loglik:
                         call daxpy(antcov * antcov, 
      &                       antevents(rsindx) / sumscore, 
      &                       sumd2score, 1, d2loglik, 1)
-                        call dsyr(UPLO, antcov, 
-     &                       -antevents(rsindx) / sumscore**2,
-     &                       sumdscore, 1, d2loglik, antcov)
-C                        call dger(antcov, antcov, 
-C     &                       -antevents(rsindx) / sumscore**2, 
-C     &                       sumdscore, 1, sumdscore, 1, 
-C     &                       d2loglik, antcov)
+C                        call dsyr(UPLO, antcov, 
+C     &                       -antevents(rsindx) / sumscore**2,
+C     &                       sumdscore, 1, d2loglik, antcov)
+                        call dger(antcov, antcov, 
+     &                       -antevents(rsindx) / sumscore**2, 
+     &                       sumdscore, 1, sumdscore, 1, 
+     &                       d2loglik, antcov)
                         endif
                   endif
 C     Done adding in; next riskset.
@@ -285,6 +293,9 @@ C     Add into dloglik:
      &                       temp, 1, dloglik, 1)
                         if (what .eq. 2) then
 C     Add into d2loglik:
+C +++ New, next line / Remove again!!:
+C                           call dscal(antcov, 1.d0 / (sumscore -ws), 
+C     &                          temp, 1)
                            call daxpy(antcov * antcov, 
      &                          1.d0/(sumscore - ws), sumd2score, 1,
      &                          d2loglik, 1)

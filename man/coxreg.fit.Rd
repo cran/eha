@@ -8,7 +8,8 @@ Called by \code{\link{coxreg}}, but a user can call it directly.
 }
 \usage{
 coxreg.fit(X, Y, rs, strats, offset, init, max.survs,
-method = "breslow", boot = FALSE, control)
+method = "breslow", boot = FALSE, calc.hazards = TRUE,
+calc.martres = TRUE, control, verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -22,8 +23,12 @@ method = "breslow", boot = FALSE, control)
     number of survivors in each risk set.}
   \item{method}{Either "efron" (default) or "breslow".}
   \item{boot}{Number of bootstrap replicates. Defaults to FALSE, no
-    bootstrapping.} 
+    bootstrapping.}
+  \item{calc.hazards}{Should estimates of baseline hazards be
+    calculated?}
+  \item{calc.martres}{Should martingale residuals be calculated?}
   \item{control}{See \code{\link{coxreg}}}
+  \item{verbose}{Should Warnings about convergence be printed?}
 }
 \details{
 \code{rs} is dangerous to use when NA's are present. 
@@ -41,6 +46,7 @@ method = "breslow", boot = FALSE, control)
   \item{means}{Means of the columns of the design matrix.}
   \item{bootstrap}{The bootstrap replicates, if requested on input.}
   \item{conver}{\code{TRUE} if convergence.}
+  \item{f.conver}{TRUE if variables converged.}
   \item{fail}{\code{TRUE} if failure.}
   \item{iter}{Number of performed iterations.}
 }

@@ -116,7 +116,12 @@ C *** return value for loglik(1):
       loglik(1) = ll
 C *** for convergence check purposes:
       loglik(2) = ll
-
+C      write(*, *) "loglik = ", (loglik(i), i = 1, antcov)
+C      write(*, *) "dloglik = ", (dloglik(i), i = 1, antcov)
+C      write(*, *) "d2loglik = "
+C      do i = 1, antcov
+C         write(*, *) (d2loglik(i, j), j = 1, antcov)
+C      enddo
       iter = 0
       conver = 0 
       fail = 0

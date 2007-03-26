@@ -111,7 +111,7 @@ mlreg.fit <- function(X, Y, rs, strats, offset, init, max.survs,
                    colnames(X)[fit$fail], sep = "")
       stop(out)
   }else if (!fit$conver){
-      fit$conver <- 1
+      ##fit$conver <- 1
       if (!fit$f.conver){
           warning("Did not converge")
       }else{

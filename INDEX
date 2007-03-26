@@ -8,9 +8,8 @@ cro                     Creates a minimal representation of a data
 frail.fit               Fits a frailty proportional hazards model
 geome.fit               Constant intensity discrete time proportional
                         hazards
-hweibull                The hazard function of a Weibull distribution
-Hweibull                Cumulative hazard function for the Weibull
-                        distribution
+hweibull                The (Cumulative) Hazard Function of a Weibull
+                        Distribution
 join.spells             Straighten up a survival data frame
 make.communal           Put communals in "fixed" data frame
 mlreg                   ML proportional hazards regression
@@ -32,6 +31,6 @@ toDate                  Convert time in years since "0000-01-01" to a
                         date.
 toTime                  Calculate duration in years from "0000-01-01"
                         to a given date
-weibreg                 Weibull regression
+weibreg                 Weibull Regression
 weibreg.fit             Weibull regression
 wfunk                   Loglihood function of a Weibull regression
