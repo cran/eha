@@ -1,4 +1,4 @@
-%\encoding{UTF-8}
+\encoding{UTF-8}
 \name{mlreg}
 \alias{mlreg}
 %- Also NEED an '\alias' for EACH other topic documented here.
@@ -8,11 +8,11 @@
 }
 \usage{
 mlreg(formula = formula(data), data = parent.frame(),
-na.action = getOption("na.action"), init, method = c("ML", "MPPL"),
+na.action = getOption("na.action"), init=NULL, method = c("ML", "MPPL"),
 control = list(eps = 1e-08, maxiter = 10, n.points = 12, trace = FALSE),
 singular.ok = TRUE, model = FALSE,
 x = FALSE, y = TRUE, boot = FALSE, geometric = FALSE,
-rs, frailty = NULL, max.survs)
+rs=NULL, frailty = NULL, max.survs=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -90,10 +90,10 @@ A list of class \code{c("mlreg", "coxreg", "coxph")} with components
   \item{convergence}{Did the optimization converge?}
   \item{fail}{Did the optimization fail? (Is \code{NULL} if not).}
 }
-\references{Broström, G. (2002). Cox regression; Ties without
+\references{\enc{BrostrÃ¶m}{Brostrom}, G. (2002). Cox regression; Ties without
   tears. \emph{Communications in Statistics: Theory and Methods}
   \bold{31}, 285--297.}  
-\author{Göran Broström}
+\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
 \note{This function starts by creating risksets, if no riskset is
   supplied via \code{rs}, with the aid of \code{\link{risksets}}. This
   latter mechanism fails if there are any NA's in the data! Note also

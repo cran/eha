@@ -1,4 +1,4 @@
-%\encoding{UTF-8}
+\encoding{UTF-8}
 \name{age.window}
 \alias{age.window}
 %- Also NEED an `\alias' for EACH other topic documented here.

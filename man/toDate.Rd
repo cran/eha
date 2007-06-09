@@ -1,4 +1,4 @@
-%\encoding{UTF-8}
+\encoding{UTF-8}
 \name{toDate}
 \alias{toDate}
 
@@ -20,7 +20,7 @@ toDate(times)
 A vector of dates as character strings of the type "1897-05-21".
 }
 %\references{ ~put references to the literature/web site here ~ }
-\author{Göran Broström}
+\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
 %\note{ ~~further notes~~ }
 
 

@@ -1,4 +1,4 @@
-%\encoding{UTF-8}
+\encoding{UTF-8}
 \name{print.coxreg}
 \alias{print.coxreg}
 
@@ -24,7 +24,7 @@ Doesn't work with three-way and higher interactions, in which case
 No value is returned.
  }
 %\references{ ~put references to the literature/web site here ~ }
-\author{Göran Broström}
+\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
 %\note{}
 
 

@@ -1,6 +1,3 @@
-# Calculate pointers from risk sets to their members.
-# (C) Göran Broström (2002).
-
 risksets <- function (x, strata = NULL, max.survs = NULL){
   ## x is a Surv (survival) object.
 

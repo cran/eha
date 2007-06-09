@@ -1,4 +1,4 @@
-%\encoding{UTF-8}
+\encoding{UTF-8}
 \name{summary.coxreg}
 \alias{summary.coxreg}
 
@@ -15,7 +15,7 @@ summary.coxreg(object, ...)
   \item{\dots}{Additional ...}
 }
 
-\author{Göran Broström}
+\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
 
 \seealso{\code{\link{print.coxreg}}}
 \examples{

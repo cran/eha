@@ -434,7 +434,7 @@ C +++ The 'afterwork':
       loglik(2) = ll
 
 C +++ Get the variance(antcov, antcov) matrix in h22:
-      call inv_hess(antcov, ns, h1, h2, h11, h21, h22, f, fail)
+C      call inv_hess(antcov, ns, h1, h2, h11, h21, h22, f, fail)
 
       if (fail .ne. 0) then
 C         call intpr('Last Info from [inv_hess] = ', -1, fail, 1)

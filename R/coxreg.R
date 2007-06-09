@@ -1,20 +1,21 @@
-## Cox regression. (C) Göran Broström (2003). Initial code borrowed from
-## 'coxph' in 'survival. Thanks to Terry Therneau and Thomas Lumley. 
-
 coxreg <- function (formula = formula(data),
-          data = parent.frame(), 
-          na.action = getOption("na.action"),
-          init,
-          method = c("efron", "breslow"),
-          control = list(eps = 1e-8, maxiter = 10, trace = FALSE),
-          singular.ok = TRUE,
-          model = FALSE, 
-          x = FALSE,
-          y = TRUE,
-          boot = FALSE,
-          rs,
-          max.survs) 
+                    data = parent.frame(), 
+                    na.action = getOption("na.action"),
+                    init = NULL,
+                    method = c("efron", "breslow", "mppl", "ml"),
+                    control = list(eps = 1e-8, maxiter = 25, trace = FALSE),
+                    singular.ok = TRUE,
+                    model = FALSE, 
+                    x = FALSE,
+                    y = TRUE,
+                    boot = FALSE,
+                    geometric = NULL,
+                    rs = NULL,
+                    frailty = NULL,
+                    max.survs = NULL) 
 {
+    if (!is.null(frailty))
+      stop("Frailty not implemented yet.")
     method <- match.arg(method)
     call <- match.call()
     m <- match.call(expand.dots = FALSE)
@@ -32,7 +33,7 @@ coxreg <- function (formula = formula(data),
     Y <- model.extract(m, "response")
     if (!inherits(Y, "Surv")) 
         stop("Response must be a survival object")
-    if (missing(max.survs)) max.survs <- NROW(Y)
+    if (is.null(max.survs)) max.survs <- NROW(Y)
     weights <- model.extract(m, "weights")
     offset <- attr(Terms, "offset")
     tt <- length(offset)
@@ -117,14 +118,10 @@ coxreg <- function (formula = formula(data),
     
     n.events <- sum(Y[, 3] != 0)
     if (n.events == 0) stop("No events; no sense in continuing!")
-    if (missing(init)){ 
-        init <- NULL
-    }else{
-        if (length(init) != NCOL(X)) stop("Wrong length of 'init'")
-    }
+
+    if ((!is.null(init)) && (length(init) != NCOL(X)))
+      stop("Wrong length of 'init'")
     
-    if (missing(rs)) 
-      rs <- NULL
     
     if (is.list(control)){
         if (is.null(control$eps)) control$eps <- 1e-8

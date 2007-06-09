@@ -5,7 +5,6 @@ coxreg                  Cox regression
 coxreg.fit              Cox regression
 cro                     Creates a minimal representation of a data
                         frame.
-frail.fit               Fits a frailty proportional hazards model
 geome.fit               Constant intensity discrete time proportional
                         hazards
 hweibull                The (Cumulative) Hazard Function of a Weibull
@@ -13,7 +12,6 @@ hweibull                The (Cumulative) Hazard Function of a Weibull
 join.spells             Straighten up a survival data frame
 make.communal           Put communals in "fixed" data frame
 mlreg                   ML proportional hazards regression
-mlreg.fit               ML proportional hazards regression
 perstat                 Period statistics
 piecewise               Piecewise hazards
 plot.Surv               Plots of survivor functions.

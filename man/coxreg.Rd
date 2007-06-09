@@ -1,4 +1,4 @@
-%\encoding{UTF-8}
+\encoding{UTF-8}
 \name{coxreg}
 \alias{coxreg}
 %- Also NEED an '\alias' for EACH other topic documented here.
@@ -9,10 +9,12 @@
 }
 \usage{
 coxreg(formula = formula(data), data = parent.frame(),
-na.action = getOption("na.action"), init, method = c("efron", "breslow"),
-control = list(eps = 1e-08, maxiter = 10, trace = FALSE),
+na.action = getOption("na.action"), init = NULL,
+method = c("efron", "breslow", "mppl", "ml"),
+control = list(eps = 1e-08, maxiter = 25, trace = FALSE),
 singular.ok = TRUE, model = FALSE,
-x = FALSE, y = TRUE, boot = FALSE, rs, max.survs)
+x = FALSE, y = TRUE, boot = FALSE, geometric = NULL, rs = NULL,
+frailty = NULL, max.survs = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -36,14 +38,19 @@ x = FALSE, y = TRUE, boot = FALSE, rs, max.survs)
   \item{x}{Return the design matrix in the model object?}
   \item{y}{return the response in the model object?}
   \item{rs}{Risk set?}
-  \item{boot}{Number of boot replicates. Defaults to FALSE, no boot samples.}
-  \item{max.survs}{Sampling of risk sets? If given, it should (the upper
-    limit on) the number of survivors in each risk set.}
+  \item{boot}{Number of boot replicates. Defaults to FALSE, no boot
+    samples.}
+  \item{geometric}{If TRUE, forces an 'ml' model with constant riskset
+    probability.} 
+  \item{frailty}{Grouping variable for frailty analysis. Not in use yet.}
+  \item{max.survs}{Sampling of risk sets? If given, it should be (the upper
+    limit of) the number of survivors in each risk set.}
 }
 \details{
 The default method, \code{efron}, and the alternative, \code{breslow},
   are both the same as in \code{\link[survival]{coxph}} in package
-  \code{survival}. 
+  \code{survival}. The methods \code{mppl} and \code{ml} are maximum
+  likelihood based. 
 }
 \value{
 A list of class \code{c("coxreg", "coxph")} with components
@@ -80,7 +87,7 @@ A list of class \code{c("coxreg", "coxph")} with components
 }
 \references{}
 
-\author{Göran Broström}
+\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
 
 \note{This function starts by creating risksets, if no riskset is
   supplied via \code{rs}, with the aid of

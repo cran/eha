@@ -1,4 +1,4 @@
-%\encoding{UTF-8}
+\encoding{UTF-8}
 \name{plot.weibreg}
 \alias{plot.weibreg}
 
@@ -34,7 +34,7 @@ The plot is drawn at the mean values of the covariates.
 No return value
 }
 
-\author{Göran Broström}
+\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
 
 \seealso{\code{\link{weibreg}}}
 \examples{

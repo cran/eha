@@ -1,4 +1,4 @@
-%\encoding{UTF-8}
+\encoding{UTF-8}
 \name{print.weibreg}
 \alias{print.weibreg}
 %- Also NEED an '\alias' for EACH other topic documented here.
@@ -20,7 +20,7 @@ print.weibreg(x, digits = max(options()$digits - 4, 3), ...)
 No value is returned.
 }
 %\references{ ~put references to the literature/web site here ~ }
-\author{Göran Broström}
+\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
 \note{Doesn't work for threeway or higher order interactions. Use
   \code{\link[survival]{print.coxph}} in that case.} 
 

@@ -1,4 +1,4 @@
-%\encoding{UTF-8}
+\encoding{UTF-8}
 \name{cal.window}
 \alias{cal.window}
 
@@ -9,7 +9,7 @@
 \usage{
 cal.window(dat, window, surv=c("enter", "exit", "event", "birthdate"))
 }
-%- maybe also `usage' for other objects documented here.
+
 \arguments{
   \item{dat}{Input data frame. Must contain survival data and a birth date.}
   \item{window}{Vector of length two; the time interval}
@@ -21,13 +21,11 @@ The \code{window} must be in the order \code{(begin, end)}
 }
 \value{
   A data frame of the same form as the input data frame, but 'cut' as
-  desired. Intervals exceeding \code{window[2]} will be given
-  \code{event = 0}
-  
+  desired. Intervals exceeding \code{window[2]} will be given \code{event = 0}
 }
-%\references{ ~put references to the literature/web site here ~ }
-\author{Göran Broström}
-%\note{ ~~further notes~~ }
+
+\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
+
 
 \seealso{\code{\link{age.window}}, \code{\link{coxreg}}, \code{\link{mlreg}}}
 
@@ -37,5 +35,5 @@ birthdate = 1962.505, x = 2)
 window <- c(1963, 1965)
 dat.trim <- cal.window(dat, window)  
 }
-\keyword{survival}% at least one, from doc/KEYWORDS
+\keyword{survival}
 

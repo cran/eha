@@ -1,5 +1,3 @@
-# 'Period statistics'; (C) Göran Broström (2003).
-
 perstat <- function(surv, period, age = c(0, 200)){
   if (ncol(surv) != 4) stop("Need a full 'surv' object with four columns.")
   surv <- data.frame(surv)

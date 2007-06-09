@@ -1,4 +1,4 @@
-%\encoding{UTF-8}
+\encoding{UTF-8}
 \name{weibreg.fit}
 \alias{weibreg.fit}
 %- Also NEED an '\alias' for EACH other topic documented here.
@@ -42,7 +42,7 @@ See \code{\link{weibreg}} for more detail.
 
 }
 %\references{ ~put references to the literature/web site here ~ }
-\author{Göran Broström}
+\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
 %\note{}
 
 
