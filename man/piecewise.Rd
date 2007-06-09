@@ -1,4 +1,4 @@
-%\encoding{UTF-8}
+\encoding{UTF-8}
 \name{piecewise}
 \alias{piecewise}
 %- Also NEED an `\alias' for EACH other topic documented here.
@@ -29,7 +29,7 @@ Exact calculation.
     \code{exposure}} 
 }
 
-\author{Göran Broström}
+\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
 
 \seealso{\code{\link{perstat}}}
 

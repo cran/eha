@@ -1,4 +1,4 @@
-%\encoding{UTF-8}
+\encoding{UTF-8}
 \name{make.communal}
 \alias{make.communal}
 
@@ -50,7 +50,7 @@ combination of \code{dat} and \code{com.dat}. Therefore it is an error
 to have common name(s) in the two data frames.
 }
 %\references{ ~put references to the literature/web site here ~ }
-\author{Göran Broström}
+\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
 \note{Not very vigorously tested.}
 
 

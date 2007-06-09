@@ -1,5 +1,3 @@
-# Vertical cut in the Lexis diagram. (C) Göran Broström (2001).
-
 cal.window <- function(dat, window,
                        surv = c("enter", "exit", "event", "birthdate")){
 

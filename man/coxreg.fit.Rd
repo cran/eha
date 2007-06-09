@@ -1,4 +1,4 @@
-%\encoding{UTF-8}
+\encoding{UTF-8}
 \name{coxreg.fit}
 \alias{coxreg.fit}
 
@@ -50,8 +50,8 @@ calc.martres = TRUE, control, verbose = TRUE)
   \item{fail}{\code{TRUE} if failure.}
   \item{iter}{Number of performed iterations.}
 }
-%\references{ ~put references to the literature/web site here ~ }
-\author{Göran Broström}
+
+\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
 \note{It is the user's responsibility to check that indata is sane.}
 
 \seealso{\code{\link{coxreg}}, \code{\link{risksets}}}

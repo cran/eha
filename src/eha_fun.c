@@ -53,52 +53,44 @@ double eha_Gprim_logit(double x, int y){ /* Note: Independent of y */
 /*         Bernoulli distribution, cloglog link:                  */
 
 double eha_P_cloglog(double x, int y){
-    double q;
+    double res, s;
+    
+    s = exp(x);
 
-    q = exp(-exp(x));
+    if (y)
+	res = log1p(-exp(-s));
+    else
+	res = -s;
 
-    if (y) {
-	return ( 1.0 - q );
-    }else{
-	return ( q );
-    }
-}
+    return(res); /* Returns "log(P)" */
+} 
 
 double eha_G_cloglog(double x, int y){
 
-    double exp_x;
+    double s, res;
+    
+    s = exp(x);
+    if (y)
+	res = -s * (1.0 + 1.0 / expm1(-s));
+    else
+	res = -s;
 
-    if (y){
-	if (x < -6.0){
-	    return (1.0);
-	}else if (x > 6.0){
-	    return (0.0);
-	}else{
-	    exp_x = exp(x);
-	    return ( exp_x / expm1(exp_x) );
-	}
-    }else{
-	return(-exp(x));
-    }
+    return(res);
+
 }
 
 double eha_Gprim_cloglog(double x, int y){
-    double exp_x;
-    double rat;
 
-    if (y){
-	if (x < -6.0){
-	    return (0.0);
-	}else if (x > 6.0){
-	    return (0.0);
-	}else{
-	    exp_x = exp(x);
-	    rat = -exp_x * exp(-exp_x) / expm1(-exp_x);
-	    return (-rat * (expm1(x) + rat) );
-	}
-    }else{
-	return(-exp(x));
-    }
+    double q, s;
+
+    s = exp(x);
+    q = exp(-s);
+    
+/*    return ( G_cloglog(x, yw, weight) - 
+      yw * R_pow_di(s, 2) * q / R_pow_di(1.0 - q, 2) ); */
+    return ( eha_G_cloglog(x, y) - 
+	     y * R_pow_di(s, 2) * q / R_pow_di(expm1(-s), 2) ); 
+
 }
 
 /*****************************************************************/

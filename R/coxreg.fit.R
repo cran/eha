@@ -1,6 +1,3 @@
-# Cox regression. (C) Göran Broström (2003). Initial code borrowed from
-# 'coxph' in 'survival'. Thanks to Terry Therneau and Thomas Lumley. 
-
 coxreg.fit <- function(X, Y, rs, strats, offset, init, max.survs,
                        method = "breslow", boot = FALSE,
                        calc.hazards = TRUE, calc.martres = TRUE,
@@ -44,8 +41,9 @@ coxreg.fit <- function(X, Y, rs, strats, offset, init, max.survs,
     nullModel <- NCOL(X) == 0
     
     if (nullModel){
+        cat("nullModel!!!!!!!!!!!!!!!!!!!!!\n")
         ## faking a simple model with no iterations
-        ncov <- 1
+        ncov <- 0
         X <- matrix(0, ncol = 1, nrow = nn)
         control$maxiter <- 0
         init <- 0
@@ -54,53 +52,79 @@ coxreg.fit <- function(X, Y, rs, strats, offset, init, max.survs,
     printlevel <- control$trace
     ## NOTE: silent == TRUE ===> printlevel = 0
     iter <- control$maxiter
+    if (method[1] == "efron")
+      meth <- 0
+    else if (method[1] == "breslow")
+      meth <- 1
+    else if (method[1] == "mppl")
+      meth <- 2
+    else if (method[1] == "ml")
+      meth <- 3
+    else
+      stop(paste("Unknown method", as.character(method[1]))) 
 
-    fit <- .Fortran("sup",
-                    as.integer(method == "efron"),
-                    iter = as.integer(iter), #maxit on input, actual on output
-                    as.double(control$eps),
-                    as.integer(printlevel),
-                                        #
-                    as.integer(sum(rs$n.events)), ## total No. of events
-                    as.integer(sum(rs$antrs)),  ## total No. of risksets
-                    as.integer(length(rs$antrs)), # No. of strata
-                                        #
-                    as.integer(rs$antrs),
-                    as.integer(rs$n.events),
-                    as.integer(rs$size),
-                                        #
-                    as.integer(length(rs$riskset)), # Sum of risk set sizes.
-                    as.integer(rs$eventset),
-                    as.integer(rs$riskset),
-                                        #
-                    as.integer(nn),
-                    as.integer(ncov),
-                    as.double(scale(X, center = TRUE, scale = FALSE)),
-                    as.double(offset),
-                                        #
-                    as.double(init),     # 'start.beta'
-                    beta = double(ncov),
-                                        #
-                    loglik = double(2), # [1] == start, [2] == maximized
-                    dloglik = double(ncov),
-                    variance = double(ncov * ncov),
-                    sctest = double(1),
-                                        #
-                    double(nn),     ## 'score', work area
-                    double(ncov),          ## 'sumdscore', work area.
-                    double(ncov * ncov), ## 'sumd2score', work area.
-                                        #
-                    conver = integer(1),
-                    f.conver = integer(1),
-                    fail = integer(1),
-                    DUP = FALSE)
+    boot <- abs(as.integer(boot))
 
-    if (nullModel){
+    if (!nullModel){
+        fit <- .C("sup",
+                  as.integer(meth),
+                  iter = as.integer(iter), #maxit on input, actual on output
+                  as.double(control$eps),
+                  as.integer(printlevel),
+                                        #
+                  as.integer(sum(rs$n.events)), ## total No. of events
+                  as.integer(sum(rs$antrs)),  ## total No. of risksets
+                  as.integer(length(rs$antrs)), # No. of strata
+                                        #
+                  as.integer(rs$antrs),
+                  as.integer(rs$n.events),
+                  as.integer(rs$size),
+                                        #
+                  as.integer(length(rs$riskset)), # Sum of risk set sizes.
+                  as.integer(rs$eventset),
+                  as.integer(rs$riskset),
+                                        #
+                  as.integer(nn),
+                  as.integer(ncov),
+                  ## Note here; X is transposed! From 2007-04-16 (0.99)
+                  as.double(t(scale(X, center = TRUE, scale = FALSE))),
+                  as.double(offset),
+                                        #
+                  as.double(init),     # 'start.beta'
+                  boot = as.integer(boot),
+                  beta = double(ncov * (1 + boot)),
+                  sd.beta = double(ncov * (1 + boot)),
+                                        #
+                  loglik = double(2), # [1] == start, [2] == maximized
+                  variance = double(ncov * ncov),
+                  sctest = double(1),
+                  ##
+                  hazard = double(sum(rs$antrs)),
+                  conver = integer(1),
+                  f.conver = integer(1),
+                  fail = integer(1),
+                  DUP = FALSE)
+    
+        bootstrap <- NULL
+        boot.sd <- NULL
+        if (boot & (fit$fail == 0)){
+            
+            bootstrap <- matrix(fit$beta[(ncov + 1):((boot + 1) * ncov)],
+                                nrow = ncov, ncol = boot)
+            boot.sd <- matrix(fit$sd.beta[(ncov + 1):((boot + 1) * ncov)],
+                              nrow = ncov, ncol = boot)
+            fit$beta <- fit$beta[1:ncov]
+            fit$sd.beta <- fit$sd.beta[1:ncov]
+        }   
+    }else{ # if nullModel
         X <- matrix(0, ncol = 0, nrow = nn)
-        fit$beta <- numeric(0)
+        fit <- list(beta = numeric(0),
+                    conver = TRUE,
+                    fail = FALSE)
         ncov <- 0
-        fit$conver <- TRUE
-        fit$fail <- FALSE
+        bootstrap <- NULL
+        boot.sd <- NULL
+        
     }
     if (fit$fail){
         out <- paste("Singular hessian; suspicious variable No. ",
@@ -119,7 +143,7 @@ coxreg.fit <- function(X, Y, rs, strats, offset, init, max.survs,
         }
     }
     
-    if (calc.hazards){
+    if (calc.hazards && (!fit$fail)){
         score <- exp(X %*% fit$beta)
         hazard <- .Fortran("hazards",
                            as.integer(sum(rs$n.events)), ## total No. of events
@@ -142,100 +166,42 @@ coxreg.fit <- function(X, Y, rs, strats, offset, init, max.survs,
                                         #
                                         #DUP = FALSE
                            )$hazard
-    }else{ #if not calc.hazards
+    }else{ #if not calc.hazards or fail
         hazard <- NULL
     }
     
-    if (calc.martres){
+    if (calc.martres && (!nullModel)){
         resid <- .Fortran("martres",
                           as.integer(sum(rs$n.events)),
                           as.integer(sum(rs$antrs)),
                           as.integer(length(rs$antrs)),
-                                        #
+                          ##
                           as.integer(rs$antrs),
                           as.integer(rs$n.events),
                           as.integer(rs$size),
-                                        #
+                          ##
                           as.integer(length(rs$riskset)), # Sum of risk set sizes.
                           as.integer(rs$riskset),
-                                        #
+                          ##
                           as.integer(nn),
-                                        #
-                          as.double(score),       ## 'score'
+                          ##
+                          as.double(score),  # 'score'
                           as.double(hazard),
                           resid = double(nn)
-                                        #DUP = FALSE
+                          ##DUP = FALSE
                           )$resid
     }else{
         resid <- NULL
     }
     
-    if (!fit$fail)
+    if ((!fit$fail) && (!nullModel))
       var <- matrix(fit$variance, ncov, ncov)
     else
       var <- NULL
 
-    bootstrap <- NULL
-    boot.sd <- NULL
-    if (!nullModel){
-        if (boot & (fit$fail == 0)){
-            if (!is.numeric(boot)){
-                cat("boot must be numeric (number of bootstrap replicates)")
-            }else{
-                init <- fit$beta
-                iter <- control$maxiter
-                fit.boot <- .Fortran("bootcox",
-                                     as.integer(1), ## means 'coxreg'
-                                     as.integer(boot),
-                                     boot.sample = double(boot * ncov),
-                                     boot.sd = double(boot * ncov),
-                                     as.integer(method == "efron"),
-                                     iter = as.integer(iter),
-                                     as.double(control$eps),
-                                     as.integer(printlevel),
-                                        #
-                                     as.integer(sum(rs$n.events)), 
-                                     as.integer(sum(rs$antrs)),  
-                                     as.integer(length(rs$antrs)),
-                                        #
-                                     as.integer(rs$antrs),
-                                     as.integer(rs$n.events),
-                                     as.integer(rs$size),
-                                        #
-                                     as.integer(length(rs$riskset)), 
-                                     as.integer(rs$eventset),
-                                     as.integer(rs$riskset),
-                                        #
-                                     as.integer(nn),
-                                     as.integer(ncov),
-                                     as.double(scale(X, center = TRUE,
-                                                     scale = FALSE)),
-                                     as.double(offset),
-                                        #
-                                     as.double(init),     
-                                     as.double(fit$beta), ## Estimated beta
-                                        #
-                                     loglik = double(2), 
-                                     dloglik = double(ncov),
-                                     variance = double(ncov * ncov),
-                                     sctest = double(1),
-                                        #
-                                     double(nn),     
-                                     double(ncov),   
-                                     double(ncov * ncov),
-                                        #
-                                     conver = integer(1),
-                                     fail = integer(1)
-                                     ##DUP = FALSE,
-                                     )
-                bootstrap <- matrix(fit.boot$boot.sample,
-                                    ncol = ncov, byrow = TRUE)
-                boot.sd <- matrix(fit.boot$boot.sd, ncol = ncov, byrow = TRUE)
-            }      
-        }   
-    }
 
     list(coefficients = fit$beta,
+         sd = fit$sd.beta,
          var = var,
          loglik = fit$loglik,
          score = fit$sctest,

@@ -8,6 +8,7 @@
 #include "frail_ml.h"
 
 
+
 void eha_frail_fun(int pp1, 
 		   double *beta,
 		   double *frail,
@@ -60,6 +61,24 @@ double eha_P_poisson(double x, int y);
 double eha_G_poisson(double x, int y);
 
 double eha_Gprim_poisson(double x, int y);
+
+void F77_NAME(mlfun)(int *what, int *method,
+		     int *totevent, int *totrs, int *ns, 
+		     int *antrs, int *antevents, int *size,
+		     int *totsize, int *eventset, int *riskset, 
+		     int *nn, int *antcov, double *covar, double *offset,
+		     double *beta, double *gamma,
+		     double *loglik, double *h2, double *h22,
+		     double *score);
+
+void F77_NAME(coxfun)(int *what, int *method,
+		      int *totevent, int *totrs, int *ns, 
+		      int *antrs, int *antevents, int *size,
+		      int *totsize, int *eventset, int *riskset, 
+		      int *nn, int *antcov, double *covar, double *offset,
+		      double *beta,
+		      double *loglik, double *h2, double *h22,
+		      double *score, double *sumdscore, double *sumd2score);
 
 
 #endif

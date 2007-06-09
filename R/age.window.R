@@ -1,5 +1,3 @@
-# 'Horizontal cut' in the Lexis diagram; (C) Göran Broström (2001).
-
 age.window <- function(dat, window,
                        surv = c("enter", "exit", "event")){
 

@@ -1,286 +1,39 @@
-# ML or MPPL estimation of proportional hazards models.
-# (C) Göran Broström (2001).
-
 mlreg <-
 function (formula = formula(data),
           data = parent.frame(), 
           na.action = getOption("na.action"),
-          init,
+          init = NULL,
           method = c("ML", "MPPL"),
           control = list(eps = 1e-8,
-          maxiter = 10, n.points = 12,
-          trace = FALSE),
+          maxiter = 10, n.points = 12, trace = FALSE),
           singular.ok = TRUE,
           model = FALSE, 
           x = FALSE,
           y = TRUE,
           boot = FALSE,
           geometric = FALSE,
-          rs,
+          rs = NULL,
           frailty = NULL,
-          max.survs) 
+          max.survs = NULL) 
 {
-    method <- match.arg(method)
-    call <- match.call()
-    m <- match.call(expand.dots = FALSE)
-    temp <- c("", "formula", "data", "na.action")
-    m <- m[match(temp, names(m), nomatch = 0)]
+    warning("'mlreg' is deprecated; use 'coxreg' instead (see 'methods')")
+    if (method[1] == "ML") method <- "ml"
+    else if (method[1] == "MPPL") method <- "mppl"
+    else stop(paste("Unknown method", as.character(method[1])))
     
-    special <- "strata"
-    Terms <- if (missing(data)) 
-        terms(formula, special)
-    else terms(formula, special, data = data)
-    m$formula <- Terms
-    m[[1]] <- as.name("model.frame")
-    m <- eval(m, parent.frame())
-    
-    Y <- model.extract(m, "response")
-    if (!inherits(Y, "Surv")) 
-        stop("Response must be a survival object")
-    if (missing(max.survs)) max.survs <- NROW(Y)
-    weights <- model.extract(m, "weights")
-    offset <- attr(Terms, "offset")
-    tt <- length(offset)
-    offset <- if (tt == 0) 
-        rep(0, nrow(Y))
-    else if (tt == 1) 
-        m[[offset]]
-    else {
-        ff <- m[[offset[1]]]
-        for (i in 2:tt) ff <- ff + m[[offset[i]]]
-        ff
-    }
-    attr(Terms, "intercept") <- 1
-    strats <- attr(Terms, "specials")$strata
-    dropx <- NULL
-    
-    if (length(strats)) {
-        temp <- untangle.specials(Terms, "strata", 1)
-        dropx <- c(dropx, temp$terms)
-        if (length(temp$vars) == 1) 
-            strata.keep <- m[[temp$vars]]
-        else strata.keep <- strata(m[, temp$vars], shortlabel = TRUE)
-        strats <- as.numeric(strata.keep)
-    }
-    if (length(dropx)) 
-        newTerms <- Terms[-dropx]
-    else newTerms <- Terms
-    X <- model.matrix(newTerms, m)
-    assign <- lapply(attrassign(X, newTerms)[-1], function(x) x - 
-                     1)
-    X <- X[, -1, drop = FALSE]
-    
-#########################################
-    
-    if (length(dropx)){
-        covars <- names(m)[-c(1, (dropx + 1))]
-    }else{
-        covars <- names(m)[-1]
-    }
-
-    isF <- logical(length(covars))
-    if (length(covars)){
-        for (i in 1:length(covars)){
-            if (length(dropx)){
-                isF[i] <- ( is.factor(m[, -(dropx + 1)][, (i + 1)]) ||
-                           is.logical(m[, -(dropx + 1)][, (i + 1)]) )
-            }else{
-                isF[i] <- ( is.factor(m[, (i + 1)]) ||
-                           is.logical(m[, (i + 1)]) )
-            }      
-        }
-    }
-    
-    if (ant.fak <- sum(isF)){
-        levels <- list()
-        index <- 0
-        for ( i in 1:length(covars) ){
-            if (isF[i]){
-                index <- index + 1
-                if (length(dropx)){
-                    levels[[i]] <- levels(m[, -(dropx + 1)][, (i + 1)])
-                }else{
-                    levels[[i]] <- levels(m[, (i + 1)])
-                }
-            }else{
-                ##cat("NULL level no  ", i, "\n")
-                levels[[i]] <- NULL
-            }
-        }
-    }else{
-        levels <- NULL
-    }
-
-    ##########################################
-    type <- attr(Y, "type")
-    if (type != "right" && type != "counting") 
-        stop(paste("Cox model doesn't support \"", type, "\" survival data", 
-                   sep = ""))
-    
-    if (NCOL(Y) == 2){
-        Y <- cbind(numeric(NROW(Y)), Y)
-    }
-    
-    n.events <- sum(Y[, 3] != 0)
-    if (n.events == 0) stop("No events; no sense in continuing!")
-    if (missing(init)) 
-        init <- NULL
-    
-    if (missing(rs)) 
-        rs <- NULL
-    
-    if (is.list(control)){
-        if (is.null(control$eps)) control$eps <- 1e-8
-        if (is.null(control$maxiter)) control$maxiter <- 10
-        if (is.null(control$n.points)) control$n.points <- 12
-        if (is.null(control$trace)) control$trace <- FALSE
-    }else{
-        stop("control must be a list")
-    }
-    
-    if (geometric) {
-        if (!is.null(frailty))
-            stop("Frailty not implemented for geometric yet")
-        fit <- geome.fit(X,
-                         Y,
-                         rs,
-                         strats,
-                         offset,
-                         init,
-                         max.survs,
-                         method,
-                         boot,
-                         control)
-    }else{
-        fit <- mlreg.fit(X,
-                         Y,
-                         rs,
-                         strats,
-                         offset,
-                         init,
-                         max.survs,
-                         method,
-                         boot,
-                         control)
-    }
-##    if (!length(fit$coefficients)) {
-##        class(fit) <- c("mlreg", "coxreg", "coxph")
-##        return (fit)
-##    }
-    
-##    if (!fit$fail) fit$fail <- NULL # Removed 19 Feb 2007
-##    else
-##        fit$fail <- TRUE
-    
-    fit$convergence <- as.logical(fit$conver)
-    fit$conver <- NULL ## Ugly!
-    fit$f.convergence <- as.logical(fit$f.conver)
-    fit$f.conver <- NULL ## Ugly!
-    if (!is.null(frailty)){
-        if (length(frailty) != NROW(X)) stop("Wrong length of 'frailty'")
-
-##        init = fit$coef
-        fit <- frail.fit(X,
-                         Y,
-                         rs,
-                         strats,
-                         offset,
-                         init,
-                         max.survs,
-                         frailty,
-                         control
-                         )
-        
-##    if (!fit$fail) fit$fail <- NULL # Removed 19 Feb 2007.
-##    else
-##        fit$fail <- TRUE
-
-        fit$convergence <- as.logical(fit$conver)
-        fit$conver <- NULL ## Ugly!
-        fit$f.convergence <- as.logical(fit$f.conver)
-        fit$f.conver <- NULL ## Ugly!
-    }        
-
-###########################################################################    
-## Crap dealt with ......
-    
-    if (is.character(fit)) {
-        fit <- list(fail = fit)
-        class(fit) <- "mlreg"
-    }
-    else if (is.null(fit$fail)){
-        if (length(fit$coef) && any(is.na(fit$coef))) {
-            vars <- (1:length(fit$coef))[is.na(fit$coef)]
-            msg <- paste("X matrix deemed to be singular; variable", 
-                         paste(vars, collapse = " "))
-            if (singular.ok) 
-                warning(msg)
-            else stop(msg)
-        }
-        fit$n <- nrow(Y)
-        fit$terms <- Terms
-        fit$assign <- assign
-        if (FALSE){ ##AAAAAARRRRRRRRRRGGGGGGGGHHHHHHH!!!!!!!!!!!!
-            if (length(fit$coef) && is.null(fit$wald.test)) {
-                nabeta <- !is.na(fit$coef)
-                if (is.null(init)) 
-                    temp <- fit$coef[nabeta]
-                else temp <- (fit$coef - init)[nabeta]
-                fit$wald.test <- survival:::coxph.wtest(fit$var[nabeta,
-        nabeta], temp, control$toler.chol)$test
-            }
-        }
-        na.action <- attr(m, "na.action")
-        if (length(na.action)) 
-            fit$na.action <- na.action
-        if (model) 
-            fit$model <- m
-        if (x) {
-            fit$x <- X
-            if (length(strats)) 
-                fit$strata <- strata.keep
-        }
-        if (y) 
-            fit$y <- Y
-    }
-    
-    ##########################################
-
-    fit$isF <- isF
-    fit$covars <- covars
-    s.wght <- (Y[, 2] - Y[, 1])## * weights
-    fit$ttr <- sum(s.wght)
-    fit$w.means <- list()
-    if (length(fit$covars)){
-        for (i in 1:length(fit$covars)){
-            nam <- fit$covars[i]
-            col.m <- which(nam == names(m))
-            if (isF[i]){
-                n.lev <- length(levels[[i]])
-                fit$w.means[[i]] <- numeric(n.lev)
-                for (j in 1:n.lev){
-                    who <- m[, col.m] == levels[[i]][j]
-                    fit$w.means[[i]][j] <-
-                      sum( s.wght[who] ) / fit$ttr ## * 100, if in per cent
-                }
-            }else{
-                fit$w.means[[i]] <- sum(s.wght * m[, col.m]) / fit$ttr
-            }
-        }
-
-    }
-    ##########################################
-    fit$levels <- levels
-    fit$formula <- formula(Terms)
-    fit$terms <- Terms
-    fit$call <- call
-    fit$events <- n.events
-    if (length(fit$coefficients)){
-        names(fit$coefficients) <- colnames(X)
-        fit$means <- apply(X, 2, mean)
-    }
-    fit$method <- method
-    class(fit) <- c("mlreg", "coxreg", "coxph")
-
-    fit
+    coxreg(formula,
+          data, 
+          na.action,
+          init,
+          method,
+          control,
+          singular.ok,
+          model, 
+          x,
+          y,
+          boot,
+          geometric,
+          rs,
+          frailty,
+          max.survs)
 }

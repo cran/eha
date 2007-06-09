@@ -15,7 +15,7 @@ summary.weibreg(object, ...)
   \item{\dots}{Additional ... }
 }
 
-\author{Göran Broström}
+\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
 
 \seealso{\code{\link{print.weibreg}} }
 \examples{

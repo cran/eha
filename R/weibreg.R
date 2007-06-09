@@ -1,6 +1,3 @@
-# Weibull regression for left truncated and right censored data.
-# (C) Göran Broström (1982-2006).
-
 weibreg <-
   function (formula = formula(data),
             data = parent.frame(), 

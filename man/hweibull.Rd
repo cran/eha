@@ -1,3 +1,4 @@
+\encoding{UTF-8}
 \name{hweibull}
 \alias{hweibull}
 \alias{Hweibull}
@@ -25,7 +26,7 @@ Hweibull(x, shape, scale = 1, log = FALSE)
 \value{
 The (cumulative) hazard function, evaluated at x.
 }
-\author{Göran Broström}
+\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
 \seealso{\code{\link{pweibull}}}
 \examples{
 hweibull(3, 2, 1)

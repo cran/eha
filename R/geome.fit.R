@@ -1,6 +1,3 @@
-# ML or MPPL estimation of proportional hazards models.
-# (C) Göran Broström (2001).
-
 geome.fit <- function(X, Y, rs, strats, offset, init, max.survs,
                        method = "ML", boot = FALSE, control){
 

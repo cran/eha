@@ -1,4 +1,4 @@
-%\encoding{UTF-8}
+\encoding{UTF-8}
 \name{plot.Surv}
 \alias{plot.Surv}
 %- Also NEED an `\alias' for EACH other topic documented here.
@@ -38,7 +38,7 @@ strange estimated curves due to lack of data in certain (low) ages.
 No value is returned.
 }
 %\references{}
-\author{Göran Broström}
+\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
 %\note{ ~~further notes~~ }
 
 % ~Make other sections like WARNING with \section{WARNING }{....} ~

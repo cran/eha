@@ -1,3 +1,13 @@
+0.99	(June 9, 2007) This is the last release before version 1.0!
+	
+	* Added full profiling to the "ml" and "mppl" methods in
+	coxreg.
+	* mlreg is now deprecated. Use coxreg with method = ml or = mppl
+	
+0.98
+
+0.97
+
 0.96-7	(Dec 29, 2006)
 
 	* Corrected a bug in the documentation of 'weibreg'.
