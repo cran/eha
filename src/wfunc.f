@@ -77,7 +77,9 @@ C      save d, dy, dz
 C ***
 C     If order is negative, do nothing!
 C ***
-
+C     To keep the compiler happy (iok is not used here):
+      iok = 0
+C
       if (order .lt. 0) return
 
       pfixed = (ipfixed .ne. 0)

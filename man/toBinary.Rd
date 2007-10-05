@@ -1,4 +1,3 @@
-\encoding{UTF-8}
 \name{toBinary}
 \alias{toBinary}
 %- Also NEED an '\alias' for EACH other topic documented here.
@@ -38,7 +37,7 @@ strats, max.survs = NROW(dat))
   \item{orig.row}{The row number for this item in the original data frame.}
 }
 \references{ ~put references to the literature/web site here ~ }
-\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
+\author{\enc{Göran Broström}{George Bridgewater}}
 \note{ 
 The survival variables must be three. If you only have \emph{exit} and
 \emph{event}, create a third containing all zeros. 

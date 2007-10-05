@@ -1,4 +1,3 @@
-\encoding{UTF-8}
 \name{age.window}
 \alias{age.window}
 %- Also NEED an `\alias' for EACH other topic documented here.
@@ -26,7 +25,7 @@ The \code{window} must be in the order \code{(begin, end)}
 
 }
 %\references{ ~put references to the literature/web site here ~ }
-\author{GÃ¶ran BrostrÃ¶m}
+\author{Göran Broström}
 %\note{ ~~further notes~~ }
 
 \seealso{\code{\link{cal.window}}, \code{\link{coxreg}},

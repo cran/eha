@@ -1,6 +1,6 @@
 C ***
 C
-      subroutine martres(totevent, totrs, ns, 
+      subroutine martres(totrs, ns, 
      &     antrs, antevents, size,
      &     totsize, riskset, 
      &     nn,
@@ -25,7 +25,7 @@ C +++
 
       implicit none
 
-      integer totevent, totrs, ns, totsize, nn
+      integer totrs, ns, totsize, nn
       integer antrs(ns), antevents(totrs), size(totrs)
       integer riskset(totsize)
 

@@ -1,4 +1,3 @@
-\encoding{UTF-8}
 \name{join.spells}
 \alias{join.spells}
 
@@ -32,7 +31,7 @@ join.spells(dat, strict = FALSE, eps = 1.e-8)
 \references{Therneau, T.M. and Grambsch, P.M. (2000). \emph{Modeling
     Survival Data: Extending the Cox
   model.} Springer.}
-\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
+\author{\enc{Göran Broström}{George Bridgewater}}
 %\note{}
 
 

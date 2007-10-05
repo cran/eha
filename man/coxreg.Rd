@@ -1,4 +1,3 @@
-\encoding{UTF-8}
 \name{coxreg}
 \alias{coxreg}
 %- Also NEED an '\alias' for EACH other topic documented here.
@@ -13,7 +12,8 @@ na.action = getOption("na.action"), init = NULL,
 method = c("efron", "breslow", "mppl", "ml"),
 control = list(eps = 1e-08, maxiter = 25, trace = FALSE),
 singular.ok = TRUE, model = FALSE,
-x = FALSE, y = TRUE, boot = FALSE, geometric = NULL, rs = NULL,
+x = FALSE, y = TRUE, boot = FALSE, efrac = 0,
+geometric = NULL, rs = NULL,
 frailty = NULL, max.survs = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -40,6 +40,7 @@ frailty = NULL, max.survs = NULL)
   \item{rs}{Risk set?}
   \item{boot}{Number of boot replicates. Defaults to FALSE, no boot
     samples.}
+  \item{efrac}{Upper limit of fraction failures in 'mppl'.}
   \item{geometric}{If TRUE, forces an 'ml' model with constant riskset
     probability.} 
   \item{frailty}{Grouping variable for frailty analysis. Not in use yet.}
@@ -87,7 +88,7 @@ A list of class \code{c("coxreg", "coxph")} with components
 }
 \references{}
 
-\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
+\author{\enc{Göran Broström}{George Bridgewater}}
 
 \note{This function starts by creating risksets, if no riskset is
   supplied via \code{rs}, with the aid of

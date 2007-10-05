@@ -1,4 +1,3 @@
-\encoding{UTF-8}
 \name{coxreg.fit}
 \alias{coxreg.fit}
 
@@ -8,7 +7,7 @@ Called by \code{\link{coxreg}}, but a user can call it directly.
 }
 \usage{
 coxreg.fit(X, Y, rs, strats, offset, init, max.survs,
-method = "breslow", boot = FALSE, calc.hazards = TRUE,
+method = "breslow", boot = FALSE, efrac = 0, calc.hazards = TRUE,
 calc.martres = TRUE, control, verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -24,6 +23,7 @@ calc.martres = TRUE, control, verbose = TRUE)
   \item{method}{Either "efron" (default) or "breslow".}
   \item{boot}{Number of bootstrap replicates. Defaults to FALSE, no
     bootstrapping.}
+  \item{efrac}{Upper limit of fraction failures in 'mppl'.}
   \item{calc.hazards}{Should estimates of baseline hazards be
     calculated?}
   \item{calc.martres}{Should martingale residuals be calculated?}
@@ -51,7 +51,7 @@ calc.martres = TRUE, control, verbose = TRUE)
   \item{iter}{Number of performed iterations.}
 }
 
-\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
+\author{\enc{Göran Broström}{George Bridgewater}}
 \note{It is the user's responsibility to check that indata is sane.}
 
 \seealso{\code{\link{coxreg}}, \code{\link{risksets}}}

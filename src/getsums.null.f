@@ -1,15 +1,14 @@
 C ***
 C
       subroutine update_null(ord1, ord2, wind, wtime, 
-     &     woffset, pfixed, p, alfa, bdim, b, 
+     &     pfixed, p, alfa, 
      &     s, sy, syy)
 
 
       implicit none
 
       logical ord1, ord2
-      integer wind, bdim
-      double precision b(bdim), woffset
+      integer wind
       logical pfixed
       double precision p, alfa
       double precision wtime, s, sy, syy
@@ -19,7 +18,9 @@ C +++ Local:
       parameter (zero = 0.d0)
       double precision y, epy
       double precision tmp1
-
+C     To satisfy the compiler:
+      tmp1 = 0.d0
+C
       y = log(wtime)
       
       epy = exp(p * (y + alfa))
@@ -48,17 +49,17 @@ c     +++       order .ge. 1
 
 C ***
 C
-      subroutine getsums_null(ord1, ord2, bdim, b, alfa, p, pfixed,
-     +     nn, time, time0, ind, offset,
+      subroutine getsums_null(ord1, ord2, alfa, p, pfixed,
+     +     nn, time, time0, ind,
      +     s, sy, syy)
 
       implicit none
 
       logical ord1, ord2, pfixed
 
-      integer bdim, nn, ind(nn)
-      double precision time(nn), time0(nn), offset(nn)
-      double precision b(bdim), alfa, p, s, sy, syy
+      integer nn, ind(nn)
+      double precision time(nn), time0(nn)
+      double precision alfa, p, s, sy, syy
 
 C +++ Local:
       integer i
@@ -89,13 +90,13 @@ C     $              wz, woffset, wcommun, wind, wstratum, wrank, ok)
 	 if  (wtime .gt. zero) then
             wind = 2
             call update_null(ord1, ord2, wind, wtime,
-     &           offset(i), pfixed, p, alfa, bdim, b,
+     &           pfixed, p, alfa, 
      &           s, sy, syy)
          endif
          wtime = time(i)
          wind = ind(i)
          call update_null(ord1, ord2, wind, wtime,
-     &        offset(i), pfixed, p, alfa, bdim, b, 
+     &        pfixed, p, alfa,  
      &        s, sy, syy)
             
   100 continue

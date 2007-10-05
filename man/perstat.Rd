@@ -1,4 +1,3 @@
-\encoding{UTF-8}
 \name{perstat}
 \alias{perstat}
 %- Also NEED an `\alias' for EACH other topic documented here.
@@ -28,7 +27,7 @@ A list with components
   \item{intensity}{\code{events / exposure}}
 }
 %\references{ ~put references to the literature/web site here ~ }
-\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
+\author{\enc{Göran Broström}{George Bridgewater}}
 %\note{ ~~further notes~~ }
 
 \seealso{\code{\link{piecewise}}}

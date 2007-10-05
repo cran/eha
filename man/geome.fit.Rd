@@ -1,4 +1,3 @@
-\encoding{UTF-8}
 \name{geome.fit}
 \alias{geome.fit}
 
@@ -28,7 +27,7 @@ boot = FALSE, control)
 See the code.
 }
 \references{See mlreg}
-\author{GÃ¶ran BrostrÃ¶m}
+\author{Göran Broström}
 \note{Nothing special}
 
 \seealso{\code{\link{mlreg}}}

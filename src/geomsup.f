@@ -58,17 +58,12 @@ C +++ Do some Newton-Raphson iterations:
 C ***
 C
       subroutine ginit_haz(ns, antrs, totrs, antevents, size, 
-     &     hazard, gamma, iterate, nn, score,
-     &     totevent, eventset, totsize, riskset)
+     &     hazard, gamma)
 
       implicit none
 
       integer ns, antrs(ns), totrs, antevents(totrs), size(totrs)
       double precision hazard(totrs), gamma(ns)
-      logical iterate
-      integer nn, totevent, totsize
-      double precision score(nn)
-      integer eventset(totevent), riskset(totsize)
       
       integer rs, j, rsindx, evsum, sisum
 
@@ -117,13 +112,14 @@ C     Start values:
       end
 C ***
 C
-      subroutine ginv_hess(antcov, ns, h1, h2, h11, h21, h22, 
+      subroutine ginv_hess(antcov, ns, h11, h21, h22, 
      &     f, fail)
+  
 
       implicit none
 
       integer antcov, ns, fail
-      double precision h1(ns), h2(antcov), h11(ns)
+      double precision h11(ns)
       double precision h21(antcov, ns), h22(antcov, antcov)
       double precision f(ns, antcov)
 
@@ -219,7 +215,7 @@ C     Then db:
 C************************************************************
 C *** The 'MAIN' subroutine:
 C
-      subroutine geomsup(method, iter, eps, prl, 
+      subroutine geomsup(iter, eps, prl, 
      &     totevent, totrs, ns, 
      &     antrs, antevents, size,
      &     totsize, eventset, riskset, 
@@ -227,13 +223,11 @@ C
      &     startbeta, beta,
      &     loglik, h2, h22, sctest,
      &     hazard,
-     &     score, sumdscore, sumd2score, 
+     &     score, 
      &     conver, f_conver, fail)
 
 
 C +++ 
-C     method   : 0 = ML,
-C                1 = MPPL, hybrid.
 C     iter     : On input = maxiter; on output = actual No. of iterations.
 C     eps      : Convergence criterion; L2 < eps ===> convergence
 C     prl      : Print level; 0 = nothing, 1 = more.
@@ -276,7 +270,7 @@ C +++
 
       implicit none
 
-      integer method, iter, prl
+      integer iter, prl
       double precision eps
       integer totevent, totrs, ns, totsize, nn, antcov
       integer antrs(ns), antevents(totrs), size(totrs)
@@ -290,8 +284,6 @@ C +++
       double precision sctest
       double precision hazard(totrs)
       double precision score(nn)
-      double precision sumdscore(antcov) 
-      double precision sumd2score(antcov, antcov)
       integer conver, f_conver, fail
 C ************************************************************
 C +++
@@ -339,8 +331,7 @@ C +++ Get initial values for gamma:
       endif
 
       call ginit_haz(ns, antrs, totrs, antevents, size, 
-     &     hazard, gamma, iterate, nn, score,
-     &     totevent, eventset, totsize, riskset)
+     &     hazard, gamma)
 C --- done!
 
       itmax = iter
@@ -349,7 +340,7 @@ C --- done!
 
       call dcopy(antcov, startbeta, ione, beta, ione)
 
-      call gmlfun(what, method,
+      call gmlfun(what,
      &     totevent, totrs, ns, 
      &     antrs, antevents, size,
      &     totsize, eventset, riskset, 
@@ -369,7 +360,7 @@ C --- done!
       do while ( (iter .lt. itmax) .and. (conver .eq. 0) )
 C         iter = iter + 1
 
-         call ginv_hess(antcov, ns, h1, h2, h11, h21, h22, 
+         call ginv_hess(antcov, ns, h11, h21, h22, 
      &        f, fail)
 
             
@@ -404,7 +395,7 @@ C +++ Update gamma, beta:
          call daxpy(antcov, one, db, ione, beta, ione)
          call daxpy(ns, one, dg, ione, gamma, ione)
 
-         call gmlfun(what, method,
+         call gmlfun(what,
      &        totevent, totrs, ns, 
      &        antrs, antevents, size,
      &        totsize, eventset, riskset, 

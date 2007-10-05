@@ -7,7 +7,7 @@ void F77_NAME(wfunc)(int *, int *, double *, int *, int *, double *,
 
 void F77_NAME(weibnr)(int *, double *, int *, int *, int *, int *,
 		      double *, double *, int *, double *, double *,
-		      double *, double *, double *, double *, double *,
+		      double *, double *, double *,
 		      double *, int *, int *,
 		      int *, int *);
 

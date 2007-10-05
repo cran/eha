@@ -41,7 +41,6 @@ geome.fit <- function(X, Y, rs, strats, offset, init, max.survs,
   ## No. of risk set with tied events and not 'trivial':
   nsk2 <- sum( (rs$n.events < rs$size) & (rs$n.events > 1))
   fit <- .Fortran("geomsup",
-                  as.integer(method == "MPPL"),
                   iter = as.integer(iter), #maxit on input, actual on output
                   as.double(control$eps),
                   as.integer(printlevel),
@@ -74,13 +73,12 @@ geome.fit <- function(X, Y, rs, strats, offset, init, max.survs,
                   hazard = numeric(sum(rs$antrs)),
                   #
                   double(nn),     ## 'score', work area
-                  double(ncov),          ## 'sumdscore', work area.
-                  double(ncov * ncov), ## 'sumd2score', work area.
                   #
                   conver = integer(1),
                   f.conver = integer(1),
-                  fail = integer(1)
-                  ##DUP = FALSE
+                  fail = integer(1),
+                  DUP = FALSE,
+                  PACKAGE = "eha"
                   )
   if (fit$fail){
       out <- paste("Singular hessian; suspicious variable No. ",
@@ -103,8 +101,7 @@ geome.fit <- function(X, Y, rs, strats, offset, init, max.survs,
 
   if (!any(is.na(hazard))){
     resid <- .Fortran("martres",
-                      as.integer(sum(rs$n.events)),
-                      as.integer(sum(rs$antrs)),
+                       as.integer(sum(rs$antrs)),
                       as.integer(length(rs$antrs)),
                                         #
                       as.integer(rs$antrs),
@@ -118,8 +115,9 @@ geome.fit <- function(X, Y, rs, strats, offset, init, max.survs,
                                         #
                       as.double(score),       ## 'score'
                       as.double(hazard),
-                      resid = double(nn)
-                      ##DUP = FALSE,
+                      resid = double(nn),
+                      DUP = FALSE,
+                      PACKAGE = "eha"
                       )$resid
   }
       
@@ -174,8 +172,9 @@ geome.fit <- function(X, Y, rs, strats, offset, init, max.survs,
                            double(ncov * ncov),
                                         #
                            conver = integer(1),
-                           fail = integer(1)
-                           ##DUP = FALSE,
+                           fail = integer(1),
+                           DUP = FALSE,
+                           PACKAGE = "eha"
                            )
       bootstrap <- matrix(fit.boot$boot.sample, ncol = ncov, byrow = TRUE)
       boot.sd <- matrix(fit.boot$boot.sd, ncol = ncov, byrow = TRUE)

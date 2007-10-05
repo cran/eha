@@ -149,7 +149,7 @@ static void inv_hess(double *h22, int *fail){
 
 
 static void n_r(int prl, int itmax, int *iter, double eps, 
-		int totrs, RiskSet *risks,
+		int totrs, RiskSet *risks, double e_frac,
 		double *b, double *db, 
 		double *ll, double *dll, double *d2ll, 
 		double *sctest, 
@@ -204,7 +204,7 @@ static void n_r(int prl, int itmax, int *iter, double eps,
 
 	F77_CALL(daxpy)(&p, &one, db, &ione, b, &ione);
 
-	coxfun(what, totrs, risks, 
+	coxfun(what, totrs, risks, e_frac, 
 	       b, ll, dll, d2ll);
 
 	if (abs(*ll / ll_prev - one) < eps) *f_conver = 1; 
@@ -271,6 +271,7 @@ void sup(int *meth,
 	 double *offset_in,
 	 double *startbeta,
 	 int *boot,
+	 double *efrac,
 	 double *beta,
 	 double *sd_beta,
 	 double *loglik, /* Note: length 2! */ 
@@ -330,6 +331,8 @@ C +++
     double ll;
     double *db = 0;
     double *b = 0;
+
+    double e_frac = *efrac; /* Choosing between 'efron' & 'ml' */
 
     int what;
 
@@ -425,14 +428,14 @@ C +++
     itmax = *iter;
 
     what = 2;
-    coxfun(what, *totrs, risks, 
+    coxfun(what, *totrs, risks, e_frac, 
 	   b, &ll, dll, d2ll);
       
     loglik[0] = ll;
     loglik[1] = ll;
 
     n_r(*prl, itmax, iter, *eps, 
-	*totrs, risks, 
+	*totrs, risks, e_frac, 
 	b, db,
 	&ll, dll, d2ll, 
 	sctest, 
@@ -530,7 +533,7 @@ C     Note the consequences in calling function!!
 	    /* Get bootstrap sample: */
 
 	    n_r(*prl, itmax, iter, *eps,
-		*totrs, risks,
+		*totrs, risks, e_frac,
 		b, db, 
 		&ll, dll, d2ll,
 		sctest, f_conver, conver, fail);	

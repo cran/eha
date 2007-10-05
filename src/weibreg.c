@@ -318,7 +318,7 @@ void weibsup(int *iter, double *eps, int *printlevel,
 /* Take some Newton-Raphson steps: */
     F77_CALL(weibnr)(iter, eps, printlevel, nn, ncov, bdim,
 		     time0, time, ind, covar, offset,
-		     beta, shape, lambda, loglik + 1, dloglik,
+		     beta, loglik + 1, dloglik,
 		     variance, ns, nstra,
 		     conver, fail);
 

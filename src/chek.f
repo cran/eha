@@ -1,9 +1,9 @@
-      subroutine chek(n, n_ind, id_size, id,
+      subroutine chek(n, n_ind, id_size,
      &     enter, exi, event, eps, sane)
 
       implicit none
 
-      integer n, n_ind, id_size(n_ind), id(n), event(n)
+      integer n, n_ind, id_size(n_ind), event(n)
       double precision enter(n), exi(n), eps
 
       integer sane(n_ind)
