@@ -1,4 +1,3 @@
-\encoding{UTF-8}
 \name{check.surv}
 \alias{check.surv}
 \title{Check the integrity of survival data.}
@@ -25,7 +24,7 @@ A vector of id's for the insane individuals. Of zero length if no errors.
 }
 \references{}
 
-\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
+\author{\enc{Göran Broström}{George Bridgewater}}
 
 \note{}
 

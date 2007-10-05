@@ -1,4 +1,3 @@
-\encoding{UTF-8}
 \name{summary.weibreg}
 \alias{summary.weibreg}
 
@@ -15,7 +14,7 @@ summary.weibreg(object, ...)
   \item{\dots}{Additional ... }
 }
 
-\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
+\author{\enc{Göran Broström}{George Bridgewater}}
 
 \seealso{\code{\link{print.weibreg}} }
 \examples{

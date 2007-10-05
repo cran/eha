@@ -1,4 +1,3 @@
-\encoding{UTF-8}
 \name{weibreg}
 \alias{weibreg}
 %- Also NEED an '\alias' for EACH other topic documented here.
@@ -91,7 +90,7 @@ A list of class \code{c("weibreg", "coxreg", "coxph")} with components
   \item{pfixed}{TRUE if shape was fixed in the estimation.}
 }
 
-\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
+\author{\enc{Göran Broström}{George Bridgewater}}
 %\note{}
 
 

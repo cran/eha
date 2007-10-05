@@ -85,7 +85,7 @@ static double get1_gam(RiskSet *risk){
 }
 
 void ml_rs(int what, RiskSet *risk,
-	   double *b,
+	   double *b, double e_frac,
 	   double *loglik, double *dloglik, double *d2loglik){
 
     double h1, h11;
@@ -194,7 +194,7 @@ static void cox_obs_rs(int what, RiskSet *risk,
 }
     
 void breslow_rs(int what, RiskSet *risk, 
-		double *b,
+		double *b, double e_frac,
 		double *loglik, double *dloglik, 
 		double *d2loglik){
 
@@ -268,7 +268,7 @@ void breslow_rs(int what, RiskSet *risk,
 }
 
 void efron_rs(int what, RiskSet *risk, 
-			 double *b,
+	      double *b, double e_frac,
 			 double *loglik, double *dloglik, 
 			 double *d2loglik){
   
@@ -428,25 +428,29 @@ C     Local (note the deviation from strict standard here!):
 
 
 void mppl_rs(int what, RiskSet *risk,
-	     double *b,
+	     double *b, double e_frac,
 	     double *loglik, double *dloglik, double *d2loglik){
 
     if (risk->antevents == risk->size) return;
     if (risk->out) return;
     if (risk->antevents == 1){
 	breslow_rs(what, risk,
-		       b, 
+		   b, e_frac,
 		       loglik, dloglik, d2loglik);
+    }else if (risk->antevents <= e_frac * risk->size){
+	efron_rs(what, risk, 
+		 b, e_frac,
+		 loglik, dloglik, d2loglik);
     }else{
 	ml_rs(what, risk,
-	      b, 
+	      b, e_frac,
 	      loglik, dloglik, d2loglik);
     }
 }
 
 void coxfun(int what, int totrs, RiskSet *risks, 
-/*	    int ml, int method, */ 
-	    double *b,
+/*	    int ml, int method, */ double e_frac, 
+	    double *b, 
 	    double *loglik, double *dloglik, double *d2loglik){
 
     /* ml : 0 = "Cox", 1 = "Maximum likelihood"    */
@@ -490,7 +494,7 @@ void coxfun(int what, int totrs, RiskSet *risks,
     
     for (rs = 0; rs < totrs; rs++){
 	eha_rs(what, (risks + rs),
-	       b, 
+	       b, e_frac, 
 	       loglik, dloglik, d2loglik);
     }
 	/* Fill in the lower part of 'd2loglik': */

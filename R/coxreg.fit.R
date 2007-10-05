@@ -1,5 +1,5 @@
 coxreg.fit <- function(X, Y, rs, strats, offset, init, max.survs,
-                       method = "breslow", boot = FALSE,
+                       method = "breslow", boot = FALSE, efrac = 0,
                        calc.hazards = TRUE, calc.martres = TRUE,
                        control, verbose = TRUE){
 
@@ -92,6 +92,7 @@ coxreg.fit <- function(X, Y, rs, strats, offset, init, max.survs,
                                         #
                   as.double(init),     # 'start.beta'
                   boot = as.integer(boot),
+                  as.double(efrac),
                   beta = double(ncov * (1 + boot)),
                   sd.beta = double(ncov * (1 + boot)),
                                         #
@@ -103,7 +104,8 @@ coxreg.fit <- function(X, Y, rs, strats, offset, init, max.survs,
                   conver = integer(1),
                   f.conver = integer(1),
                   fail = integer(1),
-                  DUP = FALSE)
+                  DUP = FALSE,
+                  PACKAGE = "eha")
     
         bootstrap <- NULL
         boot.sd <- NULL
@@ -146,25 +148,24 @@ coxreg.fit <- function(X, Y, rs, strats, offset, init, max.survs,
     if (calc.hazards && (!fit$fail)){
         score <- exp(X %*% fit$beta)
         hazard <- .Fortran("hazards",
-                           as.integer(sum(rs$n.events)), ## total No. of events
                            as.integer(sum(rs$antrs)),  ## total No. of risksets
                            as.integer(length(rs$antrs)), # No. of strata
-                                        #
+                           ##
                            as.integer(rs$antrs),
                            as.integer(rs$n.events),
                            as.integer(rs$size),
-                                        #
-                           as.integer(length(rs$riskset)), # Sum of risk set sizes.
+                           ##
+                           as.integer(length(rs$riskset)),
+                           ## is Sum of risk set sizes.
                            as.integer(rs$riskset),
-                                        #
+                           ##
                            as.integer(nn),
-                           as.integer(ncov),
-                                        #
-                           as.double(fit$beta),
+                           ##
                            as.double(score),
-                           hazard = double(sum(rs$antrs))
-                                        #
-                                        #DUP = FALSE
+                           hazard = double(sum(rs$antrs)),
+                           ##
+                           DUP = FALSE,
+                           PACKAGE = "eha"
                            )$hazard
     }else{ #if not calc.hazards or fail
         hazard <- NULL
@@ -172,7 +173,6 @@ coxreg.fit <- function(X, Y, rs, strats, offset, init, max.survs,
     
     if (calc.martres && (!nullModel)){
         resid <- .Fortran("martres",
-                          as.integer(sum(rs$n.events)),
                           as.integer(sum(rs$antrs)),
                           as.integer(length(rs$antrs)),
                           ##
@@ -187,8 +187,9 @@ coxreg.fit <- function(X, Y, rs, strats, offset, init, max.survs,
                           ##
                           as.double(score),  # 'score'
                           as.double(hazard),
-                          resid = double(nn)
-                          ##DUP = FALSE
+                          resid = double(nn),
+                          DUP = FALSE,
+                          PACKAGE = "eha"
                           )$resid
     }else{
         resid <- NULL

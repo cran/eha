@@ -122,10 +122,19 @@ function (dat, com.dat, communal = TRUE, start, period = 1, lag = 0,
             }
         }
         if (fortran) {
-            yy <- .Fortran("split", as.double(xx), as.integer(nn), 
-                as.integer(ncol(xx)), yy = as.double(yy), as.integer(nrow(yy)), 
-                as.integer(ncol(yy)), as.integer(nn.out), as.integer(ind.iv), 
-                as.double(cuts), as.integer(n.years), DUP = FALSE)$yy
+            yy <- .Fortran("split",
+                           as.double(xx),
+                           as.integer(nn), 
+                           as.integer(ncol(xx)),
+                           yy = as.double(yy),
+                           as.integer(nrow(yy)), 
+                           as.integer(ncol(yy)),
+                           as.integer(nn.out),
+                           as.integer(ind.iv), 
+                           as.double(cuts),
+                           as.integer(n.years),
+                           DUP = FALSE,
+                           PACKAGE = "eha")$yy
             yy <- matrix(yy, ncol = ncol(xx) + 1)
         }
         yy <- cbind(yy[, 1:4, drop = FALSE], dat[yy[, 5], -surv.indices, 

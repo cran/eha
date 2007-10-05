@@ -1,4 +1,3 @@
-\encoding{UTF-8}
 \name{table.events}
 \alias{table.events}
 %- Also NEED an `\alias' for EACH other topic documented here.
@@ -30,7 +29,7 @@ table.events(enter=rep(0, length(exit)), exit, event, strict=TRUE )
   \item{riskset.sizes}{Number at risk at each event time point.}
 }
 %\references{}
-\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
+\author{\enc{Göran Broström}{George Bridgewater}}
 %\note{}
 
  

@@ -1,6 +1,6 @@
       subroutine weibnr(iter, eps, printlevel, nn, ncov, bdim,
      &     time0, time, ind, covar, offset,
-     &     beta, shape, lambda, loglik, dloglik,
+     &     beta, loglik, dloglik,
      &     d2loglik, ns, nstra,
      &     conver, fail)
 
@@ -19,7 +19,7 @@ C     ns = No. of strata.
       double precision eps, time0(nn), time(nn), offset(nn)
       double precision covar(ncov, nn), d2loglik(bdim, bdim)
       integer ind(nn), ns, nstra(ns + 1), conver, fail
-      double precision beta(bdim), lambda(ns), shape(ns)
+      double precision beta(bdim)
       double precision loglik, dloglik(bdim)
 
       integer ione

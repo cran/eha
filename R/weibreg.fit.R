@@ -71,8 +71,9 @@ weibreg.fit <- function(X, Y,
                   sctest = double(1),
                                         #
                   conver = integer(1),
-                  fail = integer(1)
-                  ##DUP = FALSE,
+                  fail = integer(1),
+                  DUP = FALSE,
+                  PACKAGE = "eha"
                   )
         
         if (fit$fail) return(list(fail = fit$fail,
@@ -143,8 +144,9 @@ weibreg.fit <- function(X, Y,
                   sctest = double(1),
                                         #
                   conver = integer(1),
-                  fail = integer(1)
-                  ##DUP = FALSE,
+                  fail = integer(1),
+                  DUP = FALSE,
+                  PACKAGE = "eha"
                   )
         if (fit$fail) return(list(fail = fit$fail,
                                   n.strata = ns,

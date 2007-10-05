@@ -1,4 +1,3 @@
-\encoding{UTF-8}
 \name{risksets}
 \alias{risksets}
 %- Also NEED an `\alias' for EACH other topic documented here.
@@ -34,7 +33,7 @@ risksets(x, strata, max.survs)
   \item{n.events}{The number of events in each risk set.}
 }
 
-\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
+\author{\enc{Göran Broström}{George Bridgewater}}
 \note{can be used to "sample the risk sets".}
 
 \seealso{\code{\link{table.events}}, \code{\link{coxreg}}, \code{\link{mlreg}}}

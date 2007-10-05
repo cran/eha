@@ -1,11 +1,11 @@
-Encoding: UTF-8
+Encoding: latin1
 Package: eha
-Version: 0.99-1
-Date: 2007-06-10
-Title: Event History Analysis.
-Description: A package for survival and event history analysis.
-License: GPL version 2 or newer.
-Author: GÃ¶ran BrostrÃ¶m
+Version: 1.0
+Date: 2007-10-05
+Title: Event History Analysis
+Description: A package for survival and event history analysis
+License: GPL (>= 3)
+Author: Göran Broström
 Depends: R (>= 2.2.0), survival, graphics
-Maintainer: GÃ¶ran BrostrÃ¶m <gb@stat.umu.se>
-Packaged: Mon Jun 11 13:17:39 2007; gb
+Maintainer: Göran Broström <gb@stat.umu.se>
+Packaged: Fri Oct  5 17:10:08 2007; gb

@@ -1,4 +1,3 @@
-\encoding{UTF-8}
 \name{toTime}
 \alias{toTime}
 
@@ -20,7 +19,7 @@ toTime(dates)
 A vector of durations, as decribed above.
 }
 %\references{ ~put references to the literature/web site here ~ }
-\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
+\author{\enc{Göran Broström}{George Bridgewater}}
 %\note{ ~~further notes~~ }
 
 \seealso{\code{\link{toDate}}}

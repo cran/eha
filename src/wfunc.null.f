@@ -1,7 +1,7 @@
 C ***
 C
       subroutine wfuncnull(order, ipfixed, pfix,
-     &     bdim, b, nn, time0, time, ind, offset,
+     &     bdim, b, nn, time0, time, ind,
      &     f, fp, fpp, iok)
 
 C ******************************************************************** C
@@ -21,7 +21,7 @@ C      include 'optcom.inc'
       integer order, ipfixed, bdim, nn, iok
    
       double precision pfix
-      double precision time0(nn), time(nn), offset(nn)
+      double precision time0(nn), time(nn)
       integer ind(nn)
 
       double precision b(bdim), f, fp(bdim)
@@ -65,6 +65,9 @@ C ***
 C     If order is negative, do nothing!
 C ***
 
+C     To keep the compiler happy (iok is not used here):
+      iok = 0
+C
       if (order .lt. 0) return
 
       pfixed = (ipfixed .ne. 0)
@@ -118,8 +121,8 @@ C      if (iter .le. 1) then
  7    continue
       d = dble(id)
 
-      call getsums_null(ord1, ord2, bdim, b, alfa, p, pfixed, 
-     +        nn, time, time0, ind, offset,
+      call getsums_null(ord1, ord2, alfa, p, pfixed, 
+     +        nn, time, time0, ind,
      +        s, sy, syy)
 
 C ***

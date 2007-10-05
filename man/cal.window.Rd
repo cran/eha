@@ -1,4 +1,3 @@
-\encoding{UTF-8}
 \name{cal.window}
 \alias{cal.window}
 
@@ -24,7 +23,7 @@ The \code{window} must be in the order \code{(begin, end)}
   desired. Intervals exceeding \code{window[2]} will be given \code{event = 0}
 }
 
-\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
+\author{\enc{Göran Broström}{George Bridgewater}}
 
 
 \seealso{\code{\link{age.window}}, \code{\link{coxreg}}, \code{\link{mlreg}}}

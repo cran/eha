@@ -29,12 +29,13 @@ wfunk <- function(beta = NULL, lambda, p, X = NULL, Y,
                         as.double(Y[, 1]),
                         as.double(Y[, 2]),
                         as.integer(Y[, 3]),
-                        as.double(offset),
                                         #
                         f = double(1),
                         fp = double(bdim),
                         fpp = double(bdim * bdim),
-                        ok = integer(1)
+                        ok = integer(1),
+                        DUP = FALSE,
+                        PACKAGE = "eha"
                         )
     }else{
         mb <- NCOL(X)
@@ -65,7 +66,9 @@ wfunk <- function(beta = NULL, lambda, p, X = NULL, Y,
                         f = double(1),
                         fp = double(bdim),
                         fpp = double(bdim * bdim),
-                        ok = integer(1)
+                        ok = integer(1),
+                        DUP = FALSE,
+                        PACKAGE = "eha"
                         )
     }
     

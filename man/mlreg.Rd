@@ -1,4 +1,3 @@
-\encoding{UTF-8}
 \name{mlreg}
 \alias{mlreg}
 %- Also NEED an '\alias' for EACH other topic documented here.
@@ -90,10 +89,10 @@ A list of class \code{c("mlreg", "coxreg", "coxph")} with components
   \item{convergence}{Did the optimization converge?}
   \item{fail}{Did the optimization fail? (Is \code{NULL} if not).}
 }
-\references{\enc{BrostrÃ¶m}{Brostrom}, G. (2002). Cox regression; Ties without
+\references{\enc{Broström}{Brostrom}, G. (2002). Cox regression; Ties without
   tears. \emph{Communications in Statistics: Theory and Methods}
   \bold{31}, 285--297.}  
-\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
+\author{\enc{Göran Broström}{George Bridgewater}}
 \note{This function starts by creating risksets, if no riskset is
   supplied via \code{rs}, with the aid of \code{\link{risksets}}. This
   latter mechanism fails if there are any NA's in the data! Note also

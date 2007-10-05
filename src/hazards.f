@@ -1,11 +1,11 @@
 C ***
 C
-      subroutine hazards(totevent, totrs, ns, 
+      subroutine hazards(totrs, ns, 
      &     antrs, antevents, size,
      &     totsize, riskset, 
-     &     nn, antcov, 
+     &     nn, 
 C        covar, strata,
-     &     beta, score, hazard)
+     &     score, hazard)
 
 C +++ 
 C     totevent : Total number of events.
@@ -31,13 +31,13 @@ C +++
 
       implicit none
 
-      integer totevent, totrs, ns, totsize, nn, antcov
+      integer totrs, ns, totsize, nn
       integer antrs(ns), antevents(totrs), size(totrs)
       integer riskset(totsize)
 C      double precision covar(nn, antcov)
 C      integer strata(nn)
 
-      double precision beta(antcov), hazard(totrs)
+      double precision hazard(totrs)
 
 C +++ Work areas:
       double precision score(nn)

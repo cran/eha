@@ -134,10 +134,15 @@ weibreg <-
                        shape,
                        control,
                        center)
-    
-    fit$linear.predictors <- offset + X %*% fit$coefficients[1:ncov]
+
+    if (ncov){
+        fit$linear.predictors <- offset + X %*% fit$coefficients[1:ncov]
+        fit$means <- apply(X, 2, mean)
+    }else{
+        fit$linear.predictors <- NULL
+        fit$means <- NULL
+    }
     ##score <- exp(lp)
-    fit$means <- apply(X, 2, mean)
 
 
     if (!fit$fail){

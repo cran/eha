@@ -128,7 +128,7 @@ C +++ Second derivatives:
 
 C ***
 C
-      subroutine gmlfun(what, method,
+      subroutine gmlfun(what,
      &     totevent, totrs, ns, 
      &     antrs, antevents, size,
      &     totsize, eventset, riskset, 
@@ -173,7 +173,7 @@ C     +++
 
       implicit none
 
-      integer what, method
+      integer what
       integer totevent, totrs, ns, totsize, nn, antcov
       integer antrs(ns), antevents(totrs), size(totrs)
       integer eventset(totevent), riskset(totsize)

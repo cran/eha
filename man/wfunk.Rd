@@ -1,4 +1,3 @@
-\encoding{UTF-8}
 \name{wfunk}
 \alias{wfunk}
 %- Also NEED an '\alias' for EACH other topic documented here.
@@ -41,7 +40,7 @@ A list with components
   \item{fpp}{The negative of the hessian. Present if \code{ord >= 2}}
 }
 %\references{ }
-\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
+\author{\enc{Göran Broström}{George Bridgewater}}
 %\note{}
 
 \seealso{\code{\link{weibreg}}}
