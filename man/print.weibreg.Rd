@@ -3,7 +3,8 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Prints weibreg objects}
 \description{
-
+The hazard, the cumulative hazard, the density, and the survivor
+baseline functions are plotted. 
 }
 \usage{
 print.weibreg(x, digits = max(options()$digits - 4, 3), ...)

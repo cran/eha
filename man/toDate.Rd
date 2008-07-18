@@ -13,9 +13,7 @@ toDate(times)
 \arguments{
   \item{times}{a vector of durations}
 }
-\details{
 
-}
 \value{
 A vector of dates as character strings of the type "1897-05-21".
 }

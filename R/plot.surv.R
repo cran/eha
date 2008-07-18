@@ -28,7 +28,21 @@ plot.Surv <- function(x,
         enter <- rep(0, n)
         event <- x[, 2]
     }
-    
+
+    yVal <- function(x){
+        if (fn == "cum") return(cumsum(x))
+        if (fn %in% c("log", "loglog")) return(log(cumsum(x)))
+        n <- length(x)
+        s <- numeric(n)
+        s[1] <- 1 - x[1]
+        if (n > 1){
+            for (rs in 2:n){
+                s[rs] <- s[rs - 1] *(1 - x[rs])
+            }
+        }
+        return(s)
+    }
+
     n <- length(exit)
     if (is.null(strata)) group <- rep(1, n)
     else group <- strata
@@ -39,14 +53,14 @@ plot.Surv <- function(x,
         strata <- sort(unique(group))
     }
     noOfGroups <- length(strata)
-    if (noOfGroups > 1) limits <- FALSE 
-    
+    if (noOfGroups > 1) limits <- FALSE
+
     fn <- fn[1] # What type of plot?
     ##
-    
+
     times <- list()
     atoms <- list()
-    
+
     i <- 0
     ##if (is.null(xlim)){
         x.min <- min(enter)
@@ -62,20 +76,6 @@ plot.Surv <- function(x,
         y.min <- 1.e103
     }
 
-    yVal <- function(x){
-        if (fn == "cum") return(cumsum(x))
-        if (fn %in% c("log", "loglog")) return(log(cumsum(x)))
-        n <- length(x)
-        s <- numeric(n)
-        s[1] <- 1 - x[1]
-        if (n > 1){
-            for (rs in 2:n){
-                s[rs] <- s[rs - 1] *(1 - x[rs])
-            }
-        }
-        return(s)
-    }
-    
     for (stratum in strata){
         i <- i + 1
         atom <- table.events(enter[group == stratum],
@@ -144,7 +144,7 @@ plot.Surv <- function(x,
         ##cat("x = ", x, ", y = ", y, "\n")
         legend(x, y, legend = strata, bty = "n",
                lty = 1:noOfGroups,
-               col = 1:noOfGroups)            
+               col = 1:noOfGroups)
     }
 
     if (fn %in% c("surv", "cum") & x.axis) abline(h = 0)
@@ -176,6 +176,6 @@ plot.Surv <- function(x,
         ##lines(times[[1]], lower, type = "s", lty = 2, col = 2)
     }
 }
-    
-                                           
-            
+
+
+

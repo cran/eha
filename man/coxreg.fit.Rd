@@ -7,7 +7,8 @@ Called by \code{\link{coxreg}}, but a user can call it directly.
 }
 \usage{
 coxreg.fit(X, Y, rs, strats, offset, init, max.survs,
-method = "breslow", boot = FALSE, efrac = 0, calc.hazards = TRUE,
+method = "breslow", center = TRUE,
+boot = FALSE, efrac = 0, calc.hazards = TRUE,
 calc.martres = TRUE, control, verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -21,6 +22,7 @@ calc.martres = TRUE, control, verbose = TRUE)
   \item{max.survs}{Sampling of risk sets? If so, gives the maximum
     number of survivors in each risk set.}
   \item{method}{Either "efron" (default) or "breslow".}
+  \item{center}{See \code{\link{coxreg}}.}
   \item{boot}{Number of bootstrap replicates. Defaults to FALSE, no
     bootstrapping.}
   \item{efrac}{Upper limit of fraction failures in 'mppl'.}

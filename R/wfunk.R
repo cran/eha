@@ -1,22 +1,21 @@
 wfunk <- function(beta = NULL, lambda, p, X = NULL, Y,
                   offset = rep(0, length(Y)),
-                  ord = 2, pfixed = FALSE,
-                    trace = TRUE){
+                  ord = 2, pfixed = FALSE){
 
 ## Returns loglik, score, and information (=-fpp) 
 ## For one stratum (only)!!
 
-    
+  if (ord < 0) return(NULL)
     nn <- NROW(Y)
     if (NCOL(Y) == 2) Y <- cbind(rep(0, nn), Y)
     
     if (is.null(X)){
         if (pfixed){
             bdim <- 1
-            b <- log(lambda)
+            b <- -log(lambda)
         }else{
             bdim <- 2
-            b <- c(log(lambda), log(p))
+            b <- c(-log(lambda), log(p))
         }
         
         fit <- .Fortran("wfuncnull",
@@ -42,10 +41,10 @@ wfunk <- function(beta = NULL, lambda, p, X = NULL, Y,
         if (length(beta) != mb) stop("beta mis-specified!")
         if (pfixed){
             bdim <- mb + 1
-            b <- c(beta, log(lambda))
+            b <- c(beta, -log(lambda))
         }else{
             bdim <- mb + 2
-            b <- c(beta, log(lambda), log(p))
+            b <- c(beta, -log(lambda), log(p))
         }
         
         fit <- .Fortran("wfunc", ## Returns -loglik, -score, +information
@@ -71,13 +70,20 @@ wfunk <- function(beta = NULL, lambda, p, X = NULL, Y,
                         PACKAGE = "eha"
                         )
     }
+
+  ret <- list(f = -fit$f)
+    if (ord >= 1){
+      ## The delta method: (log(lambda) <--> -log(lambda):
+      xx <- rep(1, bdim)
+      xx[mb + 1] <- -1
+      ret$fp <- -xx * fit$fp
+      if (ord >= 2){
+        xx <- diag(xx)
+        ret$fpp <- xx %*% matrix(fit$fpp, ncol = bdim) %*% t(xx)
+      }
+    }
+
     
-    if (ord >= 2) fit$fpp <- matrix(fit$fpp, ncol = bdim)
-    if (ord <= 1) fit$fpp <- NULL
-    if (ord <= 0) fit$fp <- NULL
-    
-    list(f = -fit$f,   # NOTE!
-         fp = -fit$fp, # NOTE!
-         fpp = fit$fpp)
+  return(ret)
 }
            

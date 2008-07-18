@@ -124,7 +124,7 @@ C
 C     d:      total number of observed deaths.
 C     dy:     sum of d(i) * log[time(i)] over all individuals.
 C     dz:     dz(j)  is sum of z(j, i) * d(i) over
-C	      i (individuals), j = 1,...k.
+C            i (individuals), j = 1,...k.
 C +++
 C      if (iter .le. 1) then
       id = 0
@@ -139,7 +139,7 @@ C     call GetRec(j1, wtime, th0,
 C     $              wz, woffset, wcommun, wind, wstratum, wrank, ok)
 C            if (.not. ok) stop ' Error in getting record!!'
          if ( (ind(j1) .eq. 1) .and. (time(j1) .gt. zero) )then
-C	    if ((wind .eq. 1) .and. (wtime .gt. zero)) then
+C          if ((wind .eq. 1) .and. (wtime .gt. zero)) then
             id = id + 1
             dy = dy + log(time(j1))
             
@@ -157,7 +157,7 @@ C      endif
       bdz = zero
 
       do 10 j1 = 1, k
-	 bdz = bdz + b(j1) * dz(j1)
+         bdz = bdz + b(j1) * dz(j1)
    10 continue
 C ***
 C     Calculate f.
@@ -168,37 +168,37 @@ C ***
 C     If order > 0, calculate first derivatives.
 C ***
       if (ord1)  then
-	 do 20 j1 = 1, k
-	    fp(j1) = sz(j1) - dz(j1)
-   20	 continue
-	 fp(kp1) = p * (s - d)
-	 if (.not. pfixed) fp(kp2) = p * (alfa * s + sy) - d * (one +
-     +	      ap) - dy * p
+       do 20 j1 = 1, k
+          fp(j1) = sz(j1) - dz(j1)
+   20       continue
+       fp(kp1) = p * (s - d)
+       if (.not. pfixed) fp(kp2) = p * (alfa * s + sy) - d * (one +
+     +            ap) - dy * p
 
 
 C ***
 C     If order > 1, calculate second derivatives.
 C ***
-	 if (ord2)  then
-	    index = 0
+       if (ord2)  then
+          index = 0
 
-	    do 40 j2 = 1, k
-	       do 30 j1 = 1, j2
-		  index = index + 1
-C		  fpp(index) = szz(index)
-		  fpp(j1, j2) = szz(index)
-   30	       continue
-   40	    continue
+          do 40 j2 = 1, k
+             do 30 j1 = 1, j2
+              index = index + 1
+C              fpp(index) = szz(index)
+              fpp(j1, j2) = szz(index)
+   30             continue
+   40          continue
 
             do 50 j1 = 1, k
-	       index = index + 1
-C	       fpp(index) = p * sz(j1)
-	       fpp(j1, k+1) = p * sz(j1)
+             index = index + 1
+C             fpp(index) = p * sz(j1)
+             fpp(j1, k+1) = p * sz(j1)
    50       continue
 
-	    index = index + 1
-	    pps = p * s * p
-	    fpp(k + 1, k + 1) = pps
+          index = index + 1
+          pps = p * s * p
+          fpp(k + 1, k + 1) = pps
 
             if (.not. pfixed) then
                do 60 j1 = 1, k

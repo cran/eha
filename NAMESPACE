@@ -1,16 +1,31 @@
 useDynLib(eha)
 import(survival)
 import(graphics)
-export(age.window, cal.window, check.surv, coxreg,
-       coxreg.fit, cro, geome.fit,
-       hweibull, Hweibull, join.spells,
-       make.communal, mlreg, perstat, piecewise,
-       plot.Surv, plot.weibreg, print.coxreg, print.weibreg,
-       risksets, summary.coxreg, summary.weibreg, table.events,
-       toBinary, toDate, toTime, weibreg, weibreg.fit, wfunk)
+export(aftreg, aftreg.fit,
+       age.window, cal.window, check.dist, check.surv, coxreg,
+       coxreg.fit, cro,
+       dEV, dllogis, dgompertz, dmakeham,
+       geome.fit,
+       hEV, hllogis, hlnorm, hgompertz, hmakeham, hweibull,
+       HEV, Hllogis, Hlnorm, Hgompertz, Hmakeham, Hweibull,
+       join.spells, make.communal, mlreg, perstat, piecewise,
+       phfunc, phreg, phreg.fit,
+       pEV, pllogis, pgompertz, pmakeham,
+       plot.aftreg, plot.coxreg, plot.hazdata, plot.phreg,
+       plot.Surv, plot.weibreg,
+       print.aftreg, print.coxreg, print.phreg, print.weibreg,
+       qEV, qllogis, qgompertz, qmakeham, risksets,
+       rEV, rllogis, rgompertz, rmakeham,
+       summary.coxreg, summary.weibreg,
+       table.events, toBinary, toDate, toTime, weibreg, weibreg.fit, wfunk)
 S3method(plot, Surv)
+S3method(plot, coxreg)
 S3method(plot, weibreg)
+S3method(plot, phreg)
+S3method(plot, hazdata)
+S3method(print, aftreg)
 S3method(print, coxreg)
+S3method(print, phreg)
 S3method(print, weibreg)
 S3method(summary, coxreg)
 S3method(summary, weibreg)

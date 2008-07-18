@@ -195,7 +195,10 @@ void weibsup(int *iter, double *eps, int *printlevel,
     int fncount, grcount;
     double *xin;
     double Fmin;
-
+    /*    int zero = 0;
+    int two = 2;
+    double pfix = 1.0;
+    */
     ex = (Exts *)R_alloc(1, sizeof(Exts));
     mask = (int *)R_alloc(*bdim, sizeof(int));
     xin = (double *)R_alloc(*bdim, sizeof(double));
@@ -250,17 +253,48 @@ void weibsup(int *iter, double *eps, int *printlevel,
 
 /* Done with initial values; the same p and lambda in all strata. */
 
+    /* Temporary hack for check: */
 /*
+    for (i = 0; i < *bdim; i++) xin[i] = 0.1;
+    xin[*bdim - 2] = 0.0;
+    Fmin = we_fun(*bdim, xin, ex);
+    gwe_fun(*bdim, xin, dloglik, ex);
+    F77_CALL(wfunc)(&two, &zero, &pfix, bdim, ncov, xin,
+		    nn, covar, time0, time, ind, offset,
+		    &Fmin, dloglik, variance, &iok);
+    Rprintf("\n!!b = 0.1:\n");
+    Rprintf("f = %f\n", Fmin);
+    Rprintf("fp: ");
+    for (i = 0; i < *bdim; i++){
+	Rprintf("%f ", dloglik[i]);
+    }
+
+    Rprintf("\n\n fpp = \n");
+    for (i = 0; i < *bdim; i++){
+	for (j = 0; j < *bdim; j++){
+	    Rprintf("%f ", variance[j + *bdim * i]);
+	}
+	Rprintf("\n");
+    }
+*/
+/*
+    trace = 0;
     nmmin(*bdim, xin, beta, &Fmin, we_fun, 
 	  fail, *eps, *eps, ex, 
 	  1.0, 0.5, 2.0, trace,
 	  &fncount, maxiter);
+    trace = *printlevel;
 
     loglik[1] = -Fmin;
+    gwe_fun(*bdim, beta, dloglik, ex);
     Rprintf("\nEfter 'nmmin': loglik = %f\n", -Fmin);
+    Rprintf(" beta och dloglik:\n");
+    for (i = 0; i < *bdim; i++){
+	Rprintf("%f, %f\n", beta[i], dloglik[i]);
+    }
 */
 
-/* 'Mask out' the regresion coefficients: */
+/* 'Mask out' the regression coefficients: */
     for (i = 0; i < *ncov; i++){
 	mask[i] = 0;
     }
@@ -291,8 +325,18 @@ void weibsup(int *iter, double *eps, int *printlevel,
 	  ex, &fncount, &grcount, fail);
 
     if (trace)
-	Rprintf("\nAfter 'vmmin': loglik = %f\n", -Fmin);
+      Rprintf("\nAfter 'vmmin': loglik = %f\n", -Fmin);
     loglik[1] = -Fmin;
+
+    gwe_fun(*bdim, beta, dloglik, ex);
+    
+    if (trace){
+      Rprintf("\nEfter 'vmmin': loglik = %f\n", -Fmin);
+      Rprintf(" beta och dloglik:\n");
+      for (i = 0; i < *bdim; i++){
+	Rprintf("%f, %f\n", beta[i], dloglik[i]);
+      }
+    }
 
 /*
     ord = 1;
@@ -321,9 +365,21 @@ void weibsup(int *iter, double *eps, int *printlevel,
 		     beta, loglik + 1, dloglik,
 		     variance, ns, nstra,
 		     conver, fail);
+    if (trace){
+      Rprintf("Variance (in [weibreg]) after N-R:\n");
+      for (i = 0; i < *bdim; i++){
+	for (j = 0; j < *bdim; j++){
+	  Rprintf("%f ", variance[i + j * (*bdim)]);
+	}
+	Rprintf("\n");
+      }
 
+    Rprintf("Score: ");
+    for (i = 0; i < *bdim; i++) Rprintf("%f ", dloglik[i]);
+    Rprintf("\n");
+    }
     if (trace){
 	Rprintf("\nAfter Newton-Raphson: loglik = %f\n", loglik[1]);
 	Rprintf("fail = %d\n", *fail);
     }
-}
+ }

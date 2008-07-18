@@ -2,9 +2,11 @@
 #define COXFUN_H
 /*
 static double gam1_fun(double gam, void *info);
-
-static double get1_gam(RiskSet *risk);
 */
+
+void get1_gam(RiskSet *risk);
+
+
 void ml_rs(int what, RiskSet *risk,
 	   double *b, double e_frac,
 	   double *loglik, double *dloglik, double *d2loglik);

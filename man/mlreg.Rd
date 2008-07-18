@@ -3,13 +3,14 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ML proportional hazards regression}
 \description{
-  Maximum Likelihood estimation of proportional hazards models.
+  Maximum Likelihood estimation of proportional hazards models. Is
+  deprecated, use \code{coxreg} instead.
 }
 \usage{
 mlreg(formula = formula(data), data = parent.frame(),
 na.action = getOption("na.action"), init=NULL, method = c("ML", "MPPL"),
 control = list(eps = 1e-08, maxiter = 10, n.points = 12, trace = FALSE),
-singular.ok = TRUE, model = FALSE,
+singular.ok = TRUE, model = FALSE, center = TRUE,
 x = FALSE, y = TRUE, boot = FALSE, geometric = FALSE,
 rs=NULL, frailty = NULL, max.survs=NULL)
 }
@@ -36,6 +37,7 @@ rs=NULL, frailty = NULL, max.survs=NULL)
     change any component without mention the other(s).}
   \item{singular.ok}{Not used.}
   \item{model}{Not used.}
+  \item{center}{Should covariates be centered? Default is TRUE}
   \item{x}{Return the design matrix in the model object?}
   \item{y}{return the response in the model object?}
   \item{boot}{No. of bootstrap replicates. Defaults to FALSE, i.e., no
@@ -99,11 +101,15 @@ A list of class \code{c("mlreg", "coxreg", "coxph")} with components
   that it depends on stratification, so \code{rs} contains information
   about stratification. Giving another strata variable in the formula is
   an error. The same is ok, for instance to supply stratum
-  interactions.}
+  interactions.
+
+  Note futher that \code{mlreg} is deprecated. \code{\link{coxreg}}
+  should be used instead.
+}
 \section{Warning}{The use of \code{rs} is dangerous, see note above. It
   can however speed up computing time.} 
 
-\seealso{\code{\link[survival]{coxph}}, \code{\link{risksets}}}
+\seealso{\code{\link{coxreg}}, \code{\link{risksets}}}
 \examples{
 
  dat <- data.frame(time=  c(4, 3,1,1,2,2,3),

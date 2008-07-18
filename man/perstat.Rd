@@ -17,9 +17,7 @@ perstat(surv, period, age = c(0, 200))
   \item{period}{A vector of dates (in decimal form)}
   \item{age}{A vector of length 2; lowest and highest age}
 }
-\details{
- 
-}
+
 \value{
 A list with components
   \item{events}{No. of events in eavh time period.}

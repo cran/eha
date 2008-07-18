@@ -1,22 +1,42 @@
+aftreg                  Accelerated Failure Time Regression
+aftreg.fit              Parametric proportional hazards regression
 age.window              Age cut of survival data
 cal.window              Calendar time cut of survival data
+check.dist              Graphical goodness-of-fit test
 check.surv              Check the integrity of survival data.
 coxreg                  Cox regression
 coxreg.fit              Cox regression
 cro                     Creates a minimal representation of a data
                         frame.
+EV                      The EV Distribution
 geome.fit               Constant intensity discrete time proportional
                         hazards
+Gompertz                The Gompertz-Gompertz Distribution
 hweibull                The (Cumulative) Hazard Function of a Weibull
                         Distribution
 join.spells             Straighten up a survival data frame
+Llogis                  The Loglogistic Distribution
+Lnorm                   The Lognormal Distribution
 make.communal           Put communals in "fixed" data frame
+Makeham                 The Gompertz-Makeham Distribution
+male.mortality          Male mortality in ages 40-60, nineteenth
+                        century
 mlreg                   ML proportional hazards regression
 perstat                 Period statistics
+phfunc                  Loglihood function of a proportional hazards
+                        regression
+phreg                   Parametric Proportional Hazards Regression
+phreg.fit               Parametric proportional hazards regression
 piecewise               Piecewise hazards
+plot.aftreg             Plots output from a Weibull regression
+plot.coxreg             Plots of survivor functions.
+plot.hazdata            Plots of survivor functions.
+plot.phreg              Plots output from a Weibull regression
 plot.Surv               Plots of survivor functions.
 plot.weibreg            Plots output from a Weibull regression
+print.aftreg            Prints aftreg objects
 print.coxreg            Prints coxreg objects
+print.phreg             Prints phreg objects
 print.weibreg           Prints weibreg objects
 risksets                Finds the compositions and sizes of risk sets
 summary.coxreg          Prints coxreg objects

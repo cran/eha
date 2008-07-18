@@ -6,14 +6,14 @@
 Just a simple plot of the hazard functions for each stratum.
 }
 \usage{
-plot.weibreg(x, what = c("haz", "cum", "den", "sur"), main = NULL,
+plot.weibreg(x, fn = c("haz", "cum", "den", "sur"), main = NULL,
 xlim = NULL, ylim = NULL, xlab = NULL, ylab = NULL,
 new.data = x$means, ...)
 }
 
 \arguments{
   \item{x}{A \code{weibreg} object}
-  \item{what}{Which functions shoud be plotted! Default is all. They
+  \item{fn}{Which functions shoud be plotted! Default is all. They
     will scroll by, so you have to take care explicitely what you want
     to be produced. See, eg, \code{par(mfrow = ...)}}
   \item{main}{Header for the plot}
