@@ -1,11 +1,12 @@
 coxreg <- function (formula = formula(data),
-                    data = parent.frame(), 
+                    data = parent.frame(),
                     na.action = getOption("na.action"),
                     init = NULL,
                     method = c("efron", "breslow", "mppl", "ml"),
                     control = list(eps = 1e-8, maxiter = 25, trace = FALSE),
                     singular.ok = TRUE,
-                    model = FALSE, 
+                    model = FALSE,
+                    center = TRUE,
                     x = FALSE,
                     y = TRUE,
                     boot = FALSE,
@@ -13,7 +14,7 @@ coxreg <- function (formula = formula(data),
                     geometric = NULL,
                     rs = NULL,
                     frailty = NULL,
-                    max.survs = NULL) 
+                    max.survs = NULL)
 {
     if (!is.null(frailty))
       stop("Frailty not implemented yet.")
@@ -22,9 +23,9 @@ coxreg <- function (formula = formula(data),
     m <- match.call(expand.dots = FALSE)
     temp <- c("", "formula", "data", "na.action")
     m <- m[match(temp, names(m), nomatch = 0)]
- 
+
     special <- "strata"
-    Terms <- if (missing(data)) 
+    Terms <- if (missing(data))
         terms(formula, special)
     else terms(formula, special, data = data)
     m$formula <- Terms
@@ -32,15 +33,15 @@ coxreg <- function (formula = formula(data),
     m <- eval(m, parent.frame())
 
     Y <- model.extract(m, "response")
-    if (!inherits(Y, "Surv")) 
+    if (!inherits(Y, "Surv"))
         stop("Response must be a survival object")
     if (is.null(max.survs)) max.survs <- NROW(Y)
     weights <- model.extract(m, "weights")
     offset <- attr(Terms, "offset")
     tt <- length(offset)
-    offset <- if (tt == 0) 
+    offset <- if (tt == 0)
         rep(0, nrow(Y))
-    else if (tt == 1) 
+    else if (tt == 1)
         m[[offset]]
     else {
         ff <- m[[offset[1]]]
@@ -54,16 +55,16 @@ coxreg <- function (formula = formula(data),
     if (length(strats)) {
         temp <- untangle.specials(Terms, "strata", 1)
         dropx <- c(dropx, temp$terms)
-        if (length(temp$vars) == 1) 
+        if (length(temp$vars) == 1)
             strata.keep <- m[[temp$vars]]
         else strata.keep <- strata(m[, temp$vars], shortlabel = TRUE)
         strats <- as.numeric(strata.keep)
     }
-    if (length(dropx)) 
+    if (length(dropx))
         newTerms <- Terms[-dropx]
     else newTerms <- Terms
     X <- model.matrix(newTerms, m)
-    assign <- lapply(attrassign(X, newTerms)[-1], function(x) x - 
+    assign <- lapply(attrassign(X, newTerms)[-1], function(x) x -
         1)
     X <- X[, -1, drop = FALSE]
 
@@ -84,10 +85,10 @@ coxreg <- function (formula = formula(data),
             }else{
                 isF[i] <- ( is.factor(m[, (i + 1)]) ||
                            is.logical(m[, (i + 1)]) )
-            }      
+            }
         }
     }
-    
+
     if (any(isF)){
         levels <- list()
         index <- 0
@@ -109,21 +110,21 @@ coxreg <- function (formula = formula(data),
 
     ##########################################
     type <- attr(Y, "type")
-    if (type != "right" && type != "counting") 
-      stop(paste("Cox model doesn't support \"", type, "\" survival data", 
+    if (type != "right" && type != "counting")
+      stop(paste("Cox model doesn't support \"", type, "\" survival data",
                  sep = ""))
-    
+
     if (NCOL(Y) == 2){
         Y <- cbind(numeric(NROW(Y)), Y)
     }
-    
+
     n.events <- sum(Y[, 3] != 0)
     if (n.events == 0) stop("No events; no sense in continuing!")
 
     if ((!is.null(init)) && (length(init) != NCOL(X)))
       stop("Wrong length of 'init'")
-    
-    
+
+
     if (is.list(control)){
         if (is.null(control$eps)) control$eps <- 1e-8
         if (is.null(control$maxiter)) control$maxiter <- 10
@@ -131,7 +132,7 @@ coxreg <- function (formula = formula(data),
     }else{
         stop("control must be a list")
     }
-    
+
     fit <- coxreg.fit(X,
                       Y,
                       rs,
@@ -140,6 +141,7 @@ coxreg <- function (formula = formula(data),
                       init,
                       max.survs,
                       method,
+                      center,
                       boot,
                       efrac,
                       calc.hazards = TRUE,
@@ -160,9 +162,9 @@ coxreg <- function (formula = formula(data),
     fit$conver <- NULL ## Ugly!
     fit$f.convergence <- as.logical(fit$f.conver)
     fit$f.conver <- NULL
-###########################################################################    
+###########################################################################
 ## Crap dealt with ......
-    
+
     if (is.character(fit)) {
         fit <- list(fail = fit)
         class(fit) <- "coxreg"
@@ -170,9 +172,9 @@ coxreg <- function (formula = formula(data),
     else if (fit$fail){
         if (length(fit$coef) && any(is.na(fit$coef))) {
             vars <- (1:length(fit$coef))[is.na(fit$coef)]
-            msg <- paste("X matrix deemed to be singular; variable", 
+            msg <- paste("X matrix deemed to be singular; variable",
                 paste(vars, collapse = " "))
-            if (singular.ok) 
+            if (singular.ok)
                 warning(msg)
             else stop(msg)
         }
@@ -183,27 +185,27 @@ coxreg <- function (formula = formula(data),
         if (FALSE){ ## Out-commented
         if (length(fit$coef) && is.null(fit$wald.test)) {
             nabeta <- !is.na(fit$coef)
-            if (is.null(init)) 
+            if (is.null(init))
                 temp <- fit$coef[nabeta]
             else temp <- (fit$coef - init)[nabeta]
-            fit$wald.test <- survival:::coxph.wtest(fit$var[nabeta, nabeta], 
+            fit$wald.test <- survival:::coxph.wtest(fit$var[nabeta, nabeta],
                 temp, control$toler.chol)$test
         }
     }
         na.action <- attr(m, "na.action")
-        if (length(na.action)) 
+        if (length(na.action))
             fit$na.action <- na.action
-        if (model) 
+        if (model)
             fit$model <- m
         if (x) {
             fit$x <- X
-            if (length(strats)) 
+            if (length(strats))
                 fit$strata <- strata.keep
         }
-        if (y) 
+        if (y)
             fit$y <- Y
     }
-    ##if (!is.null(weights) && any(weights != 1)) 
+    ##if (!is.null(weights) && any(weights != 1))
     ##    fit$weights <- weights
 
     ##########################################

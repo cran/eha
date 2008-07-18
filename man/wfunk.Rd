@@ -9,7 +9,7 @@ derivatives for data from a Weibull regression model. Is called by
 }
 \usage{
 wfunk(beta = NULL, lambda, p, X = NULL, Y, offset = rep(0, length(Y)),
-ord = 2, pfixed = FALSE, trace = TRUE)
+ord = 2, pfixed = FALSE)
 }
 
 \arguments{
@@ -22,8 +22,8 @@ ord = 2, pfixed = FALSE, trace = TRUE)
   \item{ord}{ord = 0 means only loglihood, 1 means score vector as well,
   2 loglihood, score and hessian.}
   \item{pfixed}{Logical, if TRUE the shape parameter is regarded as a known
-  constant in the calculations.}
-  \item{trace}{If TRUE, more verbose output.}
+  constant in the calculations, meaning that it is not cosidered in the
+  partial derivatives.}
 }
 \details{
 Note that the function returns log likelihood, score vector

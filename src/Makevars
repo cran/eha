@@ -1,4 +1,4 @@
 ##PKG_CFLAGS = -Wall
-##PKG_FFLAGS = -Wall -ffortran-bounds-check
+##PKG_FFLAGS = -Wall ## -ffortran-bounds-check
 PKG_LIBS = $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS)
 

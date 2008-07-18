@@ -42,7 +42,7 @@ C      else
 C         epy = exp(250.d0)
 C      endif
       
-C     FY:	    if (ind(i) .eq. 2) epy = -epy
+C     FY:          if (ind(i) .eq. 2) epy = -epy
       if (wind .eq. 2) epy = -epy
               
       s = s + epy
@@ -117,15 +117,15 @@ C +++ Local:
       syy = zero
 
 C      do 10 j1 = 1, k
-C	 sz(j1) = zero
-C	 syz(j1) = zero
+C       sz(j1) = zero
+C       syz(j1) = zero
 C   10 continue
       call dcopy(k, zero, 0, sz, 1)
       call dcopy(k, zero, 0, syz, 1)
 
       index = k * (k + 1) / 2 
 C      do 20 j1 = 1, index
-C	 szz(j1) = zero
+C       szz(j1) = zero
 C   20 continue
       call dcopy(index, zero, 0, szz, 1)
 
@@ -133,7 +133,7 @@ C   20 continue
 C         call GetRec(i, wtime, th0,
 C     $              wz, woffset, wcommun, wind, wstratum, wrank, ok)
          wtime = time0(i)
-	 if  (wtime .gt. zero) then
+         if  (wtime .gt. zero) then
             wind = 2
             call update_sums(ord1, ord2, k, wind, wtime, z(1, i),
      &           offset(i), pfixed, p, alfa, b,

@@ -1,27 +1,28 @@
 coxreg.fit <- function(X, Y, rs, strats, offset, init, max.survs,
-                       method = "breslow", boot = FALSE, efrac = 0,
+                       method = "breslow", center = TRUE,
+                       boot = FALSE, efrac = 0,
                        calc.hazards = TRUE, calc.martres = TRUE,
                        control, verbose = TRUE){
 
     nn <- NROW(X)
     ncov <- NCOL(X)
 
-    if (missing(strats) || is.null(strats)) 
+    if (missing(strats) || is.null(strats))
       strats <- rep(1, nn)
 
     if (missing(rs) || is.null(rs)){
         rs <- risksets(Y, strata = strats, max.survs)
     }
 
-    
+
     if (max(rs$riskset) > nn) stop("Riskset does not match data")
-    
-    if (missing(offset) || is.null(offset)) 
+
+    if (missing(offset) || is.null(offset))
       offset <- rep(0, nn)
-    
-    if (missing(init) || is.null(init)) 
+
+    if (missing(init) || is.null(init))
       init <- rep(0, ncov)
-    
+
     if (missing(control)){
         control <- list(eps=1.e-8, maxiter = 10, trace = FALSE)
     }else{
@@ -37,18 +38,20 @@ coxreg.fit <- function(X, Y, rs, strats, offset, init, max.survs,
         }
         if (!is.logical(control$trace)) stop("control$trace must be logical")
     }
-    
-    nullModel <- NCOL(X) == 0
-    
+
+    nullModel <- (ncov == 0)
+
     if (nullModel){
-        cat("nullModel!!!!!!!!!!!!!!!!!!!!!\n")
         ## faking a simple model with no iterations
         ncov <- 0
         X <- matrix(0, ncol = 1, nrow = nn)
         control$maxiter <- 0
         init <- 0
+        means <- NULL
+    }else{
+        means = apply(X, 2, mean)
     }
-    
+
     printlevel <- control$trace
     ## NOTE: silent == TRUE ===> printlevel = 0
     iter <- control$maxiter
@@ -61,11 +64,13 @@ coxreg.fit <- function(X, Y, rs, strats, offset, init, max.survs,
     else if (method[1] == "ml")
       meth <- 3
     else
-      stop(paste("Unknown method", as.character(method[1]))) 
+      stop(paste("Unknown method", as.character(method[1])))
 
     boot <- abs(as.integer(boot))
 
-    if (!nullModel){
+    if (center) X <- scale(X, center = TRUE, scale = FALSE)
+
+    ## if (!nullModel){
         fit <- .C("sup",
                   as.integer(meth),
                   iter = as.integer(iter), #maxit on input, actual on output
@@ -87,7 +92,7 @@ coxreg.fit <- function(X, Y, rs, strats, offset, init, max.survs,
                   as.integer(nn),
                   as.integer(ncov),
                   ## Note here; X is transposed! From 2007-04-16 (0.99)
-                  as.double(t(scale(X, center = TRUE, scale = FALSE))),
+                  as.double(t(X)),
                   as.double(offset),
                                         #
                   as.double(init),     # 'start.beta'
@@ -106,19 +111,34 @@ coxreg.fit <- function(X, Y, rs, strats, offset, init, max.survs,
                   fail = integer(1),
                   DUP = FALSE,
                   PACKAGE = "eha")
-    
-        bootstrap <- NULL
-        boot.sd <- NULL
-        if (boot & (fit$fail == 0)){
-            
-            bootstrap <- matrix(fit$beta[(ncov + 1):((boot + 1) * ncov)],
-                                nrow = ncov, ncol = boot)
-            boot.sd <- matrix(fit$sd.beta[(ncov + 1):((boot + 1) * ncov)],
-                              nrow = ncov, ncol = boot)
-            fit$beta <- fit$beta[1:ncov]
-            fit$sd.beta <- fit$sd.beta[1:ncov]
-        }   
-    }else{ # if nullModel
+
+    if (FALSE){ # Not for the moment...
+        score.means <- exp(sum(means * fit$beta[1:ncov]))
+        haz.mean <- 1 - (1 - fit$hazard)^score.means
+    }else{
+        haz.mean <- fit$hazard
+    }
+    hazards <- list()
+    stopp <- cumsum(rs$antrs)
+    startt <- c(1, 1 + stopp[-length(rs$antrs)])
+    for (i in 1:length(rs$antrs)){
+        hazards[[i]] <- cbind(rs$risktimes[startt[i]:stopp[i]],
+                              haz.mean[startt[i]:stopp[i]])
+    }
+
+    class(hazards) <- "hazdata"
+    bootstrap <- NULL
+    boot.sd <- NULL
+    if (boot & (fit$fail == 0)){
+
+        bootstrap <- matrix(fit$beta[(ncov + 1):((boot + 1) * ncov)],
+                            nrow = ncov, ncol = boot)
+        boot.sd <- matrix(fit$sd.beta[(ncov + 1):((boot + 1) * ncov)],
+                          nrow = ncov, ncol = boot)
+        fit$beta <- fit$beta[1:ncov]
+        fit$sd.beta <- fit$sd.beta[1:ncov]
+    }
+    if (FALSE) { # if nullModel
         X <- matrix(0, ncol = 0, nrow = nn)
         fit <- list(beta = numeric(0),
                     conver = TRUE,
@@ -126,7 +146,7 @@ coxreg.fit <- function(X, Y, rs, strats, offset, init, max.survs,
         ncov <- 0
         bootstrap <- NULL
         boot.sd <- NULL
-        
+
     }
     if (fit$fail){
         out <- paste("Singular hessian; suspicious variable No. ",
@@ -144,8 +164,8 @@ coxreg.fit <- function(X, Y, rs, strats, offset, init, max.survs,
               warning("log likelihood converged, but not variables")
         }
     }
-    
-    if (calc.hazards && (!fit$fail)){
+
+    if (FALSE){ ##(calc.hazards && (!fit$fail)){
         score <- exp(X %*% fit$beta)
         hazard <- .Fortran("hazards",
                            as.integer(sum(rs$antrs)),  ## total No. of risksets
@@ -167,11 +187,12 @@ coxreg.fit <- function(X, Y, rs, strats, offset, init, max.survs,
                            DUP = FALSE,
                            PACKAGE = "eha"
                            )$hazard
-    }else{ #if not calc.hazards or fail
-        hazard <- NULL
+        ##}else{ #if not calc.hazards or fail
+        hazards <- NULL
     }
-    
+
     if (calc.martres && (!nullModel)){
+        score <- exp(X %*% fit$beta)
         resid <- .Fortran("martres",
                           as.integer(sum(rs$antrs)),
                           as.integer(length(rs$antrs)),
@@ -186,7 +207,7 @@ coxreg.fit <- function(X, Y, rs, strats, offset, init, max.survs,
                           as.integer(nn),
                           ##
                           as.double(score),  # 'score'
-                          as.double(hazard),
+                          as.double(fit$hazard),
                           resid = double(nn),
                           DUP = FALSE,
                           PACKAGE = "eha"
@@ -194,7 +215,7 @@ coxreg.fit <- function(X, Y, rs, strats, offset, init, max.survs,
     }else{
         resid <- NULL
     }
-    
+
     if ((!fit$fail) && (!nullModel))
       var <- matrix(fit$variance, ncov, ncov)
     else
@@ -209,14 +230,15 @@ coxreg.fit <- function(X, Y, rs, strats, offset, init, max.survs,
          linear.predictors = X %*% fit$beta,
          residuals = resid,
          noOfRisksets = rs$antrs,
-         risktimes = rs$risktimes,
-         hazard = hazard,
-         means = apply(X, 2, mean),
+         ##risktimes = rs$risktimes,
+         ##hazard = hazard,
+         hazards = hazards,
+         means = means,
          bootstrap = bootstrap,
          boot.sd = boot.sd,
          conver = fit$conver,
          f.conver = fit$f.conver,
          fail = fit$fail,
          iter = fit$iter
-         )    
+         )
 }

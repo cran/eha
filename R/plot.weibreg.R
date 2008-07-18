@@ -1,5 +1,5 @@
 plot.weibreg <- function(x,
-                         what = c("haz", "cum", "den", "sur"),
+                         fn = c("haz", "cum", "den", "sur"),
                          main = NULL,
                          xlim = NULL,
                          ylim = NULL,
@@ -9,7 +9,10 @@ plot.weibreg <- function(x,
                          ...){
     if (!inherits(x, "weibreg")) stop("Works only with 'weibreg' objects.")
     ##if (x$pfixed) stop("True exponential hazards are not plotted")
-    if (length(what) == 4){
+    if (!(fn %in% c("haz", "cum", "den", "sur")))
+        stop(paste(fn, "is an illegal value of 'fn'"))
+
+    if (length(fn) == 4){
         oldpar <- par(mfrow = c(2, 2))
         on.exit(par(oldpar))
     }
@@ -28,19 +31,19 @@ plot.weibreg <- function(x,
     }
     if (is.null(xlim))
         xlim <- c(min(x$y[, 1]), max(x$y[, 2]))
-    
+
     npts <- 999
     xx <- seq(xlim[1], xlim[2], length = npts)
     ##if (xx[1] <= 0) xx[1] <- 0.001
 
 
     ## hazard
-    if ("haz" %in% what){
+    if ("haz" %in% fn){
         haz <- matrix(ncol = npts, nrow = ns)
         for (i in 1:ns){
             haz[i, ] <- hweibull(xx, scale = lambda[i], shape = p[i])
         }
-        
+
         if (is.null(ylim)) ylim <- c(0, max(haz))
         if (min(p) < 1) ylim[2] <- min(ylim[2], max(haz[, -1]))
 
@@ -58,10 +61,10 @@ plot.weibreg <- function(x,
         abline(v = 0)
     }
     ## Cumulative hazard
-    if ("cum" %in% what){
+    if ("cum" %in% fn){
 
         Haz <- matrix(ncol = npts, nrow = ns)
-        
+
     ##if (is.null(ylim))
         for (i in 1:ns){
             Haz[i, ] <- Hweibull(xx, scale = lambda[i], shape = p[i])
@@ -84,7 +87,7 @@ plot.weibreg <- function(x,
         abline(v = 0)
     }
     ## density
-    if ("den" %in% what){
+    if ("den" %in% fn){
 
         den <- matrix(ncol = npts, nrow = ns)
         for (i in 1:ns){
@@ -113,7 +116,7 @@ plot.weibreg <- function(x,
         abline(v = 0)
     }
     ## Survivor function
-    if ("sur" %in% what){
+    if ("sur" %in% fn){
 
 
         sur <- matrix(ncol = npts, nrow = ns)
@@ -121,10 +124,10 @@ plot.weibreg <- function(x,
             sur[i, ] <- pweibull(xx, scale = lambda[i], shape = p[i],
                                  lower.tail = FALSE)
         }
-        
+
         ##if (is.null(ylim))
         ylim <- c(0, 1)
-        
+
         ##if (is.null(xlab))
         xlab <- "Duration"
         ##if (is.null(ylab))

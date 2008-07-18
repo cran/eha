@@ -220,10 +220,10 @@ static void fill_in(RiskSet *risks,
 		    int *antevents,
 		    int *eventset,
 		    int *size,
-		    int *riskset){
+		    int *riskset,
+		    double *hazard){
 
     int str, rs, j, eindx, rindx;
-    double hazard;
 
     rs = -1;
     eindx = 0;
@@ -238,11 +238,14 @@ static void fill_in(RiskSet *risks,
 	    /* if (risks[rs].antevents == risks[rs].size){ */
 	    if (1 == risks[rs].size){
 		risks[rs].out = 1;
+		risks[rs].hazard = 1.0;
+		hazard[rs] = 1.0;
+		/* warning("[fill_in] Risk set of size 1."); */ 
 	    }else{
 		risks[rs].out = 0;
-		hazard = (double)antevents[rs] /
+		hazard[rs] = (double)antevents[rs] /
 		    (double)size[rs];
-		risks[rs].gamma = log(-log1p(-hazard));
+		risks[rs].gamma = log(-log1p(-hazard[rs]));
 	    }
 	    eindx += risks[rs].antevents;
 	    rindx += risks[rs].size;
@@ -336,7 +339,7 @@ C +++
 
     int what;
 
-    int itmax, j;
+    int itmax, i, j, indx;
 
     double zero = 0.0;
     double one = 1.0;
@@ -387,8 +390,15 @@ C +++
 /* Fill in risk sets: */    
     risks = (RiskSet *)R_alloc((long)(*totrs), sizeof(RiskSet));
 
-    fill_in(risks, *ns, antrs, antevents, eventset, size, riskset);
+    fill_in(risks, *ns, antrs, antevents, eventset, size, riskset, hazard);
  
+    /* Enough if no covariates! */
+    if (p <= 0) {
+	*conver = 1;
+	*f_conver = 1;
+	*fail = 0;
+	return;
+    }
 
 /***************************/
 /*    if (*meth <= 1){
@@ -469,7 +479,15 @@ C +++
     }else{
 	F77_CALL(dcopy)(&p2, d2ll, &ione, variance, &ione);
 	/* Fill in 'hazard': */
-	fill_haz(*totrs, risks);
+	indx = -1;
+	for (i = 0; i < *ns; i++){
+	    for (j = 0; j < antrs[i]; j++){
+		indx++;
+		get1_gam(risks + indx);
+		hazard[indx] <- risks[indx].hazard;
+	    }
+	}
+	/* fill_haz(*totrs, risks); */
 	/* Get the se(beta): */
 	for (j = 0; j < p; j++){
 	    sd_beta[j] = sqrt(d2ll[(p + 1) * j]);

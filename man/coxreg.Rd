@@ -12,6 +12,7 @@ na.action = getOption("na.action"), init = NULL,
 method = c("efron", "breslow", "mppl", "ml"),
 control = list(eps = 1e-08, maxiter = 25, trace = FALSE),
 singular.ok = TRUE, model = FALSE,
+center = TRUE,
 x = FALSE, y = TRUE, boot = FALSE, efrac = 0,
 geometric = NULL, rs = NULL,
 frailty = NULL, max.survs = NULL)
@@ -35,6 +36,8 @@ frailty = NULL, max.survs = NULL)
     change any component without mention the other(s).}
   \item{singular.ok}{Not used}
   \item{model}{Not used}
+  \item{center}{If TRUE, the hazards are calculated at the means of the
+    covariates. If FALSE,  at zero.}
   \item{x}{Return the design matrix in the model object?}
   \item{y}{return the response in the model object?}
   \item{rs}{Risk set?}
@@ -86,7 +89,9 @@ A list of class \code{c("coxreg", "coxph")} with components
   \item{convergence}{Did the optimization converge?}
   \item{fail}{Did the optimization fail? (Is \code{NULL} if not).}
 }
-\references{}
+\references{Broström, G. and Lindkvist, M. (2008). Partial partial
+  likelihood. Communications in Statistics: Simulation and Computation
+  37:4, 679-686.}
 
 \author{\enc{Göran Broström}{George Bridgewater}}
 

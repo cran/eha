@@ -40,7 +40,8 @@ toBinary <- function(dat,
     rs$ev <- ev
 
     out <- data.frame(event = rs$ev,
-                      riskset = factor(rep(1:length(rs$size), rs$size))
+                      riskset = factor(rep(1:length(rs$size), rs$size)),
+                      risktime = rep(rs$risktimes[weg], rs$size)
                       )
                       
     out <- cbind(out, covars[rs$riskset, , drop = FALSE])

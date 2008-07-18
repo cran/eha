@@ -22,11 +22,11 @@ Interval lengths must be strictly positive.
 \value{
 A vector of id's for the insane individuals. Of zero length if no errors.
 }
-\references{}
+%\references{}
 
 \author{\enc{Göran Broström}{George Bridgewater}}
 
-\note{}
+%\note{}
 
 \seealso{\code{\link{join.spells}}, \code{\link{coxreg}}, \code{\link{mlreg}}}
 \examples{

@@ -31,8 +31,8 @@ See the code.
 \note{Nothing special}
 
 \seealso{\code{\link{mlreg}}}
-\examples{
+%\examples{
 
-}
+%}
 \keyword{survival}
 

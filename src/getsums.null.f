@@ -75,19 +75,19 @@ C +++ Local:
       syy = zero
 
 C      do 10 j1 = 1, k
-C	 sz(j1) = zero
-C	 syz(j1) = zero
+C       sz(j1) = zero
+C       syz(j1) = zero
 C   10 continue
 
 C      do 20 j1 = 1, index
-C	 szz(j1) = zero
+C       szz(j1) = zero
 C   20 continue
 
       do 100 i = 1, nn
 C         call GetRec(i, wtime, th0,
 C     $              wz, woffset, wcommun, wind, wstratum, wrank, ok)
          wtime = time0(i)
-	 if  (wtime .gt. zero) then
+       if  (wtime .gt. zero) then
             wind = 2
             call update_null(ord1, ord2, wind, wtime,
      &           pfixed, p, alfa, 

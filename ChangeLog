@@ -1,3 +1,15 @@
+1.2-0	(Jul 18, 2008)
+
+	* Added functionality: Accelerated failure time models with 
+	several distributions, parametric proportional hazards models 
+	with the same distributions. All models allow for left truncated 
+	and right censored data, as well as for stratification. 
+	Plot methods for the new models.  
+
+1.0-1	(Jan 5, 2008) 
+
+	* Added 'risktime' to toBinary output.
+
 0.99	(June 9, 2007) This is the last release before version 1.0!
 	
 	* Added full profiling to the "ml" and "mppl" methods in

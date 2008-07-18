@@ -34,6 +34,7 @@ strats, max.survs = NROW(dat))
   \item{event}{Indicates an event in the corresponding risk set.}
   \item{riskset}{Factor (with levels 1, 2, \ldots) indicating risk
   set.}
+  \item{risktime}{The 'risktime' (age) in the corresponding riskset.}
   \item{orig.row}{The row number for this item in the original data frame.}
 }
 \references{ ~put references to the literature/web site here ~ }

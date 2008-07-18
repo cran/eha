@@ -134,20 +134,20 @@ C ***
 C     If order > 0, calculate first derivatives.
 C ***
       if (ord1)  then
-	 fp(1) = p * (s - d)
-	 if (.not. pfixed) fp(2) = p * (alfa * s + sy) - d * (one +
-     +	      ap) - dy * p
+       fp(1) = p * (s - d)
+       if (.not. pfixed) fp(2) = p * (alfa * s + sy) - d * (one +
+     +            ap) - dy * p
 
 
 C ***
 C     If order > 1, calculate second derivatives.
 C ***
-	 if (ord2)  then
-	    index = 0
+       if (ord2)  then
+          index = 0
 
-	    index = index + 1
-	    pps = p * s * p
-	    fpp(1, 1) = pps
+          index = index + 1
+          pps = p * s * p
+          fpp(1, 1) = pps
 
             if (.not. pfixed) then
                ppsy = p * sy * p

@@ -1,5 +1,6 @@
 #include <R.h>
 #include <R_ext/BLAS.h>
+#include <Rmath.h>
 #include "sup.h"
 #include "eha_zeroin.h"
 #include "coxfun.h"
@@ -17,7 +18,7 @@ static double gam1_fun(double gam, void *info){
     dg = 0.0;
     for (i = 0; i < risk->size; i++){
 	who = risk->riskset[i];
-	s = score[who];
+	s = score[who]; /* 'score' is global. */
 	dg += s;
     }
 
@@ -32,7 +33,8 @@ static double gam1_fun(double gam, void *info){
     return(-dg);
 }
 
-static double get1_gam(RiskSet *risk){
+/* static double get1_gam(RiskSet *risk){ An error?! */
+void get1_gam(RiskSet *risk){
 
     /* Binomial, cloglog link */
     int i, itmax;
@@ -47,19 +49,30 @@ static double get1_gam(RiskSet *risk){
 
 
     if (risk->size == risk->antevents) {
-	warning("gamma infinite");
-	return(1000.0);
+	if (!(risk->out))
+	    warning("[get1_gam] gamma positive infinite");
+	risk->gamma = 1000.0;
+	risk->hazard = 1.0;
+	return;
+    }else if (risk->size == 1){
+	if (!(risk->out))
+	    warning("[get1_gam] gamma negative infinite");
+	risk->gamma = -1000;
+	risk->hazard = 0.0;
+	return;
     }
 
     itmax = 25;
     eps = 0.000001;
 
-    
+    risk->tot_score = 0.0;
     who = risk->riskset[0];
+    risk->tot_score += score[who];
     gmin = lin[who];
     gmax = gmin;
     for (i = 1; i < risk->size; i++){
 	who = risk->riskset[i];
+	risk->tot_score += score[who];
 	what = lin[who];
 	if (what < gmin){ 
 	    gmin = what;
@@ -67,21 +80,31 @@ static double get1_gam(RiskSet *risk){
 	    if (what > gmax) gmax = what;
 	}
     }
-    gam = log(-log1p(-(double)(risk->antevents) / 
-		     (double)(risk->size)) ); /* start value */
-    ax = gam - gmax;
-    bx = gam - gmin;
-    if (abs (ax - bx) < eps) return((ax + bx) / 2.0);
-    if (gam1_fun(ax, risk) * gam1_fun(bx, risk) > 0.0){
-	Rprintf("f(%f) = %f, f(%f) = %f\n", 
-		ax, gam1_fun(ax, risk), bx, gam1_fun(bx, risk));
-	Rprintf("antevents = %f\n", risk->antevents); 
-	Rprintf("size = %f\n", risk->size); 
-	error("\nWrong interval in [get0_gam]");
+    if (risk->antevents == 1){
+      who = risk->eventset[0];
+      gam = 1.0 - 
+	R_pow_di(1.0 - score[who] / risk->tot_score, 1.0 / score[who]);
+    }else{
+      gam = 1.0 - (double)(risk->antevents) / risk->tot_score;
+      gam = log(-log1p(-(double)(risk->antevents) / 
+		       (double)(risk->size)) ); /* start value */
+      ax = gam - gmax;
+      bx = gam - gmin;
+      if (abs (ax - bx) < eps){
+	risk->gamma = (ax + bx) / 2.0;
+      }else{
+	if (gam1_fun(ax, risk) * gam1_fun(bx, risk) > 0.0){
+	  Rprintf("f(%f) = %f, f(%f) = %f\n", 
+		  ax, gam1_fun(ax, risk), bx, gam1_fun(bx, risk));
+	  Rprintf("antevents = %f\n", risk->antevents); 
+	  Rprintf("size = %f\n", risk->size); 
+	  error("\nWrong interval in [get0_gam]");
+	}
+	gam = eha_zeroin(ax, bx, &gam1_fun, risk, &eps, &itmax);
+      }
     }
-    gam = eha_zeroin(ax, bx, &gam1_fun, risk, &eps, &itmax);
-
-    return(gam);
+    risk->gamma = gam;
+    risk->hazard = 1.0 - exp(-exp(gam));
 }
 
 void ml_rs(int what, RiskSet *risk,

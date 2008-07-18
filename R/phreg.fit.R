@@ -1,0 +1,243 @@
+phreg.fit <- function(X, Y, dist,
+                      strata, offset,
+                      init, shape,
+                      control, center = TRUE){
+
+    if (dist == "weibull"){
+        dis <- 0
+    }else if(dist == "loglogistic"){
+        dis <- 1
+    }else if (dist == "lognormal"){
+        dis <- 2
+    }else if (dist == "ev"){
+        dis <- 3
+    }else if (dist == "gompertz"){
+        dis <- 4
+    }else{
+        stop(paste(dist, "is not an implemented distribution"))
+    }
+
+    nn <- NROW(X)
+    ncov <- NCOL(X)
+
+    intercept <- (dis == 4)
+    if (ncov){
+        means <- colMeans(X)
+        if (center){
+            if (intercept){ ## i.e., if "gompertz"
+                if (ncov > 1){
+                    for (i in 2:ncov){
+                        X[, i] <- X[, i] - means[i]
+                    }
+                }
+            }else{
+                X <- scale(X, center = TRUE, scale = FALSE)
+            }
+        }
+    }
+    if (missing(strata) || is.null(strata)){
+        strata <- rep(1, nn)
+        ns <- 1
+    }else{
+        strata <- as.integer(factor(strata))
+        ns <- max(strata)
+    }
+
+    if (length(strata) != nn) stop("Error in stratum variable")
+    if (missing(offset) || is.null(offset))
+        offset <- rep(0, nn)
+
+    if (missing(init) || is.null(init))
+        init <- rep(0, ncov)
+    if (length(init) != ncov) stop("Error in init")
+
+    printlevel <- control$trace
+    iter <- control$maxiter
+
+
+    nstra <- c(0, cumsum(table(strata)))
+    if (all(shape <= 0)){ ## Then shape is estimated in all strata
+
+        bdim <- ncov + 2 * ns
+        if (ns > 0){
+            ord <- order(strata)
+            X <- X[ord, , drop = FALSE]
+            Y <- Y[ord, , drop = FALSE]
+            offset <- offset[ord]
+        }
+
+            fit <- .C("phsup",
+                  iter = as.integer(iter), #maxit on ip, actual on op.
+                  as.double(control$eps),
+                  as.integer(printlevel),
+                                        #
+                  as.integer(ns), # No. of strata
+                  as.integer(nstra),
+                  as.integer(nn),
+                  as.integer(ncov),
+                  as.integer(bdim),
+                                        #
+                  as.double(Y[, 1]),  ## 'enter'
+                  as.double(Y[, 2]),  ## 'exit'
+                  as.integer(Y[, 3]), ## 'event'
+                                        #
+                  ##as.double(t(scale(X, center = TRUE, scale = FALSE))),
+                  as.double(t(X)), # NOTE; scaling already done!
+                  ## NOTE transpose!
+                  as.double(offset),
+                                        #
+                  as.integer(dis),     # baseline distribution
+                  as.double(init),     # 'start.beta'
+                  beta = double(bdim), # results -->
+                  lambda = double(ns),
+                  lambda.sd = double(ns),
+                  shape = double(ns),  ## "p"
+                  shape.sd = double(ns),
+                                        #
+                  loglik = double(2), # [1] == start, [2] == maximized
+                  dloglik = double(bdim),
+                  variance = double(bdim * bdim),
+                  sctest = double(1),
+                                        #
+                  conver = integer(1),
+                  fail = integer(1),
+                  DUP = FALSE,
+                  PACKAGE = "eha"
+                  )
+
+        if (fit$fail) return(list(fail = fit$fail,
+                                  n.strata = ns,
+                                  value = fit$beta[fit$fail])
+                             )
+        if (dis == 77){# i.e., never...
+            dxy <- diag(2 * ns + ncov)
+            for (i in 1:ns){ ## Really a HACK ??!!!!!!!!!!!!!!!
+                row <- ncov + 2 * i - 1
+                col <- row + 1
+                ## fit$beta[row] <- -fit$beta[row] NOT ANY MORE!
+                if (ncov){
+                    pi.hat <- exp(fit$beta[col])
+                    scale.corr <- sum(means * fit$beta[1:ncov]) /
+                        pi.hat
+                    fit$beta[row] <- fit$beta[row] + scale.corr
+                    dxy[row, 1:ncov] <- means / pi.hat
+                    dxy[row, col] <- -scale.corr
+                }
+                ##dxy[row, row] <- -1
+            }
+        }
+        coef.names <- colnames(X)
+        if (ns > 1){
+            for (i in 1:ns){
+                coef.names <- c(coef.names,
+                                paste("log(scale)", as.character(i), sep =":"),
+                                paste("log(shape)", as.character(i), sep =":"))
+            }
+
+        }else{
+            coef.names <- c(coef.names,
+                            "log(scale)", "log(shape)")
+        }
+
+
+        fit$shape.fixed <- FALSE
+
+    }else{  ## Then shape is fixed in all strata:
+
+        if (ns >= 2) warning("'strata' is maybe useful for 'fixed shape' regression.\n Maybe include stratum variable as a factor in the model instead.")
+        bdim <- ncov + ns
+
+        if (length(shape) == 1){
+            shape <- rep(shape, ns)
+        }else if (length(shape) != ns){
+          stop("length(shape) must be equal to 1 or No. of strata")
+        }
+
+        fit <- .C("phexpsup",
+                  iter = as.integer(iter), #maxit on ip, actual on op.
+                  as.double(control$eps),
+                  as.integer(printlevel),
+                                        #
+                  as.integer(ns), # No. of strata
+                  as.integer(nstra),
+                  as.integer(nn),
+                  as.integer(ncov),
+                  as.integer(bdim),
+                                        #
+                  as.double(Y[, 1]),  ## 'enter'
+                  as.double(Y[, 2]),  ## 'exit'
+                  as.integer(Y[, 3]), ## 'event'
+                                        #
+                  ##as.double(t(scale(X, center = TRUE, scale = FALSE))),
+                  as.double(t((X))), #NOTE: scaling already done!
+                  as.double(offset),
+                  as.double(shape), ## "p" (fixed)
+                  as.integer(dis),
+
+                  as.double(init),     # 'start.beta'
+                  beta = double(bdim), # results -->
+                  lambda = double(ns),
+                  lambda.sd = double(ns),
+                                        #
+                  loglik = double(2), # [1] == start, [2] == maximized
+                  dloglik = double(bdim),
+                  variance = double(bdim * bdim),
+                  sctest = double(1),
+                                        #
+                  conver = integer(1),
+                  fail = integer(1),
+                  DUP = FALSE,
+                  PACKAGE = "eha"
+                  )
+        if (fit$fail) return(list(fail = fit$fail,
+                                  n.strata = ns,
+                                  value = fit$beta[fit$fail])
+                             )
+        fit$shape.fixed <- TRUE
+        fit$shape <- shape
+        fit$shape.sd <- NULL  ## Not necessary!?!?
+        ##fit$beta[bdim] <- -fit$beta[bdim] # To get "1 / lambda"! NO!!
+        if (dis == 77){# i.e., never...
+            dxy <- diag(bdim)
+            if (ncov){
+                dxy[bdim, 1:ncov] <- means / shape
+                scale.corr <- sum(means * fit$beta[1:ncov]) / shape
+                fit$beta[bdim] <-
+                    fit$beta[bdim] + scale.corr
+            }
+            dxy[bdim, bdim] <- -1
+        }
+        coef.names <- c(colnames(X), "log(scale)")
+
+        ## Note; this is really a "hack"!!!!!!!!!!!!!!!
+    }
+
+    ##cat("done!\n")
+
+    if (!fit$fail){
+        if (dis == 77){
+            var <- dxy %*% matrix(fit$variance, bdim, bdim) %*% t(dxy)
+        }else{
+            var <- matrix(fit$variance, bdim, bdim)
+        }
+        colnames(var) <- rownames(var) <- coef.names
+    }
+    else
+        var <- NULL
+
+    coefficients <- fit$beta
+    names(coefficients) <- coef.names
+
+    list(coefficients = coefficients,
+         df = ncov,
+         var = var,
+         loglik = fit$loglik,
+         score = fit$sctest,
+         conver = fit$conver,
+         fail = fit$fail,
+         iter = fit$iter,
+         n.strata = ns,
+         shape = fit$shape
+         )
+
+}

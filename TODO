@@ -1,4 +1,0 @@
-* Fix 'check.surv' so that detailed information on (i) which records are 
-in error, (ii) type of error is produced
-
-* Rewrite summary, print, and plot methods.

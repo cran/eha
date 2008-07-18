@@ -12,9 +12,7 @@ toTime(dates)
 \arguments{
   \item{dates}{A vector of dates in character form or of class \code{Date}}
 }
-\details{
 
-}
 \value{
 A vector of durations, as decribed above.
 }

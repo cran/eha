@@ -1,0 +1,49 @@
+\name{check.dist}
+\alias{check.dist}
+
+\title{Graphical goodness-of-fit test}
+\description{
+Comparison of the cumulative hazards functions for a semi-parametric and
+a parametric model.
+}
+\usage{
+check.dist(sp, pp, new.data = sp$means)
+}
+%- maybe also 'usage' for other objects documented here.
+\arguments{
+  \item{sp}{An object of type "cotxreg", typically output from
+\code{\link{coxreg}}} 
+  \item{pp}{An object of type "phreg", typically output from
+\code{\link{phreg}}}
+\item{new.data}{At what covariate values should the baseline hazards for
+the coxreg model be calculated?} 
+}
+\details{
+  For the moment only a graphical comparison.
+}
+\value{
+No return value.
+}
+\references{ ~put references to the literature/web site here ~ }
+\author{Göran Broström}
+
+\seealso{\code{\link{coxreg}} and \code{\link{phreg}}.}
+\examples{
+data(male.mortality)
+oldpar <- par(mfrow = c(2, 2))
+fit.cr <- coxreg(Surv(enter, exit, event) ~ ses, data = male.mortality)
+fit.w <- phreg(Surv(enter, exit, event) ~ ses, data = male.mortality)
+fit.g <- phreg(Surv(enter, exit, event) ~ ses, data = male.mortality,
+dist = "gompertz")
+fit.ln <- phreg(Surv(enter, exit, event) ~ ses, data = male.mortality,
+dist = "lognormal")
+fit.ev <- phreg(Surv(enter, exit, event) ~ ses, data = male.mortality,
+dist = "ev")
+check.dist(fit.cr, fit.w)
+check.dist(fit.cr, fit.g)
+check.dist(fit.cr, fit.ln)
+check.dist(fit.cr, fit.ev)
+par(oldpar)
+}
+\keyword{distribution}
+

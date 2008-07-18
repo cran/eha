@@ -27,6 +27,7 @@ typedef struct
     int *riskset;  /* Members of the risk set */
     double gamma;  /* depends on beta and data*/
     double hazard;
+  double tot_score; /* sum(score(j)), j in RiskSet; */
 }
 RiskSet;
 
