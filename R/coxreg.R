@@ -11,7 +11,7 @@ coxreg <- function (formula = formula(data),
                     y = TRUE,
                     boot = FALSE,
                     efrac = 0,
-                    geometric = NULL,
+                    geometric = FALSE,
                     rs = NULL,
                     frailty = NULL,
                     max.survs = NULL)
@@ -133,30 +133,43 @@ coxreg <- function (formula = formula(data),
         stop("control must be a list")
     }
 
-    fit <- coxreg.fit(X,
-                      Y,
-                      rs,
-                      strats,
-                      offset,
-                      init,
-                      max.survs,
-                      method,
-                      center,
-                      boot,
-                      efrac,
-                      calc.hazards = TRUE,
-                      calc.martres = TRUE,
-                      control,
-                      verbose = TRUE)
-
-##    if (!length(fit$coefficients)){
-##        class(fit) <- c("coxreg", "coxph")
-##        return(fit)
-##    }
-    ##if (is.null(fit)) return(NULL) ## Removed 19 Feb 2007
-    ##if (!fit$fail) fit$fail <- NULL
-    ##else
-    ##    fit$fail <- TRUE
+    if (geometric){
+      method <- "ml"
+      fit <- geome.fit(X,
+                       Y,
+                       rs,
+                       strats,
+                       offset,
+                       init,
+                       max.survs,
+                       method,
+                       boot,
+                       control)
+    }else{
+      fit <- coxreg.fit(X,
+                        Y,
+                        rs,
+                        strats,
+                        offset,
+                        init,
+                        max.survs,
+                        method,
+                        center,
+                        boot,
+                        efrac,
+                        calc.hazards = TRUE,
+                        calc.martres = TRUE,
+                        control,
+                        verbose = TRUE)
+    }
+      ##    if (!length(fit$coefficients)){
+      ##        class(fit) <- c("coxreg", "coxph")
+      ##        return(fit)
+      ##    }
+      ##if (is.null(fit)) return(NULL) ## Removed 19 Feb 2007
+      ##if (!fit$fail) fit$fail <- NULL
+      ##else
+      ##    fit$fail <- TRUE
 
     fit$convergence <- as.logical(fit$conver)
     fit$conver <- NULL ## Ugly!

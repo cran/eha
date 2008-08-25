@@ -22,9 +22,9 @@ Exact calculation.
 \value{
   A list with components
 
-  \item{deaths}{Vector of number of deaths}
+  \item{events}{Vector of number of events}
   \item{exposure}{Vector of total exposure time}
-  \item{hazard}{Vector of hazards, \code{hazard} == \code{deaths} /
+  \item{intensity}{Vector of hazards, \code{intensity} == \code{events} /
     \code{exposure}} 
 }
 

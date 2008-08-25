@@ -448,7 +448,7 @@ C +++
 	*totrs, risks, e_frac, 
 	b, db,
 	&ll, dll, d2ll, 
-	sctest, 
+	sctest,
 	f_conver, conver, fail);	
 
     if (*fail) return;
@@ -484,7 +484,7 @@ C +++
 	    for (j = 0; j < antrs[i]; j++){
 		indx++;
 		get1_gam(risks + indx);
-		hazard[indx] <- risks[indx].hazard;
+		hazard[indx] = risks[indx].hazard;
 	    }
 	}
 	/* fill_haz(*totrs, risks); */

@@ -29,7 +29,7 @@ The \code{window} must be in the order \code{(begin, end)}
 %\note{ ~~further notes~~ }
 
 \seealso{\code{\link{cal.window}}, \code{\link{coxreg}},
-\code{\link{mlreg}}}
+\code{\link{aftreg}}}
 
 \examples{
 dat <- data.frame(enter = 0, exit = 5.731, event = 1, x = 2)

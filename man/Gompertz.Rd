@@ -6,12 +6,12 @@
 \alias{hgompertz}
 \alias{Hgompertz}
 \alias{rgompertz}
-\title{The Gompertz-Gompertz Distribution}
+\title{The Gompertz Distribution}
 \description{
   Density, distribution function, quantile function, hazard function,
   cumulative hazard function, and random
-  generation for the Gompertz-Gompertz distribution with parameters
-  \code{shape1}, \code{shape2}
+  generation for the Gompertz distribution with parameters
+  \code{shape}
   and \code{scale}.
 }
 \usage{
@@ -31,7 +31,7 @@ rgompertz(n, shape = 1, scale = 1)
     and scale, defaulting to 1.}
   \item{log, log.p}{logical; if TRUE, probabilities p are given as log(p).}
   \item{lower.tail}{logical; if TRUE (default), probabilities are
-    \eqn{P[X \le x]}{P[X <= x]}, otherwise, \eqn{P[X > x]}{P[X > x]}.}
+    \eqn{P(X \le x)}{P(X <= x)}, otherwise, \eqn{P(X > x)}{P(X > x)}.}
 }
 \value{
   \code{dgompertz} gives the density,

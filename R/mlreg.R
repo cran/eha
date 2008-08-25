@@ -22,6 +22,7 @@ function (formula = formula(data),
     else if (method[1] == "MPPL") method <- "mppl"
     else stop(paste("Unknown method", as.character(method[1])))
 
+    efrac <- 0
     coxreg(formula,
            data,
            na.action,
@@ -34,6 +35,7 @@ function (formula = formula(data),
            x,
            y,
            boot,
+           efrac,
            geometric,
            rs,
            frailty,

@@ -40,7 +40,7 @@ surv=c("enter", "exit", "event", "birthdate"), tol=1e-04, fortran=TRUE)
 }
 \details{
 The main purpose of this function is to prepare a data file for use with
-\code{\link{coxreg}}, \code{\link{mlreg}}, \code{\link{weibreg}} and
+\code{\link{coxreg}}, \code{\link{aftreg}}, and
 \code{\link[survival]{coxph}}.
 }
 \value{
@@ -53,7 +53,7 @@ to have common name(s) in the two data frames.
 \note{Not very vigorously tested.}
 
 
-\seealso{\code{\link{coxreg}}, \code{\link{mlreg}},
+\seealso{\code{\link{coxreg}}, \code{\link{aftreg}},
   \code{\link[survival]{coxph}}, \code{\link{cal.window}}} 
 
 \examples{

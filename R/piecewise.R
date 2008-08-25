@@ -29,5 +29,5 @@ piecewise <- function(enter, exit, event, cutpoints){
     tt[n] <- sum(right - left)
     
     intensity <- ifelse(tt > 0, d / tt, NA)
-    list(deaths = d, exposure = tt, hazard = intensity)
+    list(events = d, exposure = tt, intensity = intensity)
 }

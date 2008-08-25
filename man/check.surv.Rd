@@ -28,7 +28,7 @@ A vector of id's for the insane individuals. Of zero length if no errors.
 
 %\note{}
 
-\seealso{\code{\link{join.spells}}, \code{\link{coxreg}}, \code{\link{mlreg}}}
+\seealso{\code{\link{join.spells}}, \code{\link{coxreg}}, \code{\link{aftreg}}}
 \examples{
 xx <- data.frame(enter = c(0, 1), exit = c(1.5, 3), event = c(0, 1), id =
 c(1,1))

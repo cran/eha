@@ -125,7 +125,6 @@ coxreg.fit <- function(X, Y, rs, strats, offset, init, max.survs,
         hazards[[i]] <- cbind(rs$risktimes[startt[i]:stopp[i]],
                               haz.mean[startt[i]:stopp[i]])
     }
-
     class(hazards) <- "hazdata"
     bootstrap <- NULL
     boot.sd <- NULL

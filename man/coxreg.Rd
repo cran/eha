@@ -14,7 +14,7 @@ control = list(eps = 1e-08, maxiter = 25, trace = FALSE),
 singular.ok = TRUE, model = FALSE,
 center = TRUE,
 x = FALSE, y = TRUE, boot = FALSE, efrac = 0,
-geometric = NULL, rs = NULL,
+geometric = FALSE, rs = NULL,
 frailty = NULL, max.survs = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -29,7 +29,8 @@ frailty = NULL, max.survs = NULL)
     Default is \code{options()$na.action}.}
   \item{init}{vector of initial values of the iteration.
     Default initial value is zero for all variables.}
-  \item{method}{Method of treating ties, "efron" (default) or "breslow".}
+  \item{method}{Method of treating ties, "efron" (default), "breslow",
+    "mppl" (maximum partial partial likelihood), or "ml" (maximum likelihood).}
   \item{control}{a list with components \code{eps} (convergence
     criterion), \code{maxiter} (maximum number of iterations), and
     \code{silent} (logical, controlling amount of output). You can
@@ -45,7 +46,7 @@ frailty = NULL, max.survs = NULL)
     samples.}
   \item{efrac}{Upper limit of fraction failures in 'mppl'.}
   \item{geometric}{If TRUE, forces an 'ml' model with constant riskset
-    probability.} 
+    probability. Default is FALSE.} 
   \item{frailty}{Grouping variable for frailty analysis. Not in use yet.}
   \item{max.survs}{Sampling of risk sets? If given, it should be (the upper
     limit of) the number of survivors in each risk set.}

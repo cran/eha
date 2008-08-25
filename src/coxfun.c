@@ -81,27 +81,30 @@ void get1_gam(RiskSet *risk){
 	}
     }
     if (risk->antevents == 1){
-      who = risk->eventset[0];
-      gam = 1.0 - 
-	R_pow_di(1.0 - score[who] / risk->tot_score, 1.0 / score[who]);
+	who = risk->eventset[0];
+	/*
+	  gam = 1.0 - 
+	    R_pow_di(1.0 - score[who] / risk->tot_score, 1.0 / score[who]);
+	*/
+	gam = log(-log1p(-score[who] / risk->tot_score) / score[who]);
     }else{
-      gam = 1.0 - (double)(risk->antevents) / risk->tot_score;
-      gam = log(-log1p(-(double)(risk->antevents) / 
-		       (double)(risk->size)) ); /* start value */
-      ax = gam - gmax;
-      bx = gam - gmin;
-      if (abs (ax - bx) < eps){
-	risk->gamma = (ax + bx) / 2.0;
-      }else{
-	if (gam1_fun(ax, risk) * gam1_fun(bx, risk) > 0.0){
-	  Rprintf("f(%f) = %f, f(%f) = %f\n", 
-		  ax, gam1_fun(ax, risk), bx, gam1_fun(bx, risk));
-	  Rprintf("antevents = %f\n", risk->antevents); 
-	  Rprintf("size = %f\n", risk->size); 
-	  error("\nWrong interval in [get0_gam]");
+	gam = 1.0 - (double)(risk->antevents) / risk->tot_score;
+	gam = log(-log1p(-(double)(risk->antevents) / 
+			 (double)(risk->size)) ); /* start value */
+	ax = gam - gmax;
+	bx = gam - gmin;
+	if (abs (ax - bx) < eps){
+	    risk->gamma = (ax + bx) / 2.0;
+	}else{
+	    if (gam1_fun(ax, risk) * gam1_fun(bx, risk) > 0.0){
+		Rprintf("f(%f) = %f, f(%f) = %f\n", 
+			ax, gam1_fun(ax, risk), bx, gam1_fun(bx, risk));
+		Rprintf("antevents = %f\n", risk->antevents); 
+		Rprintf("size = %f\n", risk->size); 
+		error("\nWrong interval in [get0_gam]");
+	    }
+	    gam = eha_zeroin(ax, bx, &gam1_fun, risk, &eps, &itmax);
 	}
-	gam = eha_zeroin(ax, bx, &gam1_fun, risk, &eps, &itmax);
-      }
     }
     risk->gamma = gam;
     risk->hazard = 1.0 - exp(-exp(gam));
@@ -125,8 +128,7 @@ void ml_rs(int what, RiskSet *risk,
 
     char up = 'U';
 
-    if (risk->out) return;
-    if (risk->antevents == risk->size) return;
+    if (risk->out) return;    if (risk->antevents == risk->size) return;
 
     /* get "gamma[rs]"; in risks[rs]: */
     get1_gam(risk);
@@ -149,16 +151,16 @@ void ml_rs(int what, RiskSet *risk,
 	*loglik += log1p(-ehil) + hil;
 
 	if (what >= 1){  /* First derivatives */
-	    /* bil = hil / (one - ehil); */
-	    bil = -hil / expm1(-hil);
+	    bil = hil / (one - ehil);
+	    /* bil = -hil / expm1(-hil); */
             h1 += bil;
             /* Update h2[j] "+= x[j, who] * bil": */
 	    F77_CALL(daxpy)(&p, &bil, (x + p * who), &ione, 
 			    dloglik, &ione);
 	    
 	    if (what >= 2){ /* Second derivatives */
-		/* gil = bil * (ehil + hil * ehil - one) / (one - ehil) */
-		gil = bil * (bil * ehil - one);
+		gil = bil * (ehil + hil * ehil - one) / (one - ehil); 
+		    /* gil = bil * (bil * ehil - one); */
 		h11 += gil;
 		/* Update h21: */
 		F77_CALL(daxpy)(&p, &gil, (x + p * who), &ione, 
@@ -476,6 +478,7 @@ void coxfun(int what, int totrs, RiskSet *risks,
 	    double *b, 
 	    double *loglik, double *dloglik, double *d2loglik){
 
+    /* Note that the following is deprecated:      */
     /* ml : 0 = "Cox", 1 = "Maximum likelihood"    */
     /* method: 0 = "efron",  if ml = 0,            */ 
     /*         1 = "breslow, if ml = 0             */

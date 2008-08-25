@@ -1,3 +1,8 @@
+1.2-2	(Aug 25, 2008)
+	* Bug in coxreg, method = "ml" fixed.
+	* Bug in coxreg, calculation of hazard, fixed.
+	* Several errors in the documentation fixed.
+
 1.2-0	(Jul 18, 2008)
 
 	* Added functionality: Accelerated failure time models with 

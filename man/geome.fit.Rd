@@ -3,10 +3,10 @@
 
 \title{Constant intensity discrete time proportional hazards}
 \description{
-This function is called from \code{mlreg}. A user may call it directly.
+This function is called from \code{coxreg}. A user may call it directly.
 }
 \usage{
-geome.fit(X, Y, rs, strats, offset, init, max.survs, method = "ML",
+geome.fit(X, Y, rs, strats, offset, init, max.survs, method = "ml",
 boot = FALSE, control)
 }
 
@@ -18,19 +18,19 @@ boot = FALSE, control)
   \item{offset}{ Offset}
   \item{init}{Initial values}
   \item{max.survs}{Maximal survivors}
-  \item{method}{"ML" or "MPPL"}
+  \item{method}{"ml", always, i.e., this argument is ignored.}
   \item{boot}{should we bootstrap?}
-  \item{control}{See mlreg}
+  \item{control}{See \code{coxreg}.}
 }
 
 \value{
 See the code.
 }
-\references{See mlreg}
+\references{See \code{\link{coxreg}}.}
 \author{Göran Broström}
 \note{Nothing special}
 
-\seealso{\code{\link{mlreg}}}
+\seealso{\code{\link{coxreg}}}
 %\examples{
 
 %}

@@ -1,5 +1,5 @@
 geome.fit <- function(X, Y, rs, strats, offset, init, max.survs,
-                       method = "ML", boot = FALSE, control){
+                       method = "ml", boot = FALSE, control){
 
   nn <- NROW(X)
   ncov <- NCOL(X)

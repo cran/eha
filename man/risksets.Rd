@@ -36,7 +36,7 @@ risksets(x, strata, max.survs)
 \author{\enc{Göran Broström}{George Bridgewater}}
 \note{can be used to "sample the risk sets".}
 
-\seealso{\code{\link{table.events}}, \code{\link{coxreg}}, \code{\link{mlreg}}}
+\seealso{\code{\link{table.events}}, \code{\link{coxreg}}.}
 
 \examples{
  enter <- c(0, 1, 0, 0)
