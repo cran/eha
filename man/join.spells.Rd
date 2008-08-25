@@ -35,7 +35,7 @@ join.spells(dat, strict = FALSE, eps = 1.e-8)
 %\note{}
 
 
-\seealso{\code{\link{coxreg}}, \code{\link{mlreg}}, \code{\link{check.surv}}}
+\seealso{\code{\link{coxreg}}, \code{\link{aftreg}}, \code{\link{check.surv}}}
 
 %\examples{
 %}

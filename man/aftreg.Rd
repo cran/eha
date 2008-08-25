@@ -24,13 +24,14 @@ singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE)
     model.frame, after any subset argument has been used.
     Default is \code{options()$na.action}.}
 \item{dist}{Which distributin? Default is "weibull", with the
-  alternatives "loglogistic" and "lognormal".}
+  alternatives "gompertz", "ev", "loglogistic" and "lognormal". A special
+  case like the \code{exponential} can be obtained by choosing "weibull"
+  in combination with \code{shape = 1}.}
   \item{init}{vector of initial values of the iteration.
     Default initial value is zero for all variables.}
-  \item{shape}{If positive, the shape parameter is fixed at that value
-    (in each stratum).  If zero or negative, the shape parameter is
-    estimated.  If more than one stratum is present in data, each stratum
-    gets its own estimate.}
+  \item{shape}{If positive, the shape parameter is fixed at that value.
+  If zero or negative, the shape parameter is estimated. Stratitfication
+  is not meaningful if shape is fixed.}
     \item{control}{a list with components \code{eps} (convergence
     criterion), \code{maxiter} (maximum number of iterations), and
     \code{silent} (logical, controlling amount of output).  You can
@@ -47,8 +48,8 @@ from the one used by \code{\link[survival]{survreg}}.
 The model is
 \deqn{S(t; a, b, \beta, z) = S_0((t / \exp(b -
   z\beta))^{\exp(a)})}{%
-  S(t; a, b, beta, z) =  S0((t/exp(b - z beta))^a)}
-where S0 is some standardized survivor function.
+  S(t; a, b, beta, z) =  S_0((t/exp(b - z beta))^a)}
+where \eqn{S_0} is some standardized survivor function.
 }
 
 \value{

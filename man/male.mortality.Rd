@@ -4,7 +4,7 @@
 \title{Male mortality in ages 40-60, nineteenth century}
 \description{
   Males born in the years 1800-1820 and surving at least 40 years  in
-  the parish SkellefteÃ¥ in northern 
+  the parish Skellefteå in northern 
   Sweden are followed from their fortieth birthday until death or the
   sixtieth birthday, whichever comes first.
 }

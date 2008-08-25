@@ -29,7 +29,7 @@ rEV(n, shape = 1, scale = 1)
   \item{shape, scale}{shape and scale parameters, both defaulting to 1.}
   \item{log, log.p}{logical; if TRUE, probabilities p are given as log(p).}
   \item{lower.tail}{logical; if TRUE (default), probabilities are
-    \eqn{P[X \le x]}{P[X <= x]}, otherwise, \eqn{P[X > x]}{P[X > x]}.}
+    \eqn{P(X \le x)}{P(X <= x)}, otherwise, \eqn{P(X > x)}{P(X > x)}.}
 }
 \value{
   \code{dEV} gives the density,
@@ -42,10 +42,10 @@ rEV(n, shape = 1, scale = 1)
   Invalid arguments will result in return value \code{NaN}, with a warning.
 }
 \details{
-  The EV distribution with \code{shape} parameter \eqn{a} and
-  \code{scale} parameter \eqn{\sigma}{b} has hazard given by
+  The EV distribution with \code{scale} parameter \eqn{a} and
+  \code{shape} parameter \eqn{\sigma}{b} has hazard function given by
   \deqn{h(x) = \exp((x / \sigma)^b)}{%
-        f(x) = exp((x / a)^b)}
+        h(x) = exp((x / a)^b)}
   for \eqn{x \ge 0}{x >= 0}.
 }
 \keyword{distribution}

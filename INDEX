@@ -11,7 +11,7 @@ cro                     Creates a minimal representation of a data
 EV                      The EV Distribution
 geome.fit               Constant intensity discrete time proportional
                         hazards
-Gompertz                The Gompertz-Gompertz Distribution
+Gompertz                The Gompertz Distribution
 hweibull                The (Cumulative) Hazard Function of a Weibull
                         Distribution
 join.spells             Straighten up a survival data frame

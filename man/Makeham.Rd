@@ -32,7 +32,7 @@ rmakeham(n, shape = c(1, 1), scale = 1)
     and scale, defaulting to 1.}
   \item{log, log.p}{logical; if TRUE, probabilities p are given as log(p).}
   \item{lower.tail}{logical; if TRUE (default), probabilities are
-    \eqn{P[X \le x]}{P[X <= x]}, otherwise, \eqn{P[X > x]}{P[X > x]}.}
+    \eqn{P(X \le x)}{P(X <= x)}, otherwise, \eqn{P(X > x)}{P(X > x)}.}
 }
 \value{
   \code{dmakeham} gives the density,
@@ -45,13 +45,11 @@ rmakeham(n, shape = c(1, 1), scale = 1)
   Invalid arguments will result in return value \code{NaN}, with a warning.
 }
 \details{
-  The Gompertz-Makeham distribution with \code{shape} parameter \eqn{a} and
-  \code{scale} parameter \eqn{\sigma}{b} has density given by
-  \deqn{f(x) = (a/\sigma) {(x/\sigma)}^{a-1} / (1 + {(x/\sigma)}^{a})^2}{%
-        f(x) = (a/b) (x/b)^(a-1) / (1 + (x/b)^a)^2}
+  The Gompertz-Makeham distribution with \code{shape} parameters
+  \eqn{a_1}{a1} and \eqn{a_2}{a2} and
+  \code{scale} parameter \eqn{\sigma}{b} has hazard function given by
+  \deqn{h(x) = a_2 + a_1 \exp(x / \sigma)}{%
+        h(x) = a2 + a1 exp(x / b)}
   for \eqn{x \ge 0}.
-  The cumulative distribution function is
-  \eqn{F(x) = 1 - 1 / (1 + {(x/\sigma)}^a)}{F(x) = 1 - 1 / (1 + (x/b)^a)}
-  on \eqn{x \ge 0}.
 }
 \keyword{distribution}

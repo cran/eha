@@ -43,8 +43,8 @@ singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE, center = TRUE)
 }
 
 \details{
-The parameterization is the same as in \code{\link{coxreg}},
-\code{\link{mlreg}}, and \code{\link[survival]{coxph}}, but different
+The parameterization is the same as in \code{\link{coxreg}}
+and \code{\link[survival]{coxph}}, but different
 from the one used by \code{\link[survival]{survreg}}.
 The model is
 \deqn{S(t; a, b, \beta, z) = S_0((t/b)^a)^{\exp(z\beta)}}{%

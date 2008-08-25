@@ -26,7 +26,7 @@ The \code{window} must be in the order \code{(begin, end)}
 \author{\enc{Göran Broström}{George Bridgewater}}
 
 
-\seealso{\code{\link{age.window}}, \code{\link{coxreg}}, \code{\link{mlreg}}}
+\seealso{\code{\link{age.window}}, \code{\link{coxreg}}, \code{\link{aftreg}}}
 
 \examples{
 dat <- data.frame(enter = 0, exit = 5.731, event = 1,
