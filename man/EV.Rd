@@ -44,8 +44,8 @@ rEV(n, shape = 1, scale = 1)
 \details{
   The EV distribution with \code{scale} parameter \eqn{a} and
   \code{shape} parameter \eqn{\sigma}{b} has hazard function given by
-  \deqn{h(x) = \exp((x / \sigma)^b)}{%
-        h(x) = exp((x / a)^b)}
+  \deqn{h(x) = (b/\sigma)(x/\sigma)^(b-1)\exp((x / \sigma)^b)}{%
+        h(x) = (b/a)(x/a)^(b-1)exp((x / a)^b)}
   for \eqn{x \ge 0}{x >= 0}.
 }
 \keyword{distribution}

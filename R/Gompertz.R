@@ -8,7 +8,33 @@ pgompertz <- function(q, shape = 1, scale = 1,
         return(NaN)
     }
 
-    ret <- pEV(q, 1, scale, lower.tail, log.p)^shape
+    y <- ifelse(q <= 0, 0, -shape * scale * expm1(q / scale))
+
+    if (log.p){
+        if (lower.tail){
+            ret <- ifelse(q <= 0,
+                          -Inf,
+                          log(-expm1(y))
+                          )
+        }else{
+            ret <- ifelse(q <= 0,
+                          0,
+                          y
+                          )
+        }
+    }else{
+        if (lower.tail){
+            ret <- ifelse(q <= 0,
+                          0,
+                          -expm1(y) # = 1 - exp(y)
+                          )
+        }else{
+            ret <- ifelse(q <= 0,
+                          1,
+                          exp(y)
+                          )
+        }
+    }
 
     return ( ret )
 }
@@ -20,10 +46,18 @@ dgompertz <- function(x, shape = 1, scale = 1, log = FALSE){
         return(NaN)
     }
 
-    ret <- dEV(x, 1, scale, log = FALSE) * shape *
-        pEV(x, 1, scale,
-                  lower.tail = TRUE, log.p = FALSE)^(shape - 1)
-    if (log) ret <- log(ret)
+    y <- ifelse(x < 0, 0, x / scale)
+
+    if (log){
+        ret <- ifelse(x < 0,
+                      0,
+                      log(shape) + y - shape * scale * expm1(y))
+    }else{
+        ret <- ifelse(x < 0,
+                      0,
+    ##                  shape * exp(y) * exp(-shape * scale * expm1(y)))
+                      shape * exp(y - shape * scale * expm1(y)))
+    }
 
     return ( ret )
 }
@@ -34,8 +68,18 @@ hgompertz <- function(x, shape = 1, scale = 1, log = FALSE){
         warning("Non-positive shape or scale")
         return(NaN)
     }
-    ret <- shape * hEV(x, 1, scale, log = FALSE)
-    if (log) ret <- log(ret)
+
+    if (log) {
+        ret <- ifelse(x < 0,
+                      -Inf,
+                      log(shape) + x / scale
+                      )
+    }else{
+        ret <- ifelse(x < 0,
+                      0,
+                      shape * exp(x / scale)
+                      )
+    }
 
     return ( ret )
 }
@@ -53,8 +97,9 @@ qgompertz <- function(p, shape = 1, scale = 1,
 
 
     ret <- ifelse(ok,
-                  scale * ( log1p(-log(p) / shape) ),
+                  scale * log1p(-log1p(-p) / (shape * scale)),
                   NaN)
+
     if (!all(ok)) warning("qgompertz produced NaN's")
 
     return ( ret )
@@ -66,7 +111,13 @@ Hgompertz <- function(x, shape = 1, scale = 1, log.p = FALSE){
         warning("Non-positive shape or scale")
         return(NaN)
     }
-    ret <- HEV(x, 1, scale, log.p = FALSE) * shape
+
+    y <- x / scale
+
+    ret <- ifelse(x <= 0,
+                  0,
+                  shape * scale * expm1(y)
+                  )
     if (log.p) ret <- log(ret)
 
     return ( ret )

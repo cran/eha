@@ -65,10 +65,11 @@ qEV <- function(p, shape = 1, scale = 1,
     }
 
     if (log.p) p <- exp(p)
+    if (!lower.tail) p <- 1 - p
 
     ok <- (p >= 0) & (p <= 1)
 
-    ret <- ifelse(ok, scale * (log1p(-log(p)))^(1 / shape), NaN)
+    ret <- ifelse(ok, (1 / scale) * (log1p(-log1p(-p)))^(1 / shape), NaN)
 
     if (!all(ok)) warning("qEV produced NaN's")
 
@@ -100,7 +101,7 @@ rEV <- function(n, shape = 1, scale = 1){
 
     y <- runif(n)
 
-    return ( scale * (log1p(-log(y)))^(1 / shape) )
+    return ( (1 / scale) * (log1p(-log1p(-y)))^(1 / shape) )
 }
 
 
