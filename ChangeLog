@@ -1,3 +1,9 @@
+1.2-4	(Jan 12, 2009)
+	* Bugs in qEV, rEV, all Gompertz functions, plus documentation of
+	EV and Gompertz fixed. Note that these bugs did not affect aftreg
+	or phreg! However,
+	* check.dist had to be revised due to the above bugs.
+
 1.2-2	(Aug 25, 2008)
 	* Bug in coxreg, method = "ml" fixed.
 	* Bug in coxreg, calculation of hazard, fixed.

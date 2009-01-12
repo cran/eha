@@ -79,7 +79,7 @@ plot.phreg <- function(x,
         Haza <- Hgompertz
         Surviv <- pgompertz
         Dens <- dgompertz
-        skal <- exp(x$coef[1])
+        skal <- exp(x$coef[1]) / lambda # Kolla detta!!!!!!!!!!
         for (i in 1:ns) p[i] <- skal
     }
 
