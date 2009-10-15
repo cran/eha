@@ -1,10 +1,30 @@
+1.2-12	(October 15, 2009)
+	* aftreg: Works now for time-varying covariates. Not polished.
+
+1.2-7	(August 13, 2009)
+
+	* coxreg: Time-dependent offset introduced. 
+
+
+1.2-6	(August 11, 2009)
+
+	* coxreg.fit: Time-dependent weights work now. 
+
+1.2-5	(August 2, 2009)
+	
+	* coxreg: Added (time-varying) weighted Cox regression. Returns
+	error code 1 if failure, with a warning.    
+	* check.dist: Can now handle stratified models.
+
 1.2-4	(Jan 12, 2009)
+
 	* Bugs in qEV, rEV, all Gompertz functions, plus documentation of
 	EV and Gompertz fixed. Note that these bugs did not affect aftreg
 	or phreg! However,
 	* check.dist had to be revised due to the above bugs.
 
 1.2-2	(Aug 25, 2008)
+
 	* Bug in coxreg, method = "ml" fixed.
 	* Bug in coxreg, calculation of hazard, fixed.
 	* Several errors in the documentation fixed.

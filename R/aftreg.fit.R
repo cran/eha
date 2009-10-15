@@ -1,8 +1,19 @@
 aftreg.fit <- function(X, Y, dist,
                        strata, offset,
-                       init, shape,
+                       init, shape, id,
                        control){
 
+    ## New in Version 1.2-9; wrong before!
+    ## Note that we MUST keep individuals together here;
+    ## stratum comes second, beacuse we can then let individuals
+    ## change stratum over time!
+    ord <- order(id, Y[, 1])
+    X <- X[ord, , drop = FALSE]
+    Y <- Y[ord, , drop = FALSE]
+    id <- id[ord]
+    strata <- strata[ord]
+    offset <- offset[ord]
+    #####################################
     if (dist == "weibull"){
         dis <- 0
     }else if(dist == "loglogistic"){
@@ -48,57 +59,57 @@ aftreg.fit <- function(X, Y, dist,
     nstra <- c(0, cumsum(table(strata)))
     if (all(shape <= 0)){ ## Then shape is estimated in all strata
 
-        bdim <- ncov + 2 * ns
-        if (ns > 0){
-            ord <- order(strata)
-            X <- X[ord, , drop = FALSE]
-            Y <- Y[ord, , drop = FALSE]
-            offset <- offset[ord]
-        }
-
+        Fmin <- function(beta){
+            
             fit <- .C("aftsup",
-                      iter = as.integer(iter), #maxit on ip, actual on op.
-                      as.double(control$eps),
                       as.integer(printlevel),
-                                        #
+                      ##
                       as.integer(ns), # No. of strata
-                      as.integer(nstra),
                       as.integer(nn),
                       as.integer(ncov),
                       as.integer(bdim),
-                                        #
+                      ##
+                      as.integer(id),
+                      as.integer(strata - 1), # 0, ..., (ns-1); C-style!
                       as.double(Y[, 1]),  ## 'enter'
                       as.double(Y[, 2]),  ## 'exit'
                       as.integer(Y[, 3]), ## 'event'
-                                        #
+                      ##
                       ##as.double(t(scale(X, center = TRUE, scale = FALSE))),
                       as.double(t(X)), # NOTE; scaling already done!
                       ## NOTE transpose!
                       as.double(offset),
-                                        #
                       as.integer(dis),     # baseline distribution
-                      as.double(init),     # 'start.beta'
-                      beta = double(bdim), # results -->
-                      lambda = double(ns),
-                      lambda.sd = double(ns),
-                      shape = double(ns),  ## "p"
-                      shape.sd = double(ns),
-                                        #
-                      loglik = double(2), # [1] == start, [2] == maximized
-                      dloglik = double(bdim),
-                      variance = double(bdim * bdim),
-                      sctest = double(1),
-                                        #
-                      conver = integer(1),
-                      fail = integer(1),
+                      as.double(beta),
+                                        # results -->
+                      loglik = double(1),  # function value at beta
+                      fail = integer(1), # = 0: No failure
                       DUP = FALSE,
                       PACKAGE = "eha"
                       )
+            if (fit$fail) stop("Error in likelihood calculation")
+            return(fit$loglik)
+        }
+        ## Start values (no covariates):
+        bdim <- 2 * ns
+        ncov.save <- ncov
+        ncov <- 0
+        beta <- numeric(bdim)
+        for (i in 1:ns){
+            beta[2 * i - 1] <- log(sum(Y[, 2] - Y[, 1]) / sum(Y[, 3]))
+            beta[2*i] <- 0
+        }
 
-        if (fit$fail) return(list(fail = fit$fail,
-                                  n.strata = ns,
-                                  value = fit$beta[fit$fail])
-                             )
+        loglik.start <- -optim(beta, Fmin, method = "BFGS", hessian = FALSE)$value
+        ## And now the real thing:
+        ncov <- ncov.save
+        bdim <- ncov + 2 * ns
+        beta <- c(rep(0, ncov), beta)
+        fit <- optim(beta, Fmin, method = "BFGS", hessian = TRUE)
+        fit$beta <- fit$par
+        fit$loglik <- c(loglik.start, -fit$value)
+        fit$variance <- solve(fit$hessian)
+        fit$fail <- FALSE
         if (ncov){
             dxy <- diag(2 * ns + ncov)
             for (i in 1:ns){ ## Really a HACK ??!!!!!!!!!!!!!!!
@@ -116,6 +127,7 @@ aftreg.fit <- function(X, Y, dist,
                 ##dxy[row, row] <- -1
             }
         }
+        
         coef.names <- colnames(X)
         if (ns > 1){
             for (i in 1:ns){
@@ -133,9 +145,41 @@ aftreg.fit <- function(X, Y, dist,
         fit$shape.fixed <- FALSE
 
     }else{  ## Then shape is fixed in all strata:
+        ## Note: We must allow stratification even here (091006)!!
+        
 
-        if (ns >= 2) stop("'strata' is not meaningful 'fixed shape' regression.\n Include stratum variable as a factor in the model instead.")
-        bdim <- ncov + ns
+        Fexpmin <- function(beta){
+
+            fit <- .C("aftexpsup",
+                      as.integer(printlevel),
+                                        #
+                      as.integer(ns), # No. of strata
+                      as.integer(nn),
+                      as.integer(ncov),
+                      as.integer(bdim),
+                                        #
+                      as.integer(id),
+                      as.integer(strata - 1), # 0, ..., (ns-1); C-style!
+                      as.double(Y[, 1]),  ## 'enter'
+                      as.double(Y[, 2]),  ## 'exit'
+                      as.integer(Y[, 3]), ## 'event'
+                                        #
+                      ##as.double(t(scale(X, center = TRUE, scale = FALSE))),
+                      as.double(t((X))), #NOTE: scaling already done!
+                      as.double(offset),
+                      as.double(shape), ## "p" (fixed)
+                      as.integer(dis),
+                      beta = as.double(beta),
+                                        # results -->
+                      loglik = double(1), # Return value at beta
+                      fail = integer(1),
+                      DUP = TRUE,
+                      PACKAGE = "eha"
+                      )
+            if (fit$fail) stop("Error in exp likelihood calculation")
+
+            return(fit$loglik)
+        }
 
         if (length(shape) == 1){
             shape <- rep(shape, ns)
@@ -143,46 +187,23 @@ aftreg.fit <- function(X, Y, dist,
           stop("length(shape) must be equal to 1 or No. of strata")
         }
 
-        fit <- .C("aftexpsup",
-                  iter = as.integer(iter), #maxit on ip, actual on op.
-                  as.double(control$eps),
-                  as.integer(printlevel),
-                                        #
-                  as.integer(ns), # No. of strata
-                  as.integer(nstra),
-                  as.integer(nn),
-                  as.integer(ncov),
-                  as.integer(bdim),
-                                        #
-                  as.double(Y[, 1]),  ## 'enter'
-                  as.double(Y[, 2]),  ## 'exit'
-                  as.integer(Y[, 3]), ## 'event'
-                                        #
-                  ##as.double(t(scale(X, center = TRUE, scale = FALSE))),
-                  as.double(t((X))), #NOTE: scaling already done!
-                  as.double(offset),
-                  as.double(shape), ## "p" (fixed)
-                  as.integer(dis),
-
-                  as.double(init),     # 'start.beta'
-                  beta = double(bdim), # results -->
-                  lambda = double(ns),
-                  lambda.sd = double(ns),
-                                        #
-                  loglik = double(2), # [1] == start, [2] == maximized
-                  dloglik = double(bdim),
-                  variance = double(bdim * bdim),
-                  sctest = double(1),
-                                        #
-                  conver = integer(1),
-                  fail = integer(1),
-                  DUP = FALSE,
-                  PACKAGE = "eha"
-                  )
-        if (fit$fail) return(list(fail = fit$fail,
-                                  n.strata = ns,
-                                  value = fit$beta[fit$fail])
-                             )
+        bdim <- ns
+        ncov.save <- ncov
+        ncov <- 0
+        beta <- numeric(bdim)
+        for (i in 1:ns){
+            beta[i] <- log(sum(Y[, 2] - Y[, 1]) / sum(Y[, 3]))
+        }
+        res <- optim(beta, Fexpmin, method = "BFGS", hessian = FALSE)
+        ncov <- ncov.save
+        bdim <- ncov + ns
+        beta <- c(rep(0, ncov), res$par)
+        loglik.start <- -res$value
+        fit <- optim(beta, Fexpmin, method = "BFGS", hessian = TRUE)
+        fit$fail <- (fit$convergence > 0.5)
+        fit$beta <- fit$par
+        fit$loglik <- c(loglik.start, -fit$value)
+        fit$variance <- solve(fit$hessian)
         fit$shape.fixed <- TRUE
         fit$shape <- shape
         fit$shape.sd <- NULL  ## Not necessary!?!?
@@ -205,7 +226,7 @@ aftreg.fit <- function(X, Y, dist,
         if (ncov){
             var <- dxy %*% matrix(fit$variance, bdim, bdim) %*% t(dxy)
         }else{
-            var <- matrix(fit$variance, bdim, bdim)
+            var <- fit$variance
         }
         colnames(var) <- rownames(var) <- coef.names
     }

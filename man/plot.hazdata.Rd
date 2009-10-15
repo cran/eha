@@ -19,7 +19,7 @@ the output from \code{link{coxreg}}.}
   \item{main}{A heading for the plot.}
   \item{xlab}{Label on the x axis.}
   \item{ylab}{Label on the y-axis.}
-  \item{...}{Anything that \code{\link[base]{plot.default}} likes...}
+  \item{...}{Anything that \code{\link[graphics]{plot.default}} likes...}
 }
 \details{
 It is also possible to have as first argument an object of type

@@ -101,7 +101,7 @@ threeway or higher order interactions are present. Use
 Note further that covariates are internally centered, if \code{center =
   TRUE}, by this function, 
 and this is not corrected for in the output. This affects the estimate
-of \code{\log(scale)}, but nothing else. If you don't like this, set
+of \eqn{\log(scale)}{log(scale)}, but nothing else. If you don't like this, set
 \code{center = FALSE}.}
 
 

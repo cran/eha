@@ -10,10 +10,10 @@
 int p = 0;
 int nn = 0;
 double *x = 0; /* Covariates: (nn x p) */
-double *offset = 0;
+/* double *offset = 0; */
 /* Variable: */ 
 double *lin = 0;
-double *score = 0;
+/* double *score = 0; */
 double *sumdscore = 0;
 double *sumd2score = 0;
 
@@ -133,7 +133,7 @@ static void inv_hess(double *h22, int *fail){
 	F77_CALL(dpotri)(&up, &p, h22, &p, fail);
 	if (!(*fail)){
 	    for ( i = 1; i < p; i++){
-		for (j = 0; j < i - 1; j++){
+		for (j = 0; j < i; j++){
 		    h22[i + j*p] = h22[j + i*p];
 		}
 	    }
@@ -145,6 +145,7 @@ static void inv_hess(double *h22, int *fail){
 	Rprintf("[dpotrf] info = %d\n", *fail);
 	error("No inverse in [inv_hess]");
     }
+
 }
 
 
@@ -221,9 +222,12 @@ static void fill_in(RiskSet *risks,
 		    int *eventset,
 		    int *size,
 		    int *riskset,
+		    double *offset,
+		    double *weights,
 		    double *hazard){
 
-    int str, rs, j, eindx, rindx;
+    int str, rs, j, eindx, rindx, i;
+    double tmp;
 
     rs = -1;
     eindx = 0;
@@ -235,6 +239,13 @@ static void fill_in(RiskSet *risks,
 	    risks[rs].eventset = eventset + eindx;
 	    risks[rs].size = size[rs];
 	    risks[rs].riskset = riskset + rindx;
+	    risks[rs].offset = offset + rindx;
+	    risks[rs].weights = weights + rindx;
+	    tmp = 0.0;
+	    for (i = 0; i < antevents[rs]; i++) 
+		tmp += risks[rs].weights[i];
+	    risks[rs].rs_weight = tmp / antevents[rs];
+
 	    /* if (risks[rs].antevents == risks[rs].size){ */
 	    if (1 == risks[rs].size){
 		risks[rs].out = 1;
@@ -265,6 +276,7 @@ void sup(int *meth,
 	 int *antrs, 
 	 int *antevents, 
 	 int *size,
+	 double *weights,
 	 int *totsize, 
 	 int *eventset, 
 	 int *riskset, 
@@ -330,7 +342,7 @@ C              0 if success
 C +++ 
 **************************************************************************/
   
-/*    variables needed for ML: */
+/*  Variables needed for ML: */
     double ll;
     double *db = 0;
     double *b = 0;
@@ -360,6 +372,8 @@ C +++
     double *prob;
     int *save_eventset = 0;
 
+    double *score = 0; /* for bootstrapping */
+
 /* Correct for C-zero! */
 
     for (j = 0; j < *totevent; j++) eventset[j] -= 1;
@@ -370,15 +384,15 @@ C +++
     p = *p_in;
     nn = *nn_in;
     x = covar;
-    offset = offset_in;
+/*    offset = offset_in; */
 
     if (p > 0){
 	lin = (double *)R_alloc((long)nn, sizeof(double));
 	F77_CALL(dcopy)(&nn, &zero, &izero, lin, &ione);
-	
+
 	score = (double *)R_alloc((long)nn, sizeof(double));
 	F77_CALL(dcopy)(&nn, &zero, &izero, score, &ione); 
-	
+
 	sumdscore = (double *)R_alloc((long)p, sizeof(double));
 	F77_CALL(dcopy)(&p, &zero, &izero, sumdscore, &ione); 
 	
@@ -390,8 +404,9 @@ C +++
 /* Fill in risk sets: */    
     risks = (RiskSet *)R_alloc((long)(*totrs), sizeof(RiskSet));
 
-    fill_in(risks, *ns, antrs, antevents, eventset, size, riskset, hazard);
- 
+    fill_in(risks, *ns, antrs, antevents, eventset, 
+	    size, riskset, offset_in, weights, hazard);
+
     /* Enough if no covariates! */
     if (p <= 0) {
 	*conver = 1;
@@ -460,9 +475,18 @@ C +++
 /* "First column" of beta is the solution! */
 
     if (*prl == 1){
-	if (*conver)
-	    Rprintf("Convergence\n");
-	else
+	if (*conver){
+	    Rprintf("Convergence: Hessian is\n");
+	    indx = -1;
+	    for (i = 0; i < p; i++){
+		Rprintf("\n ");
+		for (j = 0; j < p; j++){
+		    indx = indx + 1;
+		    Rprintf("%f ", d2ll[indx]); 
+		}
+	    }
+	    Rprintf("\n");
+	}else
             Rprintf("NOTE: No Convergence!\n");
 	Rprintf("loglik = %f\n", ll);
 }
@@ -473,6 +497,18 @@ C +++
     
     inv_hess(d2ll, fail);
 
+    if (*prl == 1){
+	Rprintf("Variance is:\n");
+	indx = -1;
+	for (i = 0; i < p; i++){
+	    Rprintf("\n ");
+	    for (j = 0; j < p; j++){
+		indx = indx + 1;
+		Rprintf("%f ", d2ll[indx]); 
+	    }
+	}
+	Rprintf("\n");
+    }
     if (*fail){
 	warning("No variance (this should not happen!)");
 	return;
@@ -495,6 +531,7 @@ C +++
 }
 
 /* Bootstrapping? */
+/* Needs fixing incase of time-varying offset! */
     if (*boot){
 	
 	prob = (double *)R_alloc((long)(*totsize), sizeof(double));
@@ -502,7 +539,8 @@ C +++
 C +++ Calculate score(i), i = 1, nn:
 C     Only needed for calculation of selection probabilities. */
 
-	F77_CALL(dcopy)(&nn, offset, &ione, score, &ione);
+/*	F77_CALL(dcopy)(&nn, offset, &ione, score, &ione); */
+	for (j = 0; j < nn; j++) score[j] = 0.0;
 	F77_CALL(dgemv)(&trans, &nn, &p, &one, covar, &nn, beta, &ione, &one,  
 			score, &ione);
 	

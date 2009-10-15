@@ -1,5 +1,7 @@
 coxreg <- function (formula = formula(data),
                     data = parent.frame(),
+                    weights,
+                    t.offset,
                     na.action = getOption("na.action"),
                     init = NULL,
                     method = c("efron", "breslow", "mppl", "ml"),
@@ -17,7 +19,7 @@ coxreg <- function (formula = formula(data),
                     max.survs = NULL)
 {
     if (!is.null(frailty))
-      stop("Frailty not implemented yet.")
+        stop("Frailty not implemented yet.")
     method <- match.arg(method)
     call <- match.call()
     m <- match.call(expand.dots = FALSE)
@@ -27,7 +29,8 @@ coxreg <- function (formula = formula(data),
     special <- "strata"
     Terms <- if (missing(data))
         terms(formula, special)
-    else terms(formula, special, data = data)
+    else
+        terms(formula, special, data = data)
     m$formula <- Terms
     m[[1]] <- as.name("model.frame")
     m <- eval(m, parent.frame())
@@ -36,7 +39,10 @@ coxreg <- function (formula = formula(data),
     if (!inherits(Y, "Surv"))
         stop("Response must be a survival object")
     if (is.null(max.survs)) max.survs <- NROW(Y)
-    weights <- model.extract(m, "weights")
+    if (missing(weights)) weights <- rep(1, NROW(Y))
+    if (missing(t.offset)) t.offset <- NULL
+    ##weights <- model.extract(m, "weights")
+
     offset <- attr(Terms, "offset")
     tt <- length(offset)
     offset <- if (tt == 0)
@@ -71,9 +77,9 @@ coxreg <- function (formula = formula(data),
     #########################################
 
     if (length(dropx)){
-      covars <- names(m)[-c(1, (dropx + 1))]
+        covars <- names(m)[-c(1, (dropx + 1))]
     }else{
-      covars <- names(m)[-1]
+        covars <- names(m)[-1]
     }
 
     isF <- logical(length(covars))
@@ -111,8 +117,8 @@ coxreg <- function (formula = formula(data),
     ##########################################
     type <- attr(Y, "type")
     if (type != "right" && type != "counting")
-      stop(paste("Cox model doesn't support \"", type, "\" survival data",
-                 sep = ""))
+        stop(paste("Cox model doesn't support \"", type, "\" survival data",
+                   sep = ""))
 
     if (NCOL(Y) == 2){
         Y <- cbind(numeric(NROW(Y)), Y)
@@ -122,7 +128,7 @@ coxreg <- function (formula = formula(data),
     if (n.events == 0) stop("No events; no sense in continuing!")
 
     if ((!is.null(init)) && (length(init) != NCOL(X)))
-      stop("Wrong length of 'init'")
+        stop("Wrong length of 'init'")
 
 
     if (is.list(control)){
@@ -149,6 +155,8 @@ coxreg <- function (formula = formula(data),
       fit <- coxreg.fit(X,
                         Y,
                         rs,
+                        weights,
+                        t.offset,
                         strats,
                         offset,
                         init,

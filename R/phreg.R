@@ -145,6 +145,10 @@ phreg <- function (formula = formula(data),
                      shape,
                      control,
                      center)
+    if (fit$fail){
+        warning(paste("Failed with error code ", fit$fail))
+        return(1)
+    }
 
     if (ncov){
         fit$linear.predictors <- offset + X %*% fit$coefficients[1:ncov]

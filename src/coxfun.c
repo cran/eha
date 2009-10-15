@@ -18,14 +18,14 @@ static double gam1_fun(double gam, void *info){
     dg = 0.0;
     for (i = 0; i < risk->size; i++){
 	who = risk->riskset[i];
-	s = score[who]; /* 'score' is global. */
+	s = exp(risk->offset[i] + lin[who]); /* 'lin' is global. */
 	dg += s;
     }
 
     egam = exp(gam);
     for (i = 0; i < risk->antevents; i++){
 	who = risk->riskset[i];
-	s = score[who];
+	s = exp(risk->offset[i] + lin[who]);
 	dg += s / expm1(-s * egam);
     }
 
@@ -67,12 +67,12 @@ void get1_gam(RiskSet *risk){
 
     risk->tot_score = 0.0;
     who = risk->riskset[0];
-    risk->tot_score += score[who];
+    risk->tot_score += exp(risk->offset[0] + lin[who]);
     gmin = lin[who];
     gmax = gmin;
     for (i = 1; i < risk->size; i++){
 	who = risk->riskset[i];
-	risk->tot_score += score[who];
+	risk->tot_score += exp(risk->offset[i] + lin[who]);
 	what = lin[who];
 	if (what < gmin){ 
 	    gmin = what;
@@ -86,7 +86,8 @@ void get1_gam(RiskSet *risk){
 	  gam = 1.0 - 
 	    R_pow_di(1.0 - score[who] / risk->tot_score, 1.0 / score[who]);
 	*/
-	gam = log(-log1p(-score[who] / risk->tot_score) / score[who]);
+	gam = log(-log1p(-exp(risk->offset[0] + lin[who]) / 
+			 risk->tot_score) / exp(risk->offset[0] + lin[who]));
     }else{
 	gam = 1.0 - (double)(risk->antevents) / risk->tot_score;
 	gam = log(-log1p(-(double)(risk->antevents) / 
@@ -145,7 +146,7 @@ void ml_rs(int what, RiskSet *risk,
 
     for (i = 0; i < risk->antevents; i++){
 	who = risk->eventset[i];
-	hil = egam * score[who];
+	hil = egam * exp(risk->offset[i] + lin[who]);
 	ehil = exp(-hil);
 	/* loglik += log(one - ehil) + hil; */
 	*loglik += log1p(-ehil) + hil;
@@ -175,7 +176,7 @@ void ml_rs(int what, RiskSet *risk,
 /* All in riskset: */
     for (i = 0; i < risk->size; i++){
 	who = risk->riskset[i];
-	hil = -egam * score[who]; /* Note 1! */
+	hil = -egam * exp(risk->offset[i] + lin[who]); /* Note 1! */
 	ehil = exp(hil);
 	*loglik += hil;
 	if (what >= 1){ /* First derivatives */
@@ -205,17 +206,21 @@ static void cox_obs_rs(int what, RiskSet *risk,
 		       double *loglik, double *dloglik){
 
     int i, who;
-    double one = 1.0;
+    /* double one = 1.0; */
+    double wght;
     int ione = 1;
 
     if (risk->out) return;
 
     for (i = 0; i < risk->antevents; i++){
 	who = risk->eventset[i];
-	*loglik += lin[who];
-	if (what >= 1) F77_CALL(daxpy)(&p, &one, (x + p * who), &ione,
+	/* Rprintf("weights[%d] = %f\n", i, risk->weights[i]); */ 
+	wght = risk->weights[i];
+	*loglik += wght * (risk->offset[i] + lin[who]);
+	if (what >= 1) F77_CALL(daxpy)(&p, &wght, (x + p * who), &ione,
 				       dloglik, &ione);
     }
+
 }
     
 void breslow_rs(int what, RiskSet *risk, 
@@ -235,6 +240,7 @@ void breslow_rs(int what, RiskSet *risk,
     double sumscore;
     int p2 = p * p;
     double alpha;
+    double *wsc;
     
     if (risk->out) return;
 
@@ -248,6 +254,7 @@ void breslow_rs(int what, RiskSet *risk,
 
     /* Initialize: */
 
+    wsc = Calloc(risk->size, double);
     sumscore = 0.0;
     if (what >= 1){
 	F77_CALL(dcopy)(&p, &zero, &izero, sumdscore, &ione);
@@ -260,13 +267,15 @@ void breslow_rs(int what, RiskSet *risk,
 
     for (i = 0; i < risk->size; i++){
 	who = risk->riskset[i];
-	sumscore += score[who];
+	wsc[i] = risk->weights[i] * exp(risk->offset[i] + lin[who]);
+	/* sumscore += score[who]; */
+	sumscore += wsc[i];
 	if (what >= 1){ /* First derivatives: */
-	    F77_CALL(daxpy)(&p, (score + who), (x + p * who), &ione, 
-			    sumdscore, &ione);
+		F77_CALL(daxpy)(&p, (wsc + i), (x + p * who), &ione, 
+				sumdscore, &ione);
 
 	    if (what >= 2){ /* Second derivatives: */
-		F77_CALL(dsyr)(&up, &p, (score + who), 
+		F77_CALL(dsyr)(&up, &p, (wsc + i), 
 			       (x + p * who), &ione,
 			       sumd2score, &p);
 	    }
@@ -275,9 +284,9 @@ void breslow_rs(int what, RiskSet *risk,
 
     /* Add in: */
 
-    *loglik -= risk->antevents * log(sumscore);
+    *loglik -= risk->rs_weight * risk->antevents * log(sumscore);/*KOLLA!*/
     if (what >= 1){
-	alpha = -(double)(risk->antevents) / sumscore;
+	alpha = -(double)(risk->antevents) * risk->rs_weight / sumscore;
 	F77_CALL(daxpy)(&p, &alpha, sumdscore, &ione, 
 			dloglik, &ione);
 	if (what >= 2){
@@ -289,7 +298,7 @@ void breslow_rs(int what, RiskSet *risk,
 			   d2loglik, &p);
 	}
     }
-
+    Free(wsc);
 }
 
 void efron_rs(int what, RiskSet *risk, 
@@ -328,6 +337,8 @@ C     Local (note the deviation from strict standard here!):
 
     double alpha;
 
+    double *wsc;
+
     if (risk->out) return;
 
     /* First the "observed" part (common to the 'breslow' method): */
@@ -338,6 +349,7 @@ C     Local (note the deviation from strict standard here!):
 
     /* Then the "expected" part: */
 
+    wsc = Calloc(risk->size, double);
     edscore = Calloc(p, double);
     ed2score = Calloc(p2, double);
 
@@ -359,12 +371,14 @@ C     Local (note the deviation from strict standard here!):
 /*     Go thru riskset(rs, j): */
     for (i = 0; i < risk->size; i++){
 	who = risk->riskset[i];
-	sumscore += score[who];
+	wsc[i] = risk->weights[i] * exp(risk->offset[i] + lin[who]);
+	/* sumscore += score[who]; */
+	sumscore += wsc[i];
 	if (what >= 1){
-	    F77_CALL(daxpy)(&p, (score + who), (x + p * who),
+	    F77_CALL(daxpy)(&p, (wsc + i), (x + p * who),
 			    &ione, sumdscore, &ione);
 	    if (what >= 2){
-		F77_CALL(dsyr)(&up, &p, (score + who),
+		F77_CALL(dsyr)(&up, &p, (wsc + i),
                                (x + p * who), &ione, 
                                sumd2score, &p);
 /*		F77_CALL(dger)(&p, &p, (score + who), (x + p * who), &ione,
@@ -376,18 +390,19 @@ C     Local (note the deviation from strict standard here!):
                
     if (risk->antevents == 1){ /* No ties */
 /*     Add into loglik: */
-	*loglik -= log(sumscore);
+	*loglik -= risk->rs_weight * log(sumscore);
 	if (what >= 1){
 /*     Add into dloglik: */
-	    alpha = -one / sumscore;
+	    /*  alpha = -one / sumscore; */
+	    alpha = -risk->rs_weight / sumscore; /* 090405 */
 	    F77_CALL(daxpy)(&p, &alpha, 
 			    sumdscore, &ione, dloglik, &ione);
 	    if (what >= 2){
 /*     Add into d2loglik: */
-		alpha = (double)risk->antevents / sumscore; 
+		alpha = risk->rs_weight / sumscore; 
 		F77_CALL(daxpy)(&p2, &alpha, sumd2score, &ione, 
 				d2loglik, &ione);
-		alpha = -(double)(risk->antevents) / 
+		alpha = -risk->rs_weight / 
 		    (sumscore * sumscore);
 		F77_CALL(dsyr)(&up, &p, &alpha, sumdscore, &ione, 
 		d2loglik, &p); 
@@ -401,12 +416,12 @@ C     Local (note the deviation from strict standard here!):
 /* Go thru events and create escore, edscore and ed2score: */
 	for (i = 0; i < risk->antevents; i++){
 	    who = risk->eventset[i];
-	    escore = escore + score[who];
+	    escore = escore + wsc[i];
 	    if (what >= 1){ /* first derivatives */
-		F77_CALL(daxpy)(&p, (score + who), (x + p * who), &ione,
+		F77_CALL(daxpy)(&p, (wsc + i), (x + p * who), &ione,
 				edscore, &ione);
 		if (what >= 2){ /* second derivatives */
-		    F77_CALL(dsyr)(&up, &p, (score + who), 
+		    F77_CALL(dsyr)(&up, &p, (wsc + i), 
 				   (x + p * who), &ione,
 				   ed2score, &p); 
 /*	       F77_CALL(dger)(&p, &p, (score + who), (x + p * who), &ione,
@@ -421,7 +436,7 @@ C     Local (note the deviation from strict standard here!):
 	    w = (double)r / (double)(risk->antevents);
 	    ws = w * escore;
 /*     Add into loglik: */
-	    *loglik -= log(sumscore - ws);
+	    *loglik -= risk->rs_weight * log(sumscore - ws);
 	    if (what >= 1){
 /*     Add into dloglik: */
 		F77_CALL(dcopy)(&p, sumdscore, &ione, temp, &ione);
@@ -429,17 +444,17 @@ C     Local (note the deviation from strict standard here!):
 		F77_CALL(daxpy)(&p, &alpha, edscore, &ione, temp, &ione);
 		alpha = one / (sumscore - ws);
 		F77_CALL(dscal)(&p, &alpha, temp, &ione);
-		alpha = -one;
+		alpha = -one * risk->rs_weight;
 		F77_CALL(daxpy)(&p, &alpha, temp, &ione, dloglik, &ione);
 		if (what >= 2){
 /*     Add into d2loglik: */
-		    alpha = one / (sumscore - ws);
+		    alpha = one * risk->rs_weight / (sumscore - ws);
 		    F77_CALL(daxpy)(&p2, &alpha, sumd2score, &ione,
 				    d2loglik, &ione);
-		    alpha = -w / (sumscore - ws);
+		    alpha = -w * risk->rs_weight / (sumscore - ws);
 		    F77_CALL(daxpy)(&p2, &alpha, ed2score, &ione,
 				    d2loglik, &ione);
-		    alpha = -one;
+		    alpha = -one * risk->rs_weight;
 		    F77_CALL(dsyr)(&up, &p, &alpha, temp, &ione,
 				   d2loglik, &p);
 		}
@@ -449,6 +464,7 @@ C     Local (note the deviation from strict standard here!):
     Free(temp);
     Free(ed2score);
     Free(ed2score);
+    Free(wsc);
 }
 
 
@@ -510,11 +526,12 @@ void coxfun(int what, int totrs, RiskSet *risks,
     }
 
     /* Calculate 'lin' and 'score' */
-
-    F77_CALL(dcopy)(&nn, offset, &ione, lin, &ione);
+    /* Lin without offset and no score; 1.2-7 */ 
+    /* F77_CALL(dcopy)(&nn, offset, &ione, lin, &ione); */
+    for (m = 0; m < nn; m++) lin[m] = 0.0;
     F77_CALL(dgemv)(&trans, &p, &nn, &one, x, 
 		    &p, b, &ione, &one, lin, &ione); 
-    for (m = 0; m < nn; m++) score[m] = exp(lin[m]);
+    /* for (m = 0; m < nn; m++) score[m] = exp(lin[m]); */
 
     /* Start walking thru risksets: */
     
@@ -534,3 +551,71 @@ void coxfun(int what, int totrs, RiskSet *risks,
     }
 }
 
+/*
+void coxfuns(int *ncov,
+	     double *beta,
+	     int *what,
+	     int *method,
+	     int *size,
+	     double *weights,
+	     int *riskset,
+	     int *antevents,
+	     int *eventset,
+	     double *covar,
+	     double *e_frac,
+	     double *lin_in,
+	     double *score_in,
+	     double *loglik,
+	     double *dloglik){
+
+    RiskSet *risks;
+    size_t one = 1;
+    int j;
+
+    double *d2loglik = 0;
+    
+    risks = (RiskSet *)R_alloc(one, sizeof(RiskSet));
+    
+    risks->out = 0;
+    risks->stratum = 1; 
+    risks->time = 0.0; 
+    risks->antevents = *antevents;
+    risks->eventset = eventset;
+    risks->size = *size;
+    risks->weights = weights;
+    risks->rs_weight = 0.0;
+    for (j = 0; j < *size; j++) risks->rs_weight + weights[j];
+    risks->riskset = riskset;
+    risks->tot_score = 0.0;
+    for (j = 0; j < *size; j++) risks->tot_score += score_in[j];
+    
+
+    lin = lin_in;
+    score = score_in;
+    p = *ncov;
+
+    x = covar;
+    sumdscore = (double *)R_alloc((size_t)p, sizeof(double));
+    
+    switch (*method){
+    case 0:
+	eha_rs = &efron_rs;
+	break;
+    case 1:
+	eha_rs = &breslow_rs;
+	break;
+    case 2: 
+	eha_rs = &mppl_rs;
+	break;
+    case 3:
+	eha_rs = &ml_rs;
+	break;
+    default:
+	error ("Wrong method! (Should never happen; file a bug report)");
+	break;
+    }
+    
+    eha_rs(*what, risks, beta, *e_frac, 
+	   loglik, dloglik, d2loglik);
+}
+*/

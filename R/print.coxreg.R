@@ -101,7 +101,8 @@ print.coxreg <-
                 }
             }else{ ## Covariates:
                 index <- index + 1
-                cat(formatC(covar.names[covar.no], width = 16, flag = "-"),
+                cat(formatC(substr(covar.names[covar.no], 1, 16),
+                            width = 16, flag = "-"),
                     formatC(x$w.means[[covar.no]],
                             width = 8, digits = 3, format = "f"),
                     coef[index],
