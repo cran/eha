@@ -6,7 +6,8 @@
 Called by \code{\link{coxreg}}, but a user can call it directly.
 }
 \usage{
-coxreg.fit(X, Y, rs, strats, offset, init, max.survs,
+coxreg.fit(X, Y, rs, weights, t.offset = NULL,
+strats, offset, init, max.survs,
 method = "breslow", center = TRUE,
 boot = FALSE, efrac = 0, calc.hazards = TRUE,
 calc.martres = TRUE, control, verbose = TRUE)
@@ -16,6 +17,8 @@ calc.martres = TRUE, control, verbose = TRUE)
   \item{X}{The design matrix.}
   \item{Y}{The survival object.}
   \item{rs}{The risk set composition. If absent, calculated.}
+  \item{weights}{Case weights; time-fixed or time-varying.}
+  \item{t.offset}{Case offset; time-varying.}
   \item{strats}{The stratum variable. Can be absent.}
   \item{offset}{Offset. Can be absent.}
   \item{init}{Start values. If absent, equal to zero.}

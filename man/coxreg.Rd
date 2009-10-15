@@ -7,7 +7,7 @@
   \emph{sampling of risksets} and \emph{the weird bootstrap}.
 }
 \usage{
-coxreg(formula = formula(data), data = parent.frame(),
+coxreg(formula = formula(data), data = parent.frame(), weights, t.offset,
 na.action = getOption("na.action"), init = NULL,
 method = c("efron", "breslow", "mppl", "ml"),
 control = list(eps = 1e-08, maxiter = 25, trace = FALSE),
@@ -24,6 +24,8 @@ frailty = NULL, max.survs = NULL)
     a survival object as returned by the Surv function.}
   \item{data}{a data.frame in which to interpret the variables named
     in the formula.}
+  \item{weights}{Case weights; time-fixed or time-varying.}
+  \item{t.offset}{Case offsets; time-varying.}
   \item{na.action}{ a missing-data filter function, applied to the
     model.frame, after any subset argument has been used.
     Default is \code{options()$na.action}.}

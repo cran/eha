@@ -7,10 +7,10 @@
 extern int p;
 extern int nn;
 extern double *x; /* Covariates: (nn x p) */
-extern double *offset; /* nn */
+/* extern double *offset; */
 /* Variable: */ 
 extern double *lin;    /* nn */
-extern double *score;      /* nn */
+/* extern double *score;      nn */
 extern double *sumdscore;   /* p */
 extern double *sumd2score;   /* p x p */
 
@@ -24,10 +24,13 @@ typedef struct
     int antevents; /* How many events in this risk set? */
     int *eventset; /* Who died in this risk set? */
     int size;      /* No. of members of the risk set */   
+    double *weights;
+    double *offset; /* Time-varying offset */
+    double rs_weight; /* riskset mean of weights; */
     int *riskset;  /* Members of the risk set */
     double gamma;  /* depends on beta and data*/
     double hazard;
-  double tot_score; /* sum(score(j)), j in RiskSet; */
+    double tot_score; /* sum(score(j)), j in RiskSet; */
 }
 RiskSet;
 
@@ -42,6 +45,7 @@ void sup(int *meth,
 	 int *antrs, 
 	 int *antevents, 
 	 int *size,
+	 double *weights,
 	 int *totsize, 
 	 int *eventset, 
 	 int *riskset, 

@@ -1,11 +1,17 @@
-coxreg.fit <- function(X, Y, rs, strats, offset, init, max.survs,
+coxreg.fit <- function(X, Y, rs, weights, t.offset = NULL,
+                       strats, offset, init, max.survs,
                        method = "breslow", center = TRUE,
                        boot = FALSE, efrac = 0,
                        calc.hazards = TRUE, calc.martres = TRUE,
                        control, verbose = TRUE){
 
-    nn <- NROW(X)
-    ncov <- NCOL(X)
+    nn <- NROW(Y)
+    if (is.matrix(X)){
+        ncov <- NCOL(X)
+    }else{
+        if (length(X)) NCOL <- 1
+        else NCOL <- 0
+    }
 
     if (missing(strats) || is.null(strats))
       strats <- rep(1, nn)
@@ -14,14 +20,36 @@ coxreg.fit <- function(X, Y, rs, strats, offset, init, max.survs,
         rs <- risksets(Y, strata = strats, max.survs)
     }
 
+    if (missing(weights) || is.null(weights)){
+        weights <- rep(1, length(rs$riskset))
+    }else{
+        if (length(weights) == nn){
+            weights <- weights[rs$riskset]
+        }else if (length(weights) != length(rs$riskset)){
+            stop("weights: length error")
+        }
+    }
+
+    if (missing(t.offset) || is.null(t.offset)){
+        t.offset <- rep(0, length(rs$riskset))
+    }else{
+        if (length(t.offset) != length(rs$riskset)){
+            cat("length(t.offset) = ", length(t.offset), "\n")
+            cat("length(rs$riskset) = ", length(rs$riskset), "\n")
+            stop("t.offset: length error")
+        }
+    }
 
     if (max(rs$riskset) > nn) stop("Riskset does not match data")
 
-    if (missing(offset) || is.null(offset))
-      offset <- rep(0, nn)
+    if (missing(offset) || is.null(offset)){
+        offset <- t.offset
+    }else{
+        offset <- t.offset + offset[rs$riskset]
+    }
 
     if (missing(init) || is.null(init))
-      init <- rep(0, ncov)
+        init <- rep(0, ncov)
 
     if (missing(control)){
         control <- list(eps=1.e-8, maxiter = 10, trace = FALSE)
@@ -84,6 +112,7 @@ coxreg.fit <- function(X, Y, rs, strats, offset, init, max.survs,
                   as.integer(rs$antrs),
                   as.integer(rs$n.events),
                   as.integer(rs$size),
+                  as.double(weights),
                                         #
                   as.integer(length(rs$riskset)), # Sum of risk set sizes.
                   as.integer(rs$eventset),

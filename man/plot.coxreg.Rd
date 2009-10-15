@@ -23,7 +23,7 @@ new.data = x$means, ...)
   \item{ylab}{Label on the y-axis.}
   \item{new.data}{At what covariate values should the calculations be
     done? Default is the mean values of the covariates.}
-  \item{...}{Anything that \code{\link[base]{plot.default}} likes...}
+  \item{...}{Anything that \code{\link[graphics]{plot.default}} likes...}
 }
 \details{
 This function is a wrapper for \code{\link{plot.hazdata}}.

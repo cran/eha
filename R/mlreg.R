@@ -25,6 +25,8 @@ function (formula = formula(data),
     efrac <- 0
     coxreg(formula,
            data,
+           t.offset = NULL,
+           weights = NULL,
            na.action,
            init,
            method,

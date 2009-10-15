@@ -12,41 +12,24 @@ ph0_fun *h0_t;     /* First order derivative of h0  */
 ph0_fun *h0_tt;    /* Second order derivative of h0 */
 
 typedef struct{
+    int *id; /* Primary sorting key */
+    int *strata; /* Numbered 0, ..., (*ns - 1) */
     int *ns;
-    int *nstra;
     double *pfix;
     int *mb;
     int *nn;
     double *z;
-    double *time0;
+    double *time0; /* Secondary sorting key */
     double *time;
     int *ind;
     double *offset;
-    double *f;
-    double *fp;
-    double *fpp;
-    int *iok;
 } Exts;
 
-/*
-static double aft_fun(int n, double *beta, void *vex);
 
-static void gaft_fun(int n, double *beta, double *dloglik, void *vex);
-
-static void g2aft_fun(int n, double *beta, double *d2loglik, void *vex);
-
-static void aft_nr(int iter, double eps, int printlevel, 
-		  int bdim, double *beta, 
-		  double *loglik, double *dloglik, double *variance,
-		  int *conver, int *fail, Exts *ex);
-*/
-void aftsup(int *iter, double *eps, int *printlevel,
-	   int *ns, int *nstra, int *nn, int *ncov, int *bdim,
-	   double *time0, double *time, int * ind,
-	   double *covar, double *offset, int *dist, /* 'dist' new */
-	   double *init, double *beta, double *lambda, double *lambda_sd,
-	   double *shape, double *shape_sd,
-	   double *loglik, double *dloglik, double *variance, double *sctest,
-	   int *conver, int *fail);
+void aftsup(int *printlevel,
+	    int *ns, int *nn, int *ncov, int *bdim,
+	    int *id, int *strata, double *time0, double *time, int *ind,
+	    double *covar, double *offset, int *dis, double *beta, 
+	    double *loglik, int *fail);
 
 #endif

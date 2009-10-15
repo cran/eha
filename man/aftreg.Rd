@@ -9,7 +9,7 @@
 \usage{
 aftreg(formula = formula(data), data = parent.frame(),
 na.action = getOption("na.action"), dist = "weibull", init, shape = 0,
-control = list(eps = 1e-08, maxiter = 20, trace = FALSE),
+id, control = list(eps = 1e-08, maxiter = 20, trace = FALSE),
 singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE)
 }
 
@@ -32,6 +32,9 @@ singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE)
   \item{shape}{If positive, the shape parameter is fixed at that value.
   If zero or negative, the shape parameter is estimated. Stratitfication
   is not meaningful if shape is fixed.}
+\item{id}{If there are more than one spell per individual, it is
+  essential to keep spells together by the id argument. This allows for
+  time-varying covariates.}
     \item{control}{a list with components \code{eps} (convergence
     criterion), \code{maxiter} (maximum number of iterations), and
     \code{silent} (logical, controlling amount of output).  You can

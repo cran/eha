@@ -1,21 +1,23 @@
 aftreg <- function (formula = formula(data),
-                   data = parent.frame(),
-                   na.action = getOption("na.action"),
-                   dist = "weibull",
-                   init,
-                   shape = 0,
-                   ## Means shape is estimated, ie true Weibull; > 0 fixed!
-                   control = list(eps = 1e-8, maxiter = 20, trace = FALSE),
-                   singular.ok = TRUE,
-                   model = FALSE,
-                   x = FALSE,
-                   y = TRUE)
+                    data = parent.frame(),
+                    na.action = getOption("na.action"),
+                    dist = "weibull",
+                    init,
+                    shape = 0,
+                    id,
+                    ## Means shape is estimated, ie true Weibull; > 0 fixed!
+                    control = list(eps = 1e-8, maxiter = 20, trace = FALSE),
+                    singular.ok = TRUE,
+                    model = FALSE,
+                    x = FALSE,
+                    y = TRUE)
 {
 
     if (dist == "gompertz") shape <- 1
     pfixed <- any(shape > 0)
     call <- match.call()
     m <- match.call(expand.dots = FALSE)
+
     temp <- c("", "formula", "data", "na.action")
     m <- m[match(temp, names(m), nomatch = 0)] # m is a call
 
@@ -31,6 +33,8 @@ aftreg <- function (formula = formula(data),
     Y <- model.extract(m, "response")
     if (!inherits(Y, "Surv"))
       stop("Response must be a survival object")
+    if (missing(id)) id <- 1:nrow(Y)
+    ##else id <- m$"(id)" # This does not work; leave it for the time being...
 
     weights <- model.extract(m, "weights")
     offset <- attr(Terms, "offset")
@@ -134,7 +138,6 @@ aftreg <- function (formula = formula(data),
         stop("control must be a list")
     }
 
-
     fit <- aftreg.fit(X,
                       Y,
                       dist,
@@ -142,6 +145,7 @@ aftreg <- function (formula = formula(data),
                       offset,
                       init,
                       shape,
+                      id,
                       control)  # Remove center? DONE!!
 
     if (ncov){

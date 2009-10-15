@@ -7,7 +7,7 @@ This function is called by \code{\link{aftreg}}, but it can also be
 directly called by a user.
 }
 \usage{
-aftreg.fit(X, Y, dist, strata, offset, init, shape, control)
+aftreg.fit(X, Y, dist, strata, offset, init, shape, id, control)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -19,6 +19,7 @@ aftreg.fit(X, Y, dist, strata, offset, init, shape, control)
   \item{init}{Initial regression parameter values.}
   \item{shape}{If positive, a fixed value of the shape parameter in the
     distribution. Otherwise, the shape is estimated.}
+  \item{id}{See corresponding argument to \code{\link{aftreg}}.}
   \item{control}{Controls convergence and output.}
 }
 \details{
