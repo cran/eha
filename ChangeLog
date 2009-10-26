@@ -1,3 +1,6 @@
+1.2-13	(October 26, 2009)
+	* plot.coxreg: Bug fixed in call to plot.hazdata (wrong order of args).
+	
 1.2-12	(October 15, 2009)
 	* aftreg: Works now for time-varying covariates. Not polished.
 

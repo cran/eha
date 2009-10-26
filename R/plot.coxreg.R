@@ -22,7 +22,7 @@ plot.coxreg <- function(x,
             ## reconsidered in the future!!
             ##x$hazards[[i]][, 2] <- score * x$hazards[[i]][, 2]
     }
-    plot.hazdata(x$hazards, fn, fig, main, xlim, ylim, xlab, ylab, ...)
+    plot.hazdata(x$hazards, fn, fig, xlim, ylim, main, xlab, ylab, ...)
 
 }
 
