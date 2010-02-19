@@ -59,8 +59,6 @@ static double aftexp_fun(int n, double *beta, void *vex){
     res1 = 0.0;
     res2 = 0.0;
 
-
-
     if (mb) {
 	for (i = 0; i < nn; i++) {
 	    bz[i] = 0.0;

@@ -233,5 +233,5 @@ print.aftreg <- function(x, digits=max(options()$digits - 4, 3), ...){
     if (length(x$icc))
       cat("   number of clusters=", x$icc[1],
           "    ICC=", format(x$icc[2:3]), "\n")
-    invisible()
+    invisible(x)
 }

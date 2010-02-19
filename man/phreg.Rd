@@ -22,8 +22,10 @@ singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE, center = TRUE)
   \item{na.action}{ a missing-data filter function, applied to the
     model.frame, after any subset argument has been used.
     Default is \code{options()$na.action}.}
-\item{dist}{Which distributin? Default is "weibull", with the
-  alternatives "loglogistic" and "lognormal".}
+\item{dist}{Which distribution? Default is "weibull", with the
+  alternatives "loglogistic" and "lognormal". A special 
+  case like the \code{exponential} can be obtained by choosing "weibull"
+  in combination with \code{shape = 1}.}
   \item{init}{vector of initial values of the iteration.
     Default initial value is zero for all variables.}
   \item{shape}{If positive, the shape parameter is fixed at that value

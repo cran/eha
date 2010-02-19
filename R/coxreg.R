@@ -23,7 +23,7 @@ coxreg <- function (formula = formula(data),
     method <- match.arg(method)
     call <- match.call()
     m <- match.call(expand.dots = FALSE)
-    temp <- c("", "formula", "data", "na.action")
+    temp <- c("", "formula", "data", "weights", "na.action")
     m <- m[match(temp, names(m), nomatch = 0)]
 
     special <- "strata"
@@ -40,8 +40,9 @@ coxreg <- function (formula = formula(data),
         stop("Response must be a survival object")
     if (is.null(max.survs)) max.survs <- NROW(Y)
     if (missing(weights)) weights <- rep(1, NROW(Y))
+    else weights <- model.extract(m, "weights")
     if (missing(t.offset)) t.offset <- NULL
-    ##weights <- model.extract(m, "weights")
+    ##
 
     offset <- attr(Terms, "offset")
     tt <- length(offset)

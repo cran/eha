@@ -114,13 +114,13 @@ plot.phreg <- function(x,
         for (i in 1:ns){
             Haz[i, ] <- Haza(xx, scale = lambda[i], shape = p[i]) * score
         }
-        ylim <- c(0, max(Haz))
+        if (is.null(ylim)) ylim <- c(0, max(Haz))
         ##if (is.null(xlab))
         xlab <- "Duration"
         ##if (is.null(ylab))
         ylab <- "Cumulative Hazard"
-        ##if (is.null(main))
-        main <- paste(dist, "cumulative hazard function")
+        if (is.null(main))
+            main <- paste(dist, "cumulative hazard function")
         plot(xx, Haz[1, ], type = "l", xlim = xlim, ylim = ylim,
              xlab = xlab, ylab = ylab, main = main, ...)
         if (ns > 1){
@@ -157,8 +157,8 @@ plot.phreg <- function(x,
         xlab <- "Duration"
         ##if (is.null(ylab))
         ylab <- "Density"
-        ##if (is.null(main))
-        main <- paste(dist, "density function")
+        if (is.null(main))
+            main <- paste(dist, "density function")
         plot(xx, den[1, ], type = "l", xlim = xlim, ylim = ylim,
              xlab = xlab, ylab = ylab, main = main, ...)
         if (ns > 1){
@@ -194,8 +194,8 @@ plot.phreg <- function(x,
         xlab <- "Duration"
         ##if (is.null(ylab))
         ylab <- "Survival"
-        ##if (is.null(main))
-        main <- paste(dist, "survivor function")
+        if (is.null(main))
+            main <- paste(dist, "survivor function")
         plot(xx, sur[1, ], type = "l", xlim = xlim, ylim = ylim,
              xlab = xlab, ylab = ylab, main = main, ...)
         if (ns > 1){

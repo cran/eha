@@ -62,13 +62,15 @@ static double aft_fun(int n, double *beta, void *vex){
 	f0_t = &f0_t_lognormal;     
 	h0_t = &h0_t_lognormal;     
 	h0_tt = &h0_tt_lognormal;   
-    }else if ((dist == 3) || (dist == 4)){ /* 4 = Gompertz */    
+    }else if (dist == 3){
 	S0 = &S0_ev;
 	f0 = &f0_ev;      
 	h0 = &h0_ev;      
 	f0_t = &f0_t_ev;     
 	h0_t = &h0_t_ev;     
-	h0_tt = &h0_tt_ev;   
+	h0_tt = &h0_tt_ev;
+    }else if (dist == 4){ /* 4 = Gompertz */    
+	error("Gompertz should not go here (internal error)");
     }else{
 	error("Unknown distribution");
     }

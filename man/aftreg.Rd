@@ -23,8 +23,9 @@ singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE)
   \item{na.action}{ a missing-data filter function, applied to the
     model.frame, after any subset argument has been used.
     Default is \code{options()$na.action}.}
-\item{dist}{Which distributin? Default is "weibull", with the
-  alternatives "gompertz", "ev", "loglogistic" and "lognormal". A special
+\item{dist}{Which distribution? Default is "weibull", with the
+  alternatives "gompertz" (but see note below), "ev", "loglogistic" and
+  "lognormal". A special 
   case like the \code{exponential} can be obtained by choosing "weibull"
   in combination with \code{shape = 1}.}
   \item{init}{vector of initial values of the iteration.
@@ -86,7 +87,8 @@ A list of class \code{c("aftreg", "coxreg", "coxph")} with components
 }
 
 \author{\enc{Göran Broström}{George Bridgewater}}
-%\note{}
+
+\note{dist = "gompertz" is unreliable.}
 
 
 \section{Warning}{The print method \code{\link{print.aftreg}} doesn't work if
@@ -99,9 +101,7 @@ threeway or higher order interactions are present. Use
 
 \examples{
 data(male.mortality)
-aftreg(Surv(enter, exit, event) ~ ses, data = male.mortality, dist = "gompertz")
-phreg(Surv(enter, exit, event) ~ ses, data = male.mortality, dist = "gompertz")
-coxreg(Surv(enter, exit, event) ~ ses, data = male.mortality)
+aftreg(Surv(enter, exit, event) ~ ses, data = male.mortality)
 }
 \keyword{survival}% at least one, from doc/KEYWORDS
 \keyword{regression}% __ONLY ONE__ keyword per line
