@@ -18,7 +18,7 @@ aftreg <- function (formula = formula(data),
     call <- match.call()
     m <- match.call(expand.dots = FALSE)
 
-    temp <- c("", "formula", "data", "na.action")
+    temp <- c("", "formula", "data", "id", "na.action")
     m <- m[match(temp, names(m), nomatch = 0)] # m is a call
 
     special <- "strata"
@@ -34,9 +34,10 @@ aftreg <- function (formula = formula(data),
     if (!inherits(Y, "Surv"))
       stop("Response must be a survival object")
     if (missing(id)) id <- 1:nrow(Y)
+    else id <- model.extract(m, "id")
     ##else id <- m$"(id)" # This does not work; leave it for the time being...
 
-    weights <- model.extract(m, "weights")
+    ##weights <- model.extract(m, "weights") # No weights (as yet...)
     offset <- attr(Terms, "offset")
     tt <- length(offset)
     offset <- if (tt == 0)
@@ -67,12 +68,12 @@ aftreg <- function (formula = formula(data),
     ##return(X)
     assign <- lapply(attrassign(X, newTerms)[-1], function(x) x - 1)
 
-   ## if (dist != "gompertz"){
-   ##     intercept <- FALSE
+    if (dist != "gompertz"){
+        intercept <- FALSE
         X <- X[, -1, drop = FALSE]
-   ## }else{
-   ##     intercept <- TRUE
-   ## }
+    }else{
+        intercept <- TRUE
+    }
     ncov <- NCOL(X)
 
     #########################################

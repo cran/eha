@@ -1,3 +1,19 @@
+1.2-16	(February 19, 2010)
+	* aftreg: 'dist = "gompertz"' is unreliable, so changed the
+	example and added a note with a warning. Is also an item on the
+	ToDo list now.
+	
+1.2-15	(February 18, 2010)
+	* aftreg: argument 'id' now works as intended, i.e., is looked for
+	in 'data' (or 'parent.frame()')
+	* print: functions return invisibly 'x'.
+	* coxreg: argument 'weights' now works as intended, i.e., is looked for
+	in 'data' (or 'parent.frame()')
+	
+1.2-14	(October 29, 2009)
+	* check.dist: Bad 'ylim' fixed.
+	* aftreg: Gompertz distribution had a bug; now fixed.
+	
 1.2-13	(October 26, 2009)
 	* plot.coxreg: Bug fixed in call to plot.hazdata (wrong order of args).
 	

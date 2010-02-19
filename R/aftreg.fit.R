@@ -31,9 +31,19 @@ aftreg.fit <- function(X, Y, dist,
     nn <- NROW(X)
     ncov <- NCOL(X)
 
+    intercept <- (dis == 4) # gompertx
     if (ncov){
         means <- colMeans(X)
-        X <- scale(X, center = TRUE, scale = FALSE)
+        if (intercept){ ## i.e., if "gompertz"
+            if (ncov > 1){
+                for (i in 2:ncov){
+                    X[, i] <- X[, i] - means[i]
+                }
+            }
+        }else{
+            X <- scale(X, center = TRUE, scale = FALSE)
+        }
+        
     }
 
     if (missing(strata) || is.null(strata)){

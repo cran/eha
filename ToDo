@@ -1,1 +1,1 @@
-* coxreg with no covariates is wrong.
+* phreg and aftreg with 'gompertz' need to be checked.
