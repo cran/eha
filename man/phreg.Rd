@@ -10,7 +10,7 @@
 phreg(formula = formula(data), data = parent.frame(),
 na.action = getOption("na.action"), dist = "weibull", init, shape = 0,
 control = list(eps = 1e-08, maxiter = 20, trace = FALSE),
-singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE, center = TRUE)
+singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE, center = FALSE)
 }
 
 \arguments{
@@ -40,8 +40,9 @@ singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE, center = TRUE)
   \item{model}{Not used.}
   \item{x}{Return the design matrix in the model object?}
   \item{y}{Return the response in the model object?}
-  \item{center}{Should the covariates be centered? Default is TRUE. No
-  correction in parameter estimates is made if centering.}
+  \item{center}{Should results from centering the covariates be
+    reported? 
+    Default is FALSE.}
 }
 
 \details{

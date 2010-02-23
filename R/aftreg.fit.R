@@ -1,7 +1,7 @@
 aftreg.fit <- function(X, Y, dist,
                        strata, offset,
                        init, shape, id,
-                       control){
+                       control, center = FALSE){
 
     ## New in Version 1.2-9; wrong before!
     ## Note that we MUST keep individuals together here;
@@ -22,8 +22,10 @@ aftreg.fit <- function(X, Y, dist,
         dis <- 2
     }else if (dist == "ev"){
         dis <- 3
-    }else if (dist == "gompertz"){
-        dis <- 4
+    }else if (dist == "gompertz"){ # An EV with shape == 1:
+        ## dis <- 4
+        dis <- 3
+        shape <- 1
     }else{
         stop(paste(dist, "is not an implemented distribution"))
     }
@@ -31,19 +33,14 @@ aftreg.fit <- function(X, Y, dist,
     nn <- NROW(X)
     ncov <- NCOL(X)
 
-    intercept <- (dis == 4) # gompertx
+    ## No intercepts in 'aftreg!!! (1.2-17) intercept <- (dis == 4) # gompertz
     if (ncov){
-        means <- colMeans(X)
-        if (intercept){ ## i.e., if "gompertz"
-            if (ncov > 1){
-                for (i in 2:ncov){
-                    X[, i] <- X[, i] - means[i]
-                }
-            }
-        }else{
-            X <- scale(X, center = TRUE, scale = FALSE)
+        wts <- Y[, 2] - Y[, 1]
+        means <- apply(X, 2, weighted.mean, w = wts)
+    ##    if (intercept) means[1] <- 0
+        for (i in 1:ncov){
+            X[, i] <- X[, i] - means[i]
         }
-        
     }
 
     if (missing(strata) || is.null(strata)){
@@ -66,11 +63,11 @@ aftreg.fit <- function(X, Y, dist,
     iter <- control$maxiter
 
 
-    nstra <- c(0, cumsum(table(strata)))
+    ## Not needed?? nstra <- c(0, cumsum(table(strata)))
     if (all(shape <= 0)){ ## Then shape is estimated in all strata
 
         Fmin <- function(beta){
-            
+
             fit <- .C("aftsup",
                       as.integer(printlevel),
                       ##
@@ -115,10 +112,12 @@ aftreg.fit <- function(X, Y, dist,
         ncov <- ncov.save
         bdim <- ncov + 2 * ns
         beta <- c(rep(0, ncov), beta)
-        fit <- optim(beta, Fmin, method = "BFGS", hessian = TRUE)
+        fit <- optim(beta, Fmin, method = "BFGS",
+                     control = list(trace = as.integer(printlevel)),
+                     hessian = TRUE)
         fit$beta <- fit$par
         fit$loglik <- c(loglik.start, -fit$value)
-        fit$variance <- solve(fit$hessian)
+        fit$variance <- try(solve(fit$hessian))
         fit$fail <- FALSE
         if (ncov){
             dxy <- diag(2 * ns + ncov)
@@ -137,7 +136,7 @@ aftreg.fit <- function(X, Y, dist,
                 ##dxy[row, row] <- -1
             }
         }
-        
+
         coef.names <- colnames(X)
         if (ns > 1){
             for (i in 1:ns){
@@ -156,7 +155,7 @@ aftreg.fit <- function(X, Y, dist,
 
     }else{  ## Then shape is fixed in all strata:
         ## Note: We must allow stratification even here (091006)!!
-        
+
 
         Fexpmin <- function(beta){
 
@@ -204,21 +203,27 @@ aftreg.fit <- function(X, Y, dist,
         for (i in 1:ns){
             beta[i] <- log(sum(Y[, 2] - Y[, 1]) / sum(Y[, 3]))
         }
-        res <- optim(beta, Fexpmin, method = "BFGS", hessian = FALSE)
+
+        res <- optim(beta, Fexpmin, method = "BFGS",
+                     control = list(trace = as.integer(printlevel)),
+                     hessian = FALSE)
         ncov <- ncov.save
         bdim <- ncov + ns
         beta <- c(rep(0, ncov), res$par)
         loglik.start <- -res$value
-        fit <- optim(beta, Fexpmin, method = "BFGS", hessian = TRUE)
+
+        fit <- optim(beta, Fexpmin, method = "BFGS",
+                     control = list(trace = as.integer(printlevel)),
+                     hessian = TRUE)
         fit$fail <- (fit$convergence > 0.5)
         fit$beta <- fit$par
         fit$loglik <- c(loglik.start, -fit$value)
-        fit$variance <- solve(fit$hessian)
+        fit$variance <- try(solve(fit$hessian))
         fit$shape.fixed <- TRUE
         fit$shape <- shape
         fit$shape.sd <- NULL  ## Not necessary!?!?
         ##fit$beta[bdim] <- -fit$beta[bdim] # To get "1 / lambda"! NO!!
-        if (ncov){
+        if (ncov & !center){
             dxy <- diag(bdim)
             dxy[bdim, 1:ncov] <- means / shape
             scale.corr <- sum(means * fit$beta[1:ncov]) / shape
@@ -233,12 +238,12 @@ aftreg.fit <- function(X, Y, dist,
     ##cat("done!\n")
 
     if (!fit$fail){
-        if (ncov){
+        if (ncov && is.numeric(fit$variance)){
             var <- dxy %*% matrix(fit$variance, bdim, bdim) %*% t(dxy)
+            colnames(var) <- rownames(var) <- coef.names
         }else{
             var <- fit$variance
         }
-        colnames(var) <- rownames(var) <- coef.names
     }
     else
         var <- NULL

@@ -10,7 +10,7 @@
 aftreg(formula = formula(data), data = parent.frame(),
 na.action = getOption("na.action"), dist = "weibull", init, shape = 0,
 id, control = list(eps = 1e-08, maxiter = 20, trace = FALSE),
-singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE)
+singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE, center = FALSE)
 }
 
 
@@ -24,7 +24,7 @@ singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE)
     model.frame, after any subset argument has been used.
     Default is \code{options()$na.action}.}
 \item{dist}{Which distribution? Default is "weibull", with the
-  alternatives "gompertz" (but see note below), "ev", "loglogistic" and
+  alternatives "gompertz", "ev", "loglogistic" and
   "lognormal". A special 
   case like the \code{exponential} can be obtained by choosing "weibull"
   in combination with \code{shape = 1}.}
@@ -44,6 +44,7 @@ singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE)
   \item{model}{Not used.}
   \item{x}{Return the design matrix in the model object?}
   \item{y}{Return the response in the model object?}
+  \item{center}{Should results from centering of covariates be reported?}
 }
 
 \details{
@@ -87,8 +88,6 @@ A list of class \code{c("aftreg", "coxreg", "coxph")} with components
 }
 
 \author{\enc{Göran Broström}{George Bridgewater}}
-
-\note{dist = "gompertz" is unreliable.}
 
 
 \section{Warning}{The print method \code{\link{print.aftreg}} doesn't work if

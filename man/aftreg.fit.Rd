@@ -7,7 +7,8 @@ This function is called by \code{\link{aftreg}}, but it can also be
 directly called by a user.
 }
 \usage{
-aftreg.fit(X, Y, dist, strata, offset, init, shape, id, control)
+aftreg.fit(X, Y, dist, strata, offset, init, shape, id, control,
+center = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -21,6 +22,7 @@ aftreg.fit(X, Y, dist, strata, offset, init, shape, id, control)
     distribution. Otherwise, the shape is estimated.}
   \item{id}{See corresponding argument to \code{\link{aftreg}}.}
   \item{control}{Controls convergence and output.}
+  \item{center}{Should results from centering of covariates be reported?}
 }
 \details{
 See \code{\link{aftreg}} for more detail.
