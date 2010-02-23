@@ -59,16 +59,17 @@ static double aftexp_fun(int n, double *beta, void *vex){
     res1 = 0.0;
     res2 = 0.0;
 
+    for (i = 0; i < nn; i++) {
+	bz[i] = ex->offset[i];
+    }
     if (mb) {
-	for (i = 0; i < nn; i++) {
-	    bz[i] = 0.0;
-	    /* Kolla detta: Ska senare bytas mot BLAS */  
-	    for (j = 0; j < mb; j++) bz[i] += ex->z[i * mb + j] * beta[j];
-	}
-    }else{
-	for (i = 0; i < nn; i++) {
-	    bz[i] = 0.0;
-	}
+	/* Kolla detta: Ska senare bytas mot BLAS */
+	for (i = 0; i < nn; i++){
+	    for (j = 0; j < mb; j++) {
+		bz[i] += ex->z[i * mb + j] * beta[j];
+	    }
+	    /* Rprintf("bz[%d] = %f\n", i, bz[i]); */ 
+	} 
     }
 
     rec = 0;

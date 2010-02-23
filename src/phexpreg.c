@@ -4,7 +4,7 @@
 
 #include "phreg.h"
 #include "phfun.h"
-#include "loglik_ph.h"
+#include "loglik_phexp.h"
 
 /*
 int dist;      
@@ -36,13 +36,13 @@ static double phexp_fun(int n, double *beta, void *vex){
 	alpha = beta[mb + i];     /* log(scale) */
 	gamma = log(ex->pfix[i]); /* log(shape) */
 
-	loglik_ph(&dist,
-		  &mb, beta, &alpha, &gamma,
-		  &nn, ex->z + mb * start, 
-		  ex->time0 + start, ex->time + start, 
-		  ex->ind + start, 
-		  ex->offset + start,
-		  &res);
+	loglik_phexp(&dist,
+		     &mb, beta, &alpha, &gamma,
+		     &nn, ex->z + mb * start, 
+		     ex->time0 + start, ex->time + start, 
+		     ex->ind + start, 
+		     ex->offset + start,
+		     &res);
 	f += res;
     }
     return(f);
@@ -60,7 +60,7 @@ static void gphexp_fun(int n, double *beta, double *dloglik, void *vex){
 
     mb = *(ex->mb);
 
-    fp = Calloc(mb + 2, double);
+    fp = Calloc(mb + 1, double);
 
     for (j = 0; j < n; j++) dloglik[j] = 0.0;
     for (i = 0; i < *(ex->ns); i++){
@@ -68,10 +68,10 @@ static void gphexp_fun(int n, double *beta, double *dloglik, void *vex){
 	nn = ex->nstra[i+1] - ex->nstra[i];
 	alpha = beta[mb + i];
 	gamma = log(ex->pfix[i]);
-	d_loglik_ph(&dist, &mb, beta, &alpha, &gamma,
-		    &nn, ex->z + *(ex->mb) * start,
-		    ex->time0 + start, ex->time + start,
-		    ex->ind + start, ex->offset + start, fp);
+	d_loglik_phexp(&dist, &mb, beta, &alpha, &gamma,
+		       &nn, ex->z + *(ex->mb) * start,
+		       ex->time0 + start, ex->time + start,
+		       ex->ind + start, ex->offset + start, fp);
 	for (j = 0; j < mb; j++) dloglik[j] += fp[j];
 	dloglik[mb + i] += fp[mb];
 	/* dloglik[mb + 2*i + 1] += fp[mb + 1]; inte med */
@@ -94,31 +94,33 @@ static void g2phexp_fun(int n, double *beta, double *d2loglik, void *vex){
 
     mb = *(ex->mb);
 
-    fpp = Calloc((mb + 2) * (mb + 2), double);
+    fpp = Calloc((mb + 1) * (mb + 1), double);
 
     for (j = 0; j < bdim * bdim; j++) d2loglik[j] = 0.0;
+    if (*(ex->ns) != 1) error("Stratification not allowed here\n");
     for (i = 0; i < *(ex->ns); i++){
 	start = ex->nstra[i];
 	nn = ex->nstra[i+1] - ex->nstra[i];
 	alpha = beta[mb + i];
 	gamma = log(ex->pfix[i]);
-	d2_loglik_ph(&dist, &mb, beta, &alpha, &gamma,
-		     &nn, ex->z + *(ex->mb) * start,
-		     ex->time0 + start, ex->time + start,
-		     ex->ind + start, ex->offset + start, fpp);
+	d2_loglik_phexp(&dist, &mb, beta, &alpha, &gamma,
+			&nn, ex->z + *(ex->mb) * start,
+			ex->time0 + start, ex->time + start,
+			ex->ind + start, ex->offset + start, fpp);
 	for (j = 0; j < mb; j++){
-	    d2loglik[j + mb * bdim] = fpp[j + mb * (mb + 2)];
-	    d2loglik[mb + j * bdim] = fpp[mb + j * (mb + 2)];
+/* ToDo: Only correct for "No strata": */                        /* NOTE!!! */
+	    d2loglik[j + mb * bdim] = fpp[j + mb * bdim];
+	    d2loglik[mb + j * bdim] = fpp[mb + j * bdim];
 /*
 	    d2loglik[j + (mb + 1) * bdim] = fpp[j + (mb + 1) * (mb + 2)];
 	    d2loglik[mb + 1 + j * bdim] = fpp[mb + 1 + j * (mb + 2)];
 */
 	    for (m = 0; m < mb; m++){
-		d2loglik[j + m * bdim] += fpp[j + m * (mb + 2)];
+		d2loglik[j + m * bdim] += fpp[j + m * (mb + 1)];
 	    }
 	}
 	/* Måste kollas !!! */
-	d2loglik[mb + 2*i + (mb + 2*i) * bdim] += fpp[mb + mb * (mb + 2)];
+	d2loglik[mb + 2*i + (mb + 2*i) * bdim] += fpp[mb + mb * (mb + 1)];
 /*	
 	d2loglik[mb + 2*i + 1 + (mb + 2 * i + 1) * bdim] += 
 	    fpp[mb + 1 + (mb + 1) * (mb + 2)];
@@ -427,11 +429,31 @@ void phexpsup(int *iter, double *eps, int *printlevel,
 	  phexp_fun, gphexp_fun, maxiter, trace,  
 	  mask, *eps, *eps, nREPORT,
 	  vex, &fncount, &grcount, fail);
-
     if (trace)
 	Rprintf("\nAfter 'vmmin': loglik = %f\n", -Fmin);
     loglik[1] = -Fmin;
+    if (trace){
+	Rprintf("\n[phexpreg] After vmmin; beta is\n");
+	for (i = 0; i < *bdim; i++){
+	    Rprintf("%f ", beta[i]);
+	}
+	Rprintf("\n\n");
 
+
+	Rprintf("Fmin efter vmmin: %f\n", Fmin);
+    }
+/*
+    nmmin(*bdim, xin, beta, &Fmin, phexp_fun, 
+	  fail, *eps, *eps, vex, 
+	  1.0, 0.5, 2.0, trace,
+	  &fncount, maxiter);
+    Rprintf("Fmin efter nmmin: %f\n", -Fmin);
+    Rprintf("\n[phexpreg] After Nmmin; beta is\n");
+    for (i = 0; i < *bdim; i++){
+	Rprintf("%f ", beta[i]);
+    }
+    Rprintf("\n\n");
+*/	
     gphexp_fun(*bdim, beta, dloglik, vex);
     if (trace){
 	Rprintf("\n[phexpreg] After vmmin; score is\n");
@@ -440,11 +462,6 @@ void phexpsup(int *iter, double *eps, int *printlevel,
 	}
 	Rprintf("\n\n");
 	
-	Rprintf("\n[phexpreg] After vmmin; beta is\n");
-	for (i = 0; i < *bdim; i++){
-	    Rprintf("%f ", beta[i]);
-	}
-	Rprintf("\n\n");
     }
     g2phexp_fun(*bdim, beta, variance, vex);
     if (trace){
@@ -481,6 +498,14 @@ void phexpsup(int *iter, double *eps, int *printlevel,
 	  *bdim, beta, 
 	  (loglik + 1), dloglik, variance, 
 	  conver, fail, ex);
+    if (trace){
+	Rprintf("Fmin efter Newton-Raphson: %f\n", -loglik[1]);
+	Rprintf("\n[phexpreg] After Newton-Raphson; beta is\n");
+	for (i = 0; i < *bdim; i++){
+	    Rprintf("%f ", beta[i]);
+	}
+	Rprintf("\n\n");
+    }
 
     if (trace){
 	Rprintf("Variance (in [phexpreg]) after N-R:\n");

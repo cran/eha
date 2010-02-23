@@ -10,7 +10,8 @@ aftreg <- function (formula = formula(data),
                     singular.ok = TRUE,
                     model = FALSE,
                     x = FALSE,
-                    y = TRUE)
+                    y = TRUE,
+                    center = FALSE)
 {
 
     if (dist == "gompertz") shape <- 1
@@ -68,12 +69,15 @@ aftreg <- function (formula = formula(data),
     ##return(X)
     assign <- lapply(attrassign(X, newTerms)[-1], function(x) x - 1)
 
-    if (dist != "gompertz"){
-        intercept <- FALSE
-        X <- X[, -1, drop = FALSE]
-    }else{
-        intercept <- TRUE
-    }
+    ##if (dist != "gompertz"){
+      ##  intercept <- FALSE
+    X <- X[, -1, drop = FALSE]
+    ##}else{
+      ##  intercept <- TRUE
+    ##}
+    ##### No more intercept! (1.2-17) !! #############
+
+    
     ncov <- NCOL(X)
 
     #########################################
@@ -147,7 +151,8 @@ aftreg <- function (formula = formula(data),
                       init,
                       shape,
                       id,
-                      control)  # Remove center? DONE!!
+                      control,
+                      center)  # Remove center? DONE!! NO!!! (1.2-17)
 
     if (ncov){
         fit$linear.predictors <- offset + X %*% fit$coefficients[1:ncov]

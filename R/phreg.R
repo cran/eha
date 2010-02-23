@@ -10,7 +10,7 @@ phreg <- function (formula = formula(data),
                    model = FALSE,
                    x = FALSE,
                    y = TRUE,
-                   center = TRUE)
+                   center = FALSE)
 {
 
     if (dist == "gompertz") shape <- 1

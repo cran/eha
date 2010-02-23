@@ -1,3 +1,13 @@
+1.2-17	(February 23, 2010)
+	* aftreg: 'dist = "gompertz"' should now work (realizing that it
+	is a special case of 'dist = "EV").
+	* phreg: Fixed bugs for the cases with fixed shape (includes 'dist
+	= "gompertz"'.
+	* aftreg: 'offset' works now.
+	* phreg: Ditto.
+	* check.dist: Bug fixed for 'dist = "gompertz"' (again!)
+	* plot.phreg: Ditto.
+	
 1.2-16	(February 19, 2010)
 	* aftreg: 'dist = "gompertz"' is unreliable, so changed the
 	example and added a note with a warning. Is also an item on the
