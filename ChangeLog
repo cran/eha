@@ -1,3 +1,10 @@
+1.2-18	(February 28, 2010)
+	* aftreg.fit: Check of data consistency in case of more than one
+	record per individual added.
+	* aftreg.fit: Fixed memory allocation bug in C code. This bug was
+	not fatal (too much memory was allocated), but caused a severe
+	performance problem, especially on Windows.
+	
 1.2-17	(February 23, 2010)
 	* aftreg: 'dist = "gompertz"' should now work (realizing that it
 	is a special case of 'dist = "EV").
