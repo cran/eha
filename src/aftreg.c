@@ -39,7 +39,7 @@ static double aft_fun(int n, double *beta, void *vex){
     mb = *(ex->mb);
     nn = *(ex->nn);
 
-    bz = Calloc(ex->nn, double);
+    bz = Calloc(nn, double);
 
     if (dist == 0){
 	S0 = &S0_weibull;
@@ -93,17 +93,12 @@ static double aft_fun(int n, double *beta, void *vex){
     res1 = 0.0;
     res2 = 0.0;
 
-
+    for (i = 0; i < nn; i++) bz[i] = ex->offset[i];
 
     if (mb) {
 	for (i = 0; i < nn; i++) {
-	    bz[i] = ex->offset[i];
 	    /* Kolla detta: Ska senare bytas mot BLAS */  
 	    for (j = 0; j < mb; j++) bz[i] += ex->z[i * mb + j] * beta[j];
-	}
-    }else{
-	for (i = 0; i < nn; i++) {
-	    bz[i] = 0.0;
 	}
     }
 
@@ -149,6 +144,7 @@ static double aft_fun(int n, double *beta, void *vex){
 
     Free(n_rec);
     Free(bz);
+
     return( -(res1 - res2) ); /* Minimizing ... */
 }
 	

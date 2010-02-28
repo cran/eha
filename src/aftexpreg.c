@@ -38,7 +38,7 @@ static double aftexp_fun(int n, double *beta, void *vex){
     mb = *(ex->mb);
     nn = *(ex->nn);
 
-    bz = Calloc(ex->nn, double);
+    bz = Calloc(nn, double);
 
     indiv = 1;
 

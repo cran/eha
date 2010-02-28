@@ -13,7 +13,21 @@ aftreg.fit <- function(X, Y, dist,
     id <- id[ord]
     strata <- strata[ord]
     offset <- offset[ord]
-    #####################################
+
+##### Check 'data integrity' ########
+    n.ind <- length(unique(id))
+    if (length(id) > NROW(Y)) stop("'id' argument too long")
+    if (any(Y[, 2] <= Y[, 1])) stop("Zero or negative length intervals")
+    else if (n.ind < NROW(Y)){
+        for (i in 2:NROW(Y)){
+            if (id[i-1] == id[i]){
+                if (Y[i-1, 2] > Y[i, 1])
+                    stop(paste("Overlapping intervals for id ", id[i]))
+            }
+        }
+    }
+
+#####################################
     if (dist == "weibull"){
         dis <- 0
     }else if(dist == "loglogistic"){
