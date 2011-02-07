@@ -7,7 +7,7 @@ Comparison of the cumulative hazards functions for a semi-parametric and
 a parametric model.
 }
 \usage{
-check.dist(sp, pp, new.data = sp$means, main = NULL)
+check.dist(sp, pp, main = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -15,8 +15,6 @@ check.dist(sp, pp, new.data = sp$means, main = NULL)
 \code{\link{coxreg}}} 
   \item{pp}{An object of type "phreg", typically output from
 \code{\link{phreg}}}
-\item{new.data}{At what covariate values should the baseline hazards for
-  the coxreg model be calculated?}
 \item{main}{Header for the plot. Default is distribution and "cumulativa
   hazard function"}
 }
@@ -26,8 +24,8 @@ check.dist(sp, pp, new.data = sp$means, main = NULL)
 \value{
 No return value.
 }
-\references{ ~put references to the literature/web site here ~ }
-\author{Göran Broström}
+%\references{ ~put references to the literature/web site here ~ }
+\author{GÃ¶ran BrostrÃ¶m}
 
 \seealso{\code{\link{coxreg}} and \code{\link{phreg}}.}
 \examples{

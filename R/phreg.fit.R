@@ -1,7 +1,7 @@
 phreg.fit <- function(X, Y, dist,
                       strata, offset,
                       init, shape,
-                      control, center = FALSE){
+                      control, center = NULL){
 
     if (dist == "weibull"){
         dis <- 0
@@ -21,10 +21,12 @@ phreg.fit <- function(X, Y, dist,
     ncov <- NCOL(X)
 
     intercept <- (dis == 4)
+    ## Should we really have _weighted_ means? Yes! (Cf. coxreg.fit)
     if (ncov){
         wts <- Y[, 2] - Y[, 1]
-        means <- apply(X, 2, weighted.mean, w = wts)
-        if (intercept) means[1] <- 0
+        w.means <- apply(X, 2, weighted.mean, w = wts)
+        means <- colMeans(X)
+        ##means <- apply(X, 2, mean)
         for (i in 1:ncov){
             X[, i] <- X[, i] - means[i]
         }
@@ -103,7 +105,8 @@ phreg.fit <- function(X, Y, dist,
                                   n.strata = ns,
                                   value = fit$beta[fit$fail])
                              )
-        if (!center){ # Transform to original values
+        ##if (!center){ # Transform to original values
+        if (FALSE){ # NOPE!!! Transform to original values
             dxy <- diag(2 * ns + ncov)
             for (i in 1:ns){ ## Really a HACK ??!!!!!!!!!!!!!!!
                 row <- ncov + 2 * i - 1
@@ -191,7 +194,8 @@ phreg.fit <- function(X, Y, dist,
         fit$shape <- shape
         fit$shape.sd <- NULL  ## Not necessary!?!?
         ##fit$beta[bdim] <- -fit$beta[bdim] # To get "1 / lambda"! NO!!
-        if (!center){# i.e., never...
+        ##if (!center){# i.e., never...
+        if (FALSE){# i.e., never...
             dxy <- diag(bdim)
             if (ncov){
                 dxy[bdim, 1:ncov] <- means / shape
@@ -209,7 +213,8 @@ phreg.fit <- function(X, Y, dist,
     ##cat("done!\n")
 
     if (!fit$fail){
-        if (!center){ # Transform back...
+        ##if (!center){ # Transform back...
+        if (FALSE){ # NOPE...Transform back...
             var <- dxy %*% matrix(fit$variance, bdim, bdim) %*% t(dxy)
         }else{
             var <- matrix(fit$variance, bdim, bdim)

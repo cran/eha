@@ -3,8 +3,20 @@
 pgompertz <- function(q, shape = 1, scale = 1,
                      lower.tail = TRUE, log.p = FALSE){
 
-    if ( any(c(shape, scale) <= 0) ){
-        warning("Non-positive shape or scale")
+    n <- length(q)
+    if (any(scale == 0)){
+        if (log.p) return(rep(-Inf, n))
+        else return(rep(0, n))
+    }
+    ##if ( any(c(shape, scale) <= 0) ){
+    if ( any(scale < 0) ){
+        cat("scale = ", scale, "\n")
+        warning("Negative scale")
+        return(NaN)
+    }
+
+    if ( any(shape < 0) ){
+        warning("Negative shape")
         return(NaN)
     }
 
@@ -64,8 +76,19 @@ dgompertz <- function(x, shape = 1, scale = 1, log = FALSE){
 
 hgompertz <- function(x, shape = 1, scale = 1, log = FALSE){
 
-    if ( any(c(shape, scale) <= 0) ){
-        warning("Non-positive shape or scale")
+    if (any(scale == 0)) {
+        return(rep(Inf, length(x)))
+    }
+    ##if ( any(c(shape, scale) <= 0) ){
+    if ( any(scale <= 0) ){
+        cat("scale = ", scale, "\n")
+        warning("Non-positive scale")
+        return(NaN)
+    }
+
+    if ( any(shape < 0) ){
+        cat("shape = ", shape, "\n")
+        warning("Negative shape")
         return(NaN)
     }
 

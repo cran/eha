@@ -1,7 +1,7 @@
 aftreg.fit <- function(X, Y, dist,
                        strata, offset,
                        init, shape, id,
-                       control, center = FALSE){
+                       control, center = NULL){
 
     ## New in Version 1.2-9; wrong before!
     ## Note that we MUST keep individuals together here;
@@ -36,18 +36,20 @@ aftreg.fit <- function(X, Y, dist,
         dis <- 2
     }else if (dist == "ev"){
         dis <- 3
-    }else if (dist == "gompertz"){ # An EV with shape == 1:
+    }else if (dist == "gompertz"){ # An EV with shape == 1: NOT REALLY!!
         ## dis <- 4
-        dis <- 3
-        shape <- 1
+        ##dis <- 3
+        ##shape <- 1
+        stop("The Gompertz is not available yet as AFT; try PH?")
     }else{
         stop(paste(dist, "is not an implemented distribution"))
     }
 
     nn <- NROW(X)
-    ncov <- NCOL(X)
+    ncov <- NCOL(X) ## No intercept! - 1
 
     ## No intercepts in 'aftreg!!! (1.2-17) intercept <- (dis == 4) # gompertz
+    ## Again: No intercept in X:
     if (ncov){
         wts <- Y[, 2] - Y[, 1]
         means <- apply(X, 2, weighted.mean, w = wts)
@@ -140,11 +142,11 @@ aftreg.fit <- function(X, Y, dist,
                 col <- row + 1
                 ## fit$beta[row] <- -fit$beta[row] NOT ANY MORE!
                 if (ncov){
-                    pi.hat <- exp(fit$beta[col])
-                    scale.corr <- sum(means * fit$beta[1:ncov]) /
-                        pi.hat
+                    ##pi.hat <- exp(fit$beta[col])
+                    scale.corr <- sum(means * fit$beta[1:ncov]) #/
+                        ##pi.hat
                     fit$beta[row] <- fit$beta[row] + scale.corr
-                    dxy[row, 1:ncov] <- means / pi.hat
+                    dxy[row, 1:ncov] <- means # / pi.hat
                     dxy[row, col] <- -scale.corr
                 }
                 ##dxy[row, row] <- -1
@@ -237,10 +239,11 @@ aftreg.fit <- function(X, Y, dist,
         fit$shape <- shape
         fit$shape.sd <- NULL  ## Not necessary!?!?
         ##fit$beta[bdim] <- -fit$beta[bdim] # To get "1 / lambda"! NO!!
-        if (ncov & !center){
+        ##if (ncov & !center){
+        if (ncov){
             dxy <- diag(bdim)
-            dxy[bdim, 1:ncov] <- means / shape
-            scale.corr <- sum(means * fit$beta[1:ncov]) / shape
+            dxy[bdim, 1:ncov] <- means# / shape
+            scale.corr <- sum(means * fit$beta[1:ncov])# / shape
             fit$beta[bdim] <- fit$beta[bdim] + scale.corr
             dxy[bdim, bdim] <- -1
         }

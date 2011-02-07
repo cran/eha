@@ -31,7 +31,7 @@ in the model. The first column contains risktimes, and the second the y
 coordinates for the requested curve(s).
 }
 %\references{}
-\author{\enc{Göran Broström}{George Bridgewater}}
+\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
 %\note{ ~~further notes~~ }
 
 % ~Make other sections like WARNING with \section{WARNING }{....} ~

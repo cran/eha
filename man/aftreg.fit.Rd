@@ -8,7 +8,7 @@ directly called by a user.
 }
 \usage{
 aftreg.fit(X, Y, dist, strata, offset, init, shape, id, control,
-center = FALSE)
+center = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -22,7 +22,8 @@ center = FALSE)
     distribution. Otherwise, the shape is estimated.}
   \item{id}{See corresponding argument to \code{\link{aftreg}}.}
   \item{control}{Controls convergence and output.}
-  \item{center}{Should results from centering of covariates be reported?}
+  \item{center}{Is now deprecated. Centering is done internally, but
+    results reported as if not.}
 }
 \details{
 See \code{\link{aftreg}} for more detail.
@@ -44,7 +45,7 @@ See \code{\link{aftreg}} for more detail.
 
 }
 %\references{ ~put references to the literature/web site here ~ }
-\author{\enc{Göran Broström}{George Bridgewater}}
+\author{\enc{GÃ¶ran}{Goran} \enc{BrostrÃ¶m}{Brostrom}}
 %\note{}
 
 

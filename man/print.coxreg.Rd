@@ -23,7 +23,7 @@ Doesn't work with three-way and higher interactions, in which case
 No value is returned.
  }
 %\references{ ~put references to the literature/web site here ~ }
-\author{\enc{Göran Broström}{George Bridgewater}}
+\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
 %\note{}
 
 

@@ -4,7 +4,7 @@
 \title{Male mortality in ages 40-60, nineteenth century}
 \description{
   Males born in the years 1800-1820 and surving at least 40 years  in
-  the parish Skellefte� in northern 
+  the parish Skellefteå in northern 
   Sweden are followed from their fortieth birthday until death or the
   sixtieth birthday, whichever comes first.
 }
@@ -20,7 +20,7 @@
     \item{\code{event}}{a logical vector indicating death at end of interval.}
     \item{\code{birthdate}}{The birthdate in decimal form.}
     \item{\code{ses}}{Socio-economic status, a factor with levels
-      \code{lower} \code{upper}} 
+      \code{lower}, \code{upper}} 
   }
 }
 \details{
@@ -31,7 +31,7 @@
   censoring are introduced this way.
 } 
 \source{
-  Data is coming from The Demographic Data Base, Umeå University, Umeå, Sweden.
+  Data is coming from The Demographic Data Base, UmeÃ¥ University, UmeÃ¥, Sweden.
 }
 \references{
 \url{http://www.ddb.umu.se}  

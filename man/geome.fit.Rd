@@ -27,7 +27,7 @@ boot = FALSE, control)
 See the code.
 }
 \references{See \code{\link{coxreg}}.}
-\author{Göran Broström}
+\author{GÃ¶ran BrostrÃ¶m}
 \note{Nothing special}
 
 \seealso{\code{\link{coxreg}}}

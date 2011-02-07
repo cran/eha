@@ -17,7 +17,7 @@ function (formula = formula(data),
           frailty = NULL,
           max.survs = NULL)
 {
-    warning("'mlreg' is deprecated; use 'coxreg' instead (see 'methods')")
+    return("'mlreg' is deprecated; use 'coxreg' instead (see 'methods')")
     if (method[1] == "ML") method <- "ml"
     else if (method[1] == "MPPL") method <- "mppl"
     else stop(paste("Unknown method", as.character(method[1])))

@@ -5,8 +5,11 @@ plot.phreg <- function(x,
                        ylim = NULL,
                        xlab = "Duration",
                        ylab = "",
-                       new.data = x$means,
+                       new.data = NULL,
                          ...){
+
+    if (is.null(new.data)) new.data <- x$means
+    
     if (!inherits(x, "phreg")) stop("Works only with 'phreg' objects.")
     ##if (x$pfixed) stop("True exponential hazards are not plotted")
     if (!(all(fn %in% c("haz", "cum", "den", "sur"))))
@@ -79,9 +82,9 @@ plot.phreg <- function(x,
         Haza <- Hgompertz
         Surviv <- pgompertz
         Dens <- dgompertz
-        skal <- exp(x$coef[1]) / lambda # Kolla detta!!!!!!!!!!
+        ##skal <- exp(x$coef[1]) / lambda # Kolla detta!!!!!!!!!!
         ##for (i in 1:ns) p[i] <- skal
-        for (i in 1:ns) p[i] <- exp(x$coef[1])
+        ##for (i in 1:ns) p[i] <- exp(x$coef[1])
     }
 
     if ("haz" %in% fn){
@@ -95,9 +98,13 @@ plot.phreg <- function(x,
 
         if (is.null(xlab)) xlab <- "Duration"
         if (is.null(ylab)) ylab <- "Hazard"
-        if (is.null(main)) main <- paste(dist, "hazard function")
+        if (is.null(main)){
+            hmain <- paste(dist, "hazard function")
+        }else{
+            hmain <- main
+        }
         plot(xx, haz[1, ], type = "l", xlim = xlim, ylim = ylim,
-             xlab = xlab, ylab = ylab, main = main, ...)
+             xlab = xlab, ylab = ylab, main = hmain, ...)
         if (ns > 1){
             for (i in 2:ns){
                 lines(xx, haz[i, ], type = "l", lty = i)
@@ -120,10 +127,13 @@ plot.phreg <- function(x,
         xlab <- "Duration"
         ##if (is.null(ylab))
         ylab <- "Cumulative Hazard"
-        if (is.null(main))
-            main <- paste(dist, "cumulative hazard function")
+        if (is.null(main)){
+            Hmain <- paste(dist, "cumulative hazard function")
+        }else{
+            Hmain <- main
+        }
         plot(xx, Haz[1, ], type = "l", xlim = xlim, ylim = ylim,
-             xlab = xlab, ylab = ylab, main = main, ...)
+             xlab = xlab, ylab = ylab, main = Hmain, ...)
         if (ns > 1){
             for (i in 2:ns){
                 lines(xx, Haz[i, ], type = "l", lty = i)
@@ -158,10 +168,13 @@ plot.phreg <- function(x,
         xlab <- "Duration"
         ##if (is.null(ylab))
         ylab <- "Density"
-        if (is.null(main))
-            main <- paste(dist, "density function")
+        if (is.null(main)){
+            dmain <- paste(dist, "density function")
+        }else{
+            dmain <- main
+        }
         plot(xx, den[1, ], type = "l", xlim = xlim, ylim = ylim,
-             xlab = xlab, ylab = ylab, main = main, ...)
+             xlab = xlab, ylab = ylab, main = dmain, ...)
         if (ns > 1){
             for (i in 2:ns){
                 lines(xx, den[i, ], type = "l", lty = i)
@@ -195,10 +208,13 @@ plot.phreg <- function(x,
         xlab <- "Duration"
         ##if (is.null(ylab))
         ylab <- "Survival"
-        if (is.null(main))
-            main <- paste(dist, "survivor function")
+        if (is.null(main)){
+            smain <- paste(dist, "survivor function")
+        }else{
+            smain <- main
+        }
         plot(xx, sur[1, ], type = "l", xlim = xlim, ylim = ylim,
-             xlab = xlab, ylab = ylab, main = main, ...)
+             xlab = xlab, ylab = ylab, main = smain, ...)
         if (ns > 1){
             for (i in 2:ns){
                 lines(xx, sur[i, ], type = "l", lty = i)

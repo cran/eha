@@ -8,7 +8,7 @@
 \usage{
 plot.coxreg(x, fn = c("cum", "surv", "log", "loglog"), fig = TRUE,
 xlim=NULL, ylim=NULL, main=NULL, xlab="Duration", ylab="",
-new.data = x$means, ...)
+new.data = NULL, ...)
 }
 \arguments{
   \item{x}{A \code{coxreg} object, typically the output from
@@ -34,7 +34,7 @@ in the model. The first column contains risktimes, and the second the y
 coordinates for the requested curve.
 }
 %\references{}
-\author{\enc{Göran Broström}{George Bridgewater}}
+\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
 %\note{ ~~further notes~~ }
 
 % ~Make other sections like WARNING with \section{WARNING }{....} ~

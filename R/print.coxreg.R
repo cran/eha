@@ -7,10 +7,12 @@ print.coxreg <-
 	cat("\n")
 	}
 
-    if (x$fail) {
-	cat(" coxreg failed.\n")
-	return()
-	}
+    if (!is.null(x$fail)) {
+        if (x$fail != 0){
+            cat(" coxreg failed with: ")
+            stop(x$fail)
+        }
+    }
 
     if (!length(x$coefficients)){
         cat("Null log likelihood = ", x$loglik[2], "\n")

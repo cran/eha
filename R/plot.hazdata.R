@@ -12,6 +12,11 @@ plot.hazdata <- function(x,
     ## as components, one component per stratum. The first column contains
     ## risktimes, and the second column the corresponding 'hazard atoms'.
 
+    if (is.null(x)){
+        cat("Must be fixed in plot.hazdata!\n")
+        return(NULL)
+    }
+        
     if (!inherits(x, "hazdata")){
         if (!inherits(x, "coxreg")){
             stop("First argument must be of type 'hazdata' or 'coxreg'")

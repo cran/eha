@@ -20,7 +20,7 @@ print.aftreg(x, digits = max(options()$digits - 4, 3), ...)
 No value is returned.
 }
 %\references{ ~put references to the literature/web site here ~ }
-\author{\enc{Göran Broström}{George Bridgewater}}
+\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
 \note{Doesn't work for threeway or higher order interactions. Use
   \code{\link[survival]{print.coxph}} in that case.} 
 

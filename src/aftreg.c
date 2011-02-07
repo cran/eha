@@ -148,7 +148,6 @@ static double aft_fun(int n, double *beta, void *vex){
     return( -(res1 - res2) ); /* Minimizing ... */
 }
 	
-
 void aftsup(int *printlevel,
 	    int *ns, int *nn, int *ncov, int *bdim,
 	    int *id, int *strata, double *time0, double *time, int *ind,

@@ -10,7 +10,7 @@
 aftreg(formula = formula(data), data = parent.frame(),
 na.action = getOption("na.action"), dist = "weibull", init, shape = 0,
 id, control = list(eps = 1e-08, maxiter = 20, trace = FALSE),
-singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE, center = FALSE)
+singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE, center = NULL)
 }
 
 
@@ -44,7 +44,7 @@ singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE, center = FALSE)
   \item{model}{Not used.}
   \item{x}{Return the design matrix in the model object?}
   \item{y}{Return the response in the model object?}
-  \item{center}{Should results from centering of covariates be reported?}
+  \item{center}{Deprecated. No centering results are reported.}
 }
 
 \details{
@@ -53,8 +53,10 @@ from the one used by \code{\link[survival]{survreg}}.
 The model is
 \deqn{S(t; a, b, \beta, z) = S_0((t / \exp(b -
   z\beta))^{\exp(a)})}{%
-  S(t; a, b, beta, z) =  S_0((t/exp(b - z beta))^a)}
+  S(t; a, b, beta, z) =  S_0((t/exp(b - z beta))^exp(a))}
 where \eqn{S_0} is some standardized survivor function.
+The base-line parameters \eqn{a} and \eqn{b} are log shape and log
+scale, respectively.  
 }
 
 \value{
@@ -87,7 +89,7 @@ A list of class \code{c("aftreg", "coxreg", "coxph")} with components
   \item{pfixed}{TRUE if shape was fixed in the estimation.}
 }
 
-\author{\enc{Göran Broström}{George Bridgewater}}
+\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
 
 
 \section{Warning}{The print method \code{\link{print.aftreg}} doesn't work if

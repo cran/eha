@@ -90,7 +90,7 @@ A list of class \code{c("weibreg", "coxreg", "coxph")} with components
   \item{pfixed}{TRUE if shape was fixed in the estimation.}
 }
 
-\author{\enc{Göran Broström}{George Bridgewater}}
+\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
 %\note{}
 
 

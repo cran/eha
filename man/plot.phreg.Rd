@@ -8,7 +8,7 @@ Just a simple plot of the hazard functions for each stratum.
 \usage{
 plot.phreg(x, fn = c("haz", "cum", "den", "sur"), main = NULL,
 xlim = NULL, ylim = NULL, xlab = "Duration", ylab = "",
-new.data = x$means, ...)
+new.data = NULL, ...)
 }
 
 \arguments{
@@ -21,7 +21,7 @@ new.data = x$means, ...)
   \item{ylim}{y limits}
   \item{xlab}{x label}
   \item{ylab}{y label}
-  \item{new.data}{At which covariate values?}
+  \item{new.data}{At which covariate values? Default is at the means.}
   
   \item{\dots}{Extra parameters passed to 'plot'}
 }
@@ -33,7 +33,7 @@ The plot is drawn at the mean values of the covariates, by default.
 No return value.
 }
 
-\author{\enc{Göran Broström}{George Bridgewater}}
+\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
 
 \seealso{\code{\link{phreg}}}
 \examples{

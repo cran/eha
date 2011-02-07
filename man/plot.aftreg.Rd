@@ -33,7 +33,7 @@ The plot is drawn at the mean values of the covariates, by default.
 No return value.
 }
 
-\author{\enc{Göran Broström}{George Bridgewater}}
+\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
 
 \seealso{\code{\link{aftreg}}}
 \examples{

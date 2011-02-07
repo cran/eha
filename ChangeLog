@@ -1,10 +1,36 @@
+1.3-0	(January 4, 2011)
+	* coxreg: Major revision, calls 'coxph' in 'survival' (thanks to
+	Terry Therneau!) for ordinary requests. Reason: speed. The argument
+	'center' is deprecated, centering of covariates is now routinely
+	made. Affects the estimation of the baseline hazard, which is done
+	at the means of the columns of the original design matrix.
+
+	* phreg: Argument 'center' is deprecated. Centering is routinely
+	performed, so the baseline hazard is estimated at the means of the
+	columns of the original design matrix.
+
+	* aftreg: Corrected error in documentation and made the argument
+	'center' deprecated.
+
+	* aftreg: Estimation of intercept ("scale") is now comparable with
+	corresponding estimate of Intercept in 'survreg'. 'shape' in
+	aftreg is still '1 / scale' in survreg. Regression coefficients still
+	have different signs but the same absolute values.
+
+	* join.spells: a few bugs fixed, now allows for factor covariates.
+
+	* male.mortality: data set "joined".
+
+	* fert: is a new data set. Contains data on 19th century marital
+	fertility from a parish in northern Sweden.
+
 1.2-18	(February 28, 2010)
 	* aftreg.fit: Check of data consistency in case of more than one
 	record per individual added.
 	* aftreg.fit: Fixed memory allocation bug in C code. This bug was
 	not fatal (too much memory was allocated), but caused a severe
 	performance problem, especially on Windows.
-	
+
 1.2-17	(February 23, 2010)
 	* aftreg: 'dist = "gompertz"' should now work (realizing that it
 	is a special case of 'dist = "EV").
@@ -14,26 +40,26 @@
 	* phreg: Ditto.
 	* check.dist: Bug fixed for 'dist = "gompertz"' (again!)
 	* plot.phreg: Ditto.
-	
+
 1.2-16	(February 19, 2010)
 	* aftreg: 'dist = "gompertz"' is unreliable, so changed the
 	example and added a note with a warning. Is also an item on the
 	ToDo list now.
-	
+
 1.2-15	(February 18, 2010)
 	* aftreg: argument 'id' now works as intended, i.e., is looked for
 	in 'data' (or 'parent.frame()')
 	* print: functions return invisibly 'x'.
 	* coxreg: argument 'weights' now works as intended, i.e., is looked for
 	in 'data' (or 'parent.frame()')
-	
+
 1.2-14	(October 29, 2009)
 	* check.dist: Bad 'ylim' fixed.
 	* aftreg: Gompertz distribution had a bug; now fixed.
-	
+
 1.2-13	(October 26, 2009)
 	* plot.coxreg: Bug fixed in call to plot.hazdata (wrong order of args).
-	
+
 1.2-12	(October 15, 2009)
 	* aftreg: Works now for time-varying covariates. Not polished.
 
@@ -47,7 +73,7 @@
 	* coxreg.fit: Time-dependent weights work now. 
 
 1.2-5	(August 2, 2009)
-	
+
 	* coxreg: Added (time-varying) weighted Cox regression. Returns
 	error code 1 if failure, with a warning.    
 	* check.dist: Can now handle stratified models.

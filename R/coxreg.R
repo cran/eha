@@ -1,6 +1,7 @@
 coxreg <- function (formula = formula(data),
                     data = parent.frame(),
                     weights,
+                    subset,
                     t.offset,
                     na.action = getOption("na.action"),
                     init = NULL,
@@ -18,12 +19,20 @@ coxreg <- function (formula = formula(data),
                     frailty = NULL,
                     max.survs = NULL)
 {
+    
+    cox.ph <- (missing(t.offset) &&
+               (method %in% c("breslow", "efron")) &&
+               is.null(rs) &&
+               is.null(max.survs) &&
+               (!boot)
+               )
+    
     if (!is.null(frailty))
-        stop("Frailty not implemented yet.")
+        stop("Frailty not implemented (yet). Try 'coxme' in 'survival'")
     method <- match.arg(method)
     call <- match.call()
     m <- match.call(expand.dots = FALSE)
-    temp <- c("", "formula", "data", "weights", "na.action")
+    temp <- c("", "formula", "data", "weights", "subset", "na.action")
     m <- m[match(temp, names(m), nomatch = 0)]
 
     special <- "strata"
@@ -38,12 +47,14 @@ coxreg <- function (formula = formula(data),
     Y <- model.extract(m, "response")
     if (!inherits(Y, "Surv"))
         stop("Response must be a survival object")
+
     if (is.null(max.survs)) max.survs <- NROW(Y)
     if (missing(weights)) weights <- rep(1, NROW(Y))
     else weights <- model.extract(m, "weights")
+    cox.ph <- cox.ph && (length(weights) == NROW(Y))
+    
     if (missing(t.offset)) t.offset <- NULL
     ##
-
     offset <- attr(Terms, "offset")
     tt <- length(offset)
     offset <- if (tt == 0)
@@ -58,7 +69,7 @@ coxreg <- function (formula = formula(data),
     attr(Terms, "intercept") <- 1
     strats <- attr(Terms, "specials")$strata
     dropx <- NULL
-
+        
     if (length(strats)) {
         temp <- untangle.specials(Terms, "strata", 1)
         dropx <- c(dropx, temp$terms)
@@ -72,30 +83,30 @@ coxreg <- function (formula = formula(data),
     else newTerms <- Terms
     X <- model.matrix(newTerms, m)
     assign <- lapply(attrassign(X, newTerms)[-1], function(x) x -
-        1)
+                     1)
     X <- X[, -1, drop = FALSE]
-
-    #########################################
-
+    ##}
+#########################################
+        
     if (length(dropx)){
         covars <- names(m)[-c(1, (dropx + 1))]
     }else{
         covars <- names(m)[-1]
     }
-
+    
     isF <- logical(length(covars))
     if (length(covars)){
         for (i in 1:length(covars)){
             if (length(dropx)){
                 isF[i] <- ( is.factor(m[, -(dropx + 1)][, (i + 1)]) ||
-                           is.logical(m[, -(dropx + 1)][, (i + 1)]) )
+                               is.logical(m[, -(dropx + 1)][, (i + 1)]) )
             }else{
                 isF[i] <- ( is.factor(m[, (i + 1)]) ||
                            is.logical(m[, (i + 1)]) )
             }
         }
     }
-
+    
     if (any(isF)){
         levels <- list()
         index <- 0
@@ -115,87 +126,139 @@ coxreg <- function (formula = formula(data),
         levels <- NULL
     }
 
-    ##########################################
-    type <- attr(Y, "type")
-    if (type != "right" && type != "counting")
-        stop(paste("Cox model doesn't support \"", type, "\" survival data",
-                   sep = ""))
-
-    if (NCOL(Y) == 2){
-        Y <- cbind(numeric(NROW(Y)), Y)
-    }
-
-    n.events <- sum(Y[, 3] != 0)
+    
+    n.events <- sum(Y[, NCOL(Y)] != 0)
     if (n.events == 0) stop("No events; no sense in continuing!")
+        
+    ##########################################
 
-    if ((!is.null(init)) && (length(init) != NCOL(X)))
-        stop("Wrong length of 'init'")
+    if (cox.ph){
+        type <- attr(Y, "type")
+        control$iter.max <- control$maxiter
+        control$toler.chol = .Machine$double.eps^0.75
+        control$toler.inf = sqrt(control$eps)
+        control$outer.max <- 10
+        if (type == "counting"){
+            fit <- survival:::agreg.fit(X, Y, strats, offset, init,
+                                        control, weights = weights,
+                                        method = method, row.names(m))
+        }else{
+            fit <- survival:::coxph.fit(X, Y, strats, offset, init,
+                                        control, weights = weights,
+                                        method = method, row.names(m))
+        }
+        ## get hazards
+        rs <- risksets(Y, strats)
+        hazard <- .Fortran("gethaz",
+                           as.integer(NROW(Y)),
+                           as.integer(length(rs$antrs)),
+                           as.integer(rs$antrs),
+                           as.integer(rs$size),
+                           as.integer(rs$n.events),
+                           as.integer(length(rs$riskset)),
+                           as.integer(rs$riskset),
+                           as.double(exp(fit$linear.predictors)),
+                           as.integer(sum(rs$antrs)),
+                           hazard = double(sum(rs$antrs)),
+                           DUP = FALSE,
+                           PACKAGE = "eha")$hazard
+        ## Put it on:
+        ##haz.mean <- fit$hazard::: At means of covariates:
+        ##if (!is.null(fit$coefficients))
+          ##  hazard <- 1 - (1 - hazard)^exp(fit$means * fit$coefficients)
+        hazards <- list()
+        stopp <- cumsum(rs$antrs)
+        startt <- c(1, 1 + stopp[-length(rs$antrs)])
+        for (i in 1:length(rs$antrs)){
+            hazards[[i]] <- cbind(rs$risktimes[startt[i]:stopp[i]],
+                                  hazard[startt[i]:stopp[i]])
+        }
+        class(hazards) <- "hazdata"
+        fit$hazards <- hazards
+        ##fit$hazards <- hazard
+    }else{ # if (!cox.ph)
+        if (NCOL(Y) == 2){
+            Y <- cbind(numeric(NROW(Y)), Y)
+            attr(Y, "type") <- "counting"
+        }
+        
+        ##return(Y)
+        type <- attr(Y, "type")
+        if (type != "right" && type != "counting")
+            stop(paste("Cox model doesn't support \"", type, "\" survival data",
+                       sep = ""))
+        
+        if ((!is.null(init)) && (length(init) != NCOL(X)))
+            stop("Wrong length of 'init'")
+        
+        
+        if (is.list(control)){
+            if (is.null(control$eps)) control$eps <- 1e-8
+            if (is.null(control$maxiter)) control$maxiter <- 10
+            if (is.null(control$trace)) control$trace <- FALSE
+        }else{
+            stop("control must be a list")
+        }
+        
+### New start for cox.ph (not any more!) ##################################
+        if (geometric){
+            method <- "ml"
+            fit <- geome.fit(X,
+                             Y,
+                             rs,
+                             strats,
+                             offset,
+                             init,
+                             max.survs,
+                             method,
+                             boot,
+                             control)
+        }else{
+            fit <- coxreg.fit(X,
+                              Y,
+                              rs,
+                              weights,
+                              t.offset,
+                              strats,
+                              offset,
+                              init,
+                              max.survs,
+                              method,
+                              center,
+                              boot,
+                              efrac,
+                              calc.hazards = TRUE,
+                              calc.martres = TRUE,
+                              control,
+                              verbose = TRUE)
+        }
+     # End 'if (!cox.ph)'
 
+    ##    if (!length(fit$coefficients)){
+    ##        class(fit) <- c("coxreg", "coxph")
+    ##        return(fit)
+    ##    }
+    ##if (is.null(fit)) return(NULL) ## Removed 19 Feb 2007
+    ##if (!fit$fail) fit$fail <- NULL
+    ##else
+    ##    fit$fail <- TRUE
 
-    if (is.list(control)){
-        if (is.null(control$eps)) control$eps <- 1e-8
-        if (is.null(control$maxiter)) control$maxiter <- 10
-        if (is.null(control$trace)) control$trace <- FALSE
-    }else{
-        stop("control must be a list")
+        fit$convergence <- as.logical(fit$conver)
+        fit$conver <- NULL ## Ugly!
+        fit$f.convergence <- as.logical(fit$f.conver)
+        fit$f.conver <- NULL
     }
-
-    if (geometric){
-      method <- "ml"
-      fit <- geome.fit(X,
-                       Y,
-                       rs,
-                       strats,
-                       offset,
-                       init,
-                       max.survs,
-                       method,
-                       boot,
-                       control)
-    }else{
-      fit <- coxreg.fit(X,
-                        Y,
-                        rs,
-                        weights,
-                        t.offset,
-                        strats,
-                        offset,
-                        init,
-                        max.survs,
-                        method,
-                        center,
-                        boot,
-                        efrac,
-                        calc.hazards = TRUE,
-                        calc.martres = TRUE,
-                        control,
-                        verbose = TRUE)
-    }
-      ##    if (!length(fit$coefficients)){
-      ##        class(fit) <- c("coxreg", "coxph")
-      ##        return(fit)
-      ##    }
-      ##if (is.null(fit)) return(NULL) ## Removed 19 Feb 2007
-      ##if (!fit$fail) fit$fail <- NULL
-      ##else
-      ##    fit$fail <- TRUE
-
-    fit$convergence <- as.logical(fit$conver)
-    fit$conver <- NULL ## Ugly!
-    fit$f.convergence <- as.logical(fit$f.conver)
-    fit$f.conver <- NULL
 ###########################################################################
 ## Crap dealt with ......
 
     if (is.character(fit)) {
         fit <- list(fail = fit)
         class(fit) <- "coxreg"
-    }
-    else if (fit$fail){
+    }else if ((!cox.ph) && !fit$fail){
         if (length(fit$coef) && any(is.na(fit$coef))) {
             vars <- (1:length(fit$coef))[is.na(fit$coef)]
             msg <- paste("X matrix deemed to be singular; variable",
-                paste(vars, collapse = " "))
+                         paste(vars, collapse = " "))
             if (singular.ok)
                 warning(msg)
             else stop(msg)
@@ -205,15 +268,15 @@ coxreg <- function (formula = formula(data),
         fit$terms <- Terms
         fit$assign <- assign
         if (FALSE){ ## Out-commented
-        if (length(fit$coef) && is.null(fit$wald.test)) {
-            nabeta <- !is.na(fit$coef)
-            if (is.null(init))
-                temp <- fit$coef[nabeta]
-            else temp <- (fit$coef - init)[nabeta]
-            fit$wald.test <- survival:::coxph.wtest(fit$var[nabeta, nabeta],
-                temp, control$toler.chol)$test
+            if (length(fit$coef) && is.null(fit$wald.test)) {
+                nabeta <- !is.na(fit$coef)
+                if (is.null(init))
+                    temp <- fit$coef[nabeta]
+                else temp <- (fit$coef - init)[nabeta]
+                fit$wald.test <- survival:::coxph.wtest(fit$var[nabeta, nabeta],
+                                                        temp, control$toler.chol)$test
+            }
         }
-    }
         na.action <- attr(m, "na.action")
         if (length(na.action))
             fit$na.action <- na.action
@@ -224,9 +287,9 @@ coxreg <- function (formula = formula(data),
             if (length(strats))
                 fit$strata <- strata.keep
         }
-        if (y)
-            fit$y <- Y
     }
+    if (y)
+        fit$y <- Y
     ##if (!is.null(weights) && any(weights != 1))
     ##    fit$weights <- weights
 
