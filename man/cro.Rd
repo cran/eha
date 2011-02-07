@@ -28,7 +28,7 @@ A list with components
     response with its covariate vector.}
 }
 %\references{ ~put references to the literature/web site here ~ }
-\author{\enc{Göran Broström}{George Bridgewater}}
+\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
 \note{This function is based on suggestions by Anne York and Brian Ripley.}
 
 \seealso{\code{\link{match}}, \code{\link{paste}}}

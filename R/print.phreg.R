@@ -69,7 +69,8 @@ print.phreg <- function(x, digits=max(options()$digits - 4, 3), ...){
 
     index <- 0
 
-    if(x$intercept){
+    ##if(x$intercept){
+    if (FALSE){
         index <- index + 1
         cat(formatC("(Intercept)", width = 25, flag = "-"),
             ##formatC(x$w.means[[1]],

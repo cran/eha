@@ -96,8 +96,8 @@ coxreg.fit <- function(X, Y, rs, weights, t.offset = NULL,
 
     boot <- abs(as.integer(boot))
 
-    if (center) X <- scale(X, center = TRUE, scale = FALSE)
-
+    ##if (center) X <- scale(X, center = TRUE, scale = FALSE)
+    X <- scale(X, center = TRUE, scale = FALSE) # Always center!
     ## if (!nullModel){
         fit <- .C("sup",
                   as.integer(meth),
@@ -141,7 +141,7 @@ coxreg.fit <- function(X, Y, rs, weights, t.offset = NULL,
                   DUP = FALSE,
                   PACKAGE = "eha")
 
-    if (FALSE){ # Not for the moment...
+    if (FALSE){ ## NO!!!! 20110105; # YES!!! 20110103. Not for the moment...
         score.means <- exp(sum(means * fit$beta[1:ncov]))
         haz.mean <- 1 - (1 - fit$hazard)^score.means
     }else{

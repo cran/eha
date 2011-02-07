@@ -27,13 +27,13 @@ risksets(x, strata, max.survs)
   \item{risktimes}{Ordered distinct failure time points.}
   \item{eventset}{vector of pointers to events in each risk set.} 
   \item{riskset}{vector of pointers to 
-    the members of the risk sets, in order. The 'events' 
+    the members of the risk sets, in order. The 'n.events' 
     first are the events.}
   \item{size}{The sizes of the risk sets.}
   \item{n.events}{The number of events in each risk set.}
 }
 
-\author{\enc{Göran Broström}{George Bridgewater}}
+\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
 \note{can be used to "sample the risk sets".}
 
 \seealso{\code{\link{table.events}}, \code{\link{coxreg}}.}

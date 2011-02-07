@@ -6,11 +6,15 @@ plot.coxreg <- function(x,
                         main = NULL,
                         xlab = "Duration",
                         ylab = "",
-                        new.data = x$means,
+                        new.data = NULL,
                         ...){
+    if (is.null(new.data)) new.data <- x$means
     fn <- fn[1]
     if (!inherits(x, "coxreg")) stop("Works only with 'coxreg' objects.")
-    if (is.null(x$hazards)) stop("No 'hazards' object found.")
+    if (is.null(x$hazards)){
+        cat("No 'hazards' object found. Must be fixed!!!!")
+        return(NULL)
+    }
     if (!(fn %in% c("cum", "surv", "log", "loglog")))
         stop(paste(fn, "is an illegal value of 'fn'"))
 

@@ -56,7 +56,7 @@ calc.martres = TRUE, control, verbose = TRUE)
   \item{iter}{Number of performed iterations.}
 }
 
-\author{\enc{Göran Broström}{George Bridgewater}}
+\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
 \note{It is the user's responsibility to check that indata is sane.}
 
 \seealso{\code{\link{coxreg}}, \code{\link{risksets}}}

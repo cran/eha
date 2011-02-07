@@ -38,7 +38,7 @@ strats, max.survs = NROW(dat))
   \item{orig.row}{The row number for this item in the original data frame.}
 }
 \references{ ~put references to the literature/web site here ~ }
-\author{\enc{Göran Broström}{George Bridgewater}}
+\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
 \note{ 
 The survival variables must be three. If you only have \emph{exit} and
 \emph{event}, create a third containing all zeros. 

@@ -25,7 +25,7 @@ A list with components
   \item{intensity}{\code{events / exposure}}
 }
 %\references{ ~put references to the literature/web site here ~ }
-\author{\enc{Göran Broström}{George Bridgewater}}
+\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
 %\note{ ~~further notes~~ }
 
 \seealso{\code{\link{piecewise}}}

@@ -28,7 +28,7 @@ Exact calculation.
     \code{exposure}} 
 }
 
-\author{\enc{Göran Broström}{George Bridgewater}}
+\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
 
 \seealso{\code{\link{perstat}}}
 

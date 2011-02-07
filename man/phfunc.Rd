@@ -39,7 +39,7 @@ A list with components
   \item{fpp}{The negative of the hessian. Present if \code{ord >= 2}}
 }
 %\references{ }
-\author{\enc{Göran Broström}{George Bridgewater}}
+\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
 %\note{}
 
 \seealso{\code{\link{phreg}}}

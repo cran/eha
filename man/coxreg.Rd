@@ -7,8 +7,8 @@
   \emph{sampling of risksets} and \emph{the weird bootstrap}.
 }
 \usage{
-coxreg(formula = formula(data), data = parent.frame(), weights, t.offset,
-na.action = getOption("na.action"), init = NULL,
+coxreg(formula = formula(data), data = parent.frame(), weights, subset,
+t.offset, na.action = getOption("na.action"), init = NULL,
 method = c("efron", "breslow", "mppl", "ml"),
 control = list(eps = 1e-08, maxiter = 25, trace = FALSE),
 singular.ok = TRUE, model = FALSE,
@@ -25,6 +25,8 @@ frailty = NULL, max.survs = NULL)
   \item{data}{a data.frame in which to interpret the variables named
     in the formula.}
   \item{weights}{Case weights; time-fixed or time-varying.}
+  \item{subset}{An optional vector specifying a subset of observations
+    to be used in the fitting process.} 
   \item{t.offset}{Case offsets; time-varying.}
   \item{na.action}{ a missing-data filter function, applied to the
     model.frame, after any subset argument has been used.
@@ -39,8 +41,9 @@ frailty = NULL, max.survs = NULL)
     change any component without mention the other(s).}
   \item{singular.ok}{Not used}
   \item{model}{Not used}
-  \item{center}{If TRUE, the hazards are calculated at the means of the
-    covariates. If FALSE,  at zero.}
+  \item{center}{Now deprecated. The baseline hazards are always
+    calculated at the means of the 
+    covariates.}
   \item{x}{Return the design matrix in the model object?}
   \item{y}{return the response in the model object?}
   \item{rs}{Risk set?}
@@ -68,7 +71,11 @@ A list of class \code{c("coxreg", "coxph")} with components
   \item{score}{The score test statistic (at the initial value).}
   \item{linear.predictors}{The estimated linear predictors.}
   \item{residuals}{The martingale residuals.}
-  \item{hazard}{The estimated baseline hazard.}
+  \item{hazard}{The estimated baseline hazard, calculated at the means
+    of the covariates (rathre, columns of the design matrix. Is a list,
+    with one component per stratum. Each 
+    component is a matrix with two columns, the first contains
+    risktimes, the second the corresponding hazard atom.}
   \item{means}{Means of the columns of the design matrix.}
   \item{w.means}{Weighted (against exposure time) means of covariates;
     weighted relative frequencies of levels of factors.}
@@ -92,11 +99,11 @@ A list of class \code{c("coxreg", "coxph")} with components
   \item{convergence}{Did the optimization converge?}
   \item{fail}{Did the optimization fail? (Is \code{NULL} if not).}
 }
-\references{Broström, G. and Lindkvist, M. (2008). Partial partial
+\references{BrostrÃ¶m, G. and Lindkvist, M. (2008). Partial partial
   likelihood. Communications in Statistics: Simulation and Computation
   37:4, 679-686.}
 
-\author{\enc{Göran Broström}{George Bridgewater}}
+\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
 
 \note{This function starts by creating risksets, if no riskset is
   supplied via \code{rs}, with the aid of

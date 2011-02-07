@@ -37,7 +37,7 @@ strange estimated curves due to lack of data in certain (low) ages.
 No value is returned.
 }
 %\references{}
-\author{\enc{Göran Broström}{George Bridgewater}}
+\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
 %\note{ ~~further notes~~ }
 
 % ~Make other sections like WARNING with \section{WARNING }{....} ~

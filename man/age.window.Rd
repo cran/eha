@@ -25,7 +25,7 @@ The \code{window} must be in the order \code{(begin, end)}
 
 }
 %\references{ ~put references to the literature/web site here ~ }
-\author{Göran Broström}
+\author{GÃ¶ran BrostrÃ¶m}
 %\note{ ~~further notes~~ }
 
 \seealso{\code{\link{cal.window}}, \code{\link{coxreg}},

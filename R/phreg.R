@@ -10,10 +10,9 @@ phreg <- function (formula = formula(data),
                    model = FALSE,
                    x = FALSE,
                    y = TRUE,
-                   center = FALSE)
+                   center = NULL)
 {
 
-    if (dist == "gompertz") shape <- 1
     pfixed <- any(shape > 0)
     call <- match.call()
     m <- match.call(expand.dots = FALSE)
@@ -64,17 +63,12 @@ phreg <- function (formula = formula(data),
     ##return(X)
     assign <- lapply(attrassign(X, newTerms)[-1], function(x) x - 1)
 
-    if (dist != "gompertz"){
-        intercept <- FALSE
-        X <- X[, -1, drop = FALSE]
-    }else{
-        intercept <- TRUE
-    }
+    X <- X[, -1, drop = FALSE]
     ncov <- NCOL(X)
 
     #########################################
 
-    if (ncov - intercept){
+    if (ncov){
         if (length(dropx)){
             covars <- names(m)[-c(1, (dropx + 1))]
          }else{
@@ -135,16 +129,26 @@ phreg <- function (formula = formula(data),
         stop("control must be a list")
     }
 
-
-    fit <- phreg.fit(X,
-                     Y,
-                     dist,
-                     strats,
-                     offset,
-                     init,
-                     shape,
-                     control,
-                     center)
+    if (dist == "gompertz"){
+        fit <- gompreg(X,
+                       Y,
+                       strats,
+                       offset,
+                       init,
+                       control)
+    }else{
+    
+        fit <- phreg.fit(X,
+                         Y,
+                         dist,
+                         strats,
+                         offset,
+                         init,
+                         shape,
+                         control,
+                         center)
+    }
+    
     if (fit$fail){
         warning(paste("Failed with error code ", fit$fail))
         return(1)
@@ -225,7 +229,7 @@ phreg <- function (formula = formula(data),
 ##########################################
     s.wght <- (Y[, 2] - Y[, 1])## * weights
     fit$ttr <- sum(s.wght)
-    if (ncov - intercept){
+    if (ncov){
         fit$isF <- isF
         fit$covars <- covars
         fit$w.means <- list()
@@ -258,6 +262,5 @@ phreg <- function (formula = formula(data),
     fit$events <- n.events
     class(fit) <- c("phreg", "weibreg", "coxreg", "coxph")
     fit$pfixed <- pfixed
-    fit$intercept <- intercept
     fit
 }

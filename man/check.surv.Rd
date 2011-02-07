@@ -24,7 +24,7 @@ A vector of id's for the insane individuals. Of zero length if no errors.
 }
 %\references{}
 
-\author{\enc{Göran Broström}{George Bridgewater}}
+\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
 
 %\note{}
 

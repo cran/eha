@@ -10,7 +10,7 @@
 phreg(formula = formula(data), data = parent.frame(),
 na.action = getOption("na.action"), dist = "weibull", init, shape = 0,
 control = list(eps = 1e-08, maxiter = 20, trace = FALSE),
-singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE, center = FALSE)
+singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE, center = NULL)
 }
 
 \arguments{
@@ -40,9 +40,8 @@ singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE, center = FALSE)
   \item{model}{Not used.}
   \item{x}{Return the design matrix in the model object?}
   \item{y}{Return the response in the model object?}
-  \item{center}{Should results from centering the covariates be
-    reported? 
-    Default is FALSE.}
+  \item{center}{Now deprecated and not used. Baseline parameters are now always
+  calculated at the means of the columns of the design matrix.}
 }
 
 \details{
@@ -50,8 +49,8 @@ The parameterization is the same as in \code{\link{coxreg}}
 and \code{\link[survival]{coxph}}, but different
 from the one used by \code{\link[survival]{survreg}}.
 The model is
-\deqn{S(t; a, b, \beta, z) = S_0((t/b)^a)^{\exp(z\beta)}}{%
-  S(t; a, b, beta, z) =  S0((t/b)^a)^exp(z beta)}
+\deqn{S(t; a, b, \beta, z) = S_0((t/b)^a)^{\exp((z-mean(z))\beta)}}{%
+  S(t; a, b, beta, z) =  S0((t/b)^a)^exp((z - mean(z)) beta)}
 where S0 is some standardized survivor function.
 }
 
@@ -85,20 +84,16 @@ A list of class \code{c("phreg", "coxreg", "coxph")} with components
   \item{pfixed}{TRUE if shape was fixed in the estimation.}
 }
 
-\author{\enc{Göran Broström}{George Bridgewater}}
-%\note{}
+\author{\enc{GÃ¶ran BrostrÃ¶m}{George Bridgewater}}
+\note{For some of the baseline distributions, e.g., the lognormal
+  distribution, the family of distributions is not closed under
+  proportional hazards.}
 
 
-\section{Warning}{The print method \code{\link{print.phreg}} doesn't work if
-threeway or higher order interactions are present. Use
-\code{\link[survival]{print.coxph}} in that case.
-
-Note further that covariates are internally centered, if \code{center =
-  TRUE}, by this function, 
+\section{Warning}{Note that covariates are internally centered by this
+  function,  
 and this is not corrected for in the output. This affects the estimate
-of \eqn{\log(scale)}{log(scale)}, but nothing else. If you don't
-  like this, set 
-\code{center = FALSE}.}
+of \eqn{\log(scale)}{log(scale)}, but nothing else.}
 
 \seealso{\code{\link{coxreg}}, \code{\link{check.dist}}, \code{link{aftreg}}.}
 
