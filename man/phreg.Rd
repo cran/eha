@@ -98,11 +98,11 @@ of \eqn{\log(scale)}{log(scale)}, but nothing else.}
 \seealso{\code{\link{coxreg}}, \code{\link{check.dist}}, \code{link{aftreg}}.}
 
 \examples{
-data(male.mortality)
-fit <- phreg(Surv(enter, exit, event) ~ ses, data = male.mortality)
+data(mort)
+fit <- phreg(Surv(enter, exit, event) ~ ses, data = mort)
 fit
 plot(fit)
-fit.cr <- coxreg(Surv(enter, exit, event) ~ ses, data = male.mortality)
+fit.cr <- coxreg(Surv(enter, exit, event) ~ ses, data = mort)
 check.dist(fit.cr, fit)
 }
 \keyword{survival}% at least one, from doc/KEYWORDS

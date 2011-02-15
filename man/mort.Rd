@@ -1,5 +1,5 @@
-\name{male.mortality}
-\alias{male.mortality}
+\name{mort}
+\alias{mort}
 \docType{data}
 \title{Male mortality in ages 40-60, nineteenth century}
 \description{
@@ -8,7 +8,7 @@
   Sweden are followed from their fortieth birthday until death or the
   sixtieth birthday, whichever comes first.
 }
-\usage{data(male.mortality)}
+\usage{data(mort)}
 \format{
   A data frame with 2058 observations on the following 6 variables.
   \describe{
@@ -37,7 +37,7 @@
 \url{http://www.ddb.umu.se}  
 }
 \examples{
-data(male.mortality)
-coxreg(Surv(enter, exit, event) ~ ses, data = male.mortality)
+data(mort)
+coxreg(Surv(enter, exit, event) ~ ses, data = mort)
 }
 \keyword{datasets}
