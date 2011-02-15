@@ -101,8 +101,8 @@ threeway or higher order interactions are present. Use
   }
 
 \examples{
-data(male.mortality)
-aftreg(Surv(enter, exit, event) ~ ses, data = male.mortality)
+data(mort)
+aftreg(Surv(enter, exit, event) ~ ses, data = mort)
 }
 \keyword{survival}% at least one, from doc/KEYWORDS
 \keyword{regression}% __ONLY ONE__ keyword per line

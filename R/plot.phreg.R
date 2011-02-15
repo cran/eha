@@ -122,7 +122,8 @@ plot.phreg <- function(x,
         for (i in 1:ns){
             Haz[i, ] <- Haza(xx, scale = lambda[i], shape = p[i]) * score
         }
-        if (is.null(ylim)) ylim <- c(0, max(Haz))
+        ##if (is.null(ylim))
+        ylim <- c(0, max(Haz))
         ##if (is.null(xlab))
         xlab <- "Duration"
         ##if (is.null(ylab))

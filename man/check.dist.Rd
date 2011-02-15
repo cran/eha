@@ -29,15 +29,15 @@ No return value.
 
 \seealso{\code{\link{coxreg}} and \code{\link{phreg}}.}
 \examples{
-data(male.mortality)
+data(mort)
 oldpar <- par(mfrow = c(2, 2))
-fit.cr <- coxreg(Surv(enter, exit, event) ~ ses, data = male.mortality)
-fit.w <- phreg(Surv(enter, exit, event) ~ ses, data = male.mortality)
-fit.g <- phreg(Surv(enter, exit, event) ~ ses, data = male.mortality,
+fit.cr <- coxreg(Surv(enter, exit, event) ~ ses, data = mort)
+fit.w <- phreg(Surv(enter, exit, event) ~ ses, data = mort)
+fit.g <- phreg(Surv(enter, exit, event) ~ ses, data = mort,
 dist = "gompertz")
-fit.ln <- phreg(Surv(enter, exit, event) ~ ses, data = male.mortality,
+fit.ln <- phreg(Surv(enter, exit, event) ~ ses, data = mort,
 dist = "lognormal")
-fit.ev <- phreg(Surv(enter, exit, event) ~ ses, data = male.mortality,
+fit.ev <- phreg(Surv(enter, exit, event) ~ ses, data = mort,
 dist = "ev")
 check.dist(fit.cr, fit.w)
 check.dist(fit.cr, fit.g)

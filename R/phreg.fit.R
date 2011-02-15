@@ -12,7 +12,7 @@ phreg.fit <- function(X, Y, dist,
     }else if (dist == "ev"){
         dis <- 3
     }else if (dist == "gompertz"){
-        dis <- 4
+        stop("phreg.fit cannot be used with 'gompertz', try 'gompreg'")
     }else{
         stop(paste(dist, "is not an implemented distribution"))
     }
@@ -20,7 +20,6 @@ phreg.fit <- function(X, Y, dist,
     nn <- NROW(X)
     ncov <- NCOL(X)
 
-    intercept <- (dis == 4)
     ## Should we really have _weighted_ means? Yes! (Cf. coxreg.fit)
     if (ncov){
         wts <- Y[, 2] - Y[, 1]

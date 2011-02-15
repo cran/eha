@@ -61,10 +61,9 @@ gompreg <- function(X, Y, strata, offset, init, control){
         
         grad <- numeric(ncov + 2 * ns)
         
-        R <- function(T0, T, alpha, gamma){
-            ret <- exp(alpha + gamma) *
-                (exp(T * exp(-gamma)) - exp(T0 * exp(-gamma)))
-            ##cat("R = ", ret, "\n")
+        RR <- function(T0, T, alpha, gamma){ # Changed 1.3-1; moved gamma;
+            ret <- exp(alpha) *
+                
             ret
         }
         for (i in 1:ns){
@@ -75,26 +74,23 @@ gompreg <- function(X, Y, strata, offset, init, control){
 
             ezb <- exp(bz[strata == i])
             alpha <- beta[ncov + 2 * i]
+            eapzb <- exp(alpha + bz[strata == i])
             gamma <- beta[ncov + 2 * i - 1]
-            driv <- D - R(T0, T, alpha, gamma) * ezb
+            emgamma <- exp(-gamma)
+            R <- exp(gamma + T * emgamma) - exp(gamma + T0 * emgamma) 
+            driv <- D - R * eapzb
             grad[ncov + 2 * i] <- sum(driv)
-            ##cat("grad[ncov + 2 * i] = ", grad[ncov + 2 * i], "\n")
-            grad[ncov + 2 * i - 1] <- -sum(D * T * exp(-gamma)) -
-                sum(R(T0, T, alpha, gamma) -
-                    exp(alpha) * (T * exp(T * exp(-gamma)) -
-                                  T0 * exp(T0 * exp(-gamma))) * ezb)
-            ##cat("grad[ncov + 2 * i - 1] = ", grad[ncov + 2 * i - 1], "\n")
+            grad[ncov + 2 * i - 1] <- -sum(D * T) * emgamma -
+                sum(eapzb * (R -
+                    (T * exp(T * emgamma) - T0 * exp(T0 * emgamma))))
             if (ncov){
                 for (j in 1:ncov){
                     grad[j] <- grad[j] + sum(driv * z[, j])
                 }
             }
         }
-        ##cat("grad = ", grad, "\n")
         grad
     }    
-                                   
-        
     
 
     Fmin <- function(beta){
@@ -107,7 +103,6 @@ gompreg <- function(X, Y, strata, offset, init, control){
         for (i in 1:ns){
             scale <- exp(beta[ncov + 2 * i - 1])
             shape <- exp(beta[ncov + 2 * i])
-            ##cat("shape = ", shape, ", scale = ", scale, "\n")
             if (ncov){
                 bz <- offset[strata == i] + X[strata == i, , drop = FALSE] %*% b
             }else{
@@ -123,36 +118,71 @@ gompreg <- function(X, Y, strata, offset, init, control){
             ret1 <- sum(Y[strata == i, 3] * (h + bz))
             ret2 <- sum(ebz * (S1 - S0))
             total <- total + ret1 + ret2
-            ##cat("S1 = ", S1[1], ", S0 = ", S0[1], "\n") 
         }
-        ##cat("Fmin = ", total, "\n")
+
         return(total)
     }
 
+    ## First, fit the 'null' model:
+    beta0 <- numeric(2 * ns)
+    ncov.save <- ncov
+    ncov <- 0
+    ## Start values (primitive!!):
+    for (i in 1:ns){ 
+        beta0[ncov + 2 * i - 1] <- log(max(Y[strata == i, 2]))
+        beta0[ncov + 2 * i] <- log(sum(Y[strata == i, 3]) /
+                                    sum(Y[strata == i, 2])) - 1
+    }
+
+    res0 <- optim(beta0, Fmin, gr = dGomp,
+                 method = "BFGS",
+                 control = list(fnscale = -1, reltol = 1e-10),
+                 hessian = FALSE)
+    ## Done; now the real thing:
+    ncov <- ncov.save
     beta <- numeric(bdim)
+    
     if (ncov)
         beta[1:ncov] <- init  # Start values
-    beta[ncov + 1] <- log(1000)
+    beta[(ncov + 1):length(beta)] <- res0$par # Ditto
     res <- optim(beta, Fmin, gr = dGomp,
                  method = "BFGS",
                  control = list(fnscale = -1, reltol = 1e-10),
                  hessian = TRUE)
-    ##cat("AFTER optim: grad = ", dGomp(res$par), "\n\n") 
     if (res$convergence != 0) stop("[gompreg]: No convergence")
-    ##vari <- solve(-res$hessian)
     coefficients <- res$par
-    names(coefficients) <- c(colnames(X), "log(scale)", "log(shape)")
+    coef.names <- colnames(X)
+    if (ns > 1){
+        for (i in 1:ns){
+            coef.names <- c(coef.names,
+                            paste("log(scale)", as.character(i), sep =":"),
+                            paste("log(shape)", as.character(i), sep =":"))
+        }
+        
+    }else{
+        coef.names <- c(coef.names,
+                        "log(scale)", "log(shape)")
+    }
+
+    names(coefficients) <- coef.names
     fit <- list(coefficients = coefficients,
-                ##sd = sqrt(diag(vari)),
-                loglik = res$value
+                loglik = c(res0$value, res$value)
                 )
     fit$pfixed <- FALSE
-
     fit$var <- tryCatch(solve(-res$hessian), error = function(e) e)
+    if (is.matrix(fit$var)){
+        colnames(fit$var) <- coef.names
+        rownames(fit$var) <- coef.names
+    }
     fit$hessian <- res$hessian
+    if (is.matrix(fit$hessian)){
+        colnames(fit$hessian) <- coef.names
+        rownames(fit$hessian) <- coef.names
+    }
+    
     fit$n.strata <- ns
-    ##class(fit) <- "phreg"
-    fit$fail <- FALSE
+
+    fit$fail <- FALSE # Optimist!
     fit
 }
                       

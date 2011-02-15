@@ -245,14 +245,7 @@ h(t) = \tau\exp(t/\lambda), \quad t \ge 0; \quad \tau,
 \lambda > 0.  
 \end{equation*}
 This family is not directly possible to generate from the described 
-shape-scale models, but by including the parameter $\log(\tau) = \alpha$ 
-as a constant term (intercept) in the regression part, we get the 
-proportional hazards model
-\begin{equation*}
-h(t; (\alpha, \lambda \bbeta)) = \exp(t/\lambda) \exp(\alpha + 
-\bz\bbeta), \quad t \ge 0; \quad  \lambda > 0.  
-\end{equation*}
- This is of the required type, with the shape parameter fixed to unity.
+shape-scale models, so it is treated separately by direct maximum likelihood.
 
 \subsection{Other families of distributions}
 
