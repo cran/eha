@@ -47,7 +47,7 @@ dllogis <- function(x, shape = 1, scale = 1, log = FALSE){
 
     ret <- ifelse(y < 0,
                   0,
-                  shape * y^(shape - 1) / (1 + y^shape)^2
+                  (shape / scale) * y^(shape - 1) / (1 + y^shape)^2
                   )
     if (log) ret <- ifelse(ret <= 0, -Inf, log(ret))
 
@@ -62,7 +62,7 @@ hllogis <- function(x, shape = 1, scale = 1, log = FALSE){
     y <- x / scale
     ret <- ifelse(x < 0,
                     0,
-                    shape * y^(shape - 1) / (1 + y^shape)
+                    (shape / scale) * y^(shape - 1) / (1 + y^shape)
                     )
     if (log) ret <- ifelse(ret <= 0, -Inf, log(ret))
 
