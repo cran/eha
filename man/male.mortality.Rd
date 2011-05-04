@@ -1,5 +1,5 @@
-\name{mort}
-\alias{mort}
+\name{male.mortality}
+\alias{male.mortality}
 \docType{data}
 \title{Male mortality in ages 40-60, nineteenth century}
 \description{
@@ -8,7 +8,7 @@
   Sweden are followed from their fortieth birthday until death or the
   sixtieth birthday, whichever comes first.
 }
-\usage{data(mort)}
+\usage{data(male.mortality)}
 \format{
   A data frame with 2058 observations on the following 6 variables.
   \describe{
@@ -23,7 +23,7 @@
       \code{lower}, \code{upper}} 
   }
 }
-\note{This data set is also known, and accessible,  as \code{male.mortality}}
+\note{This data set is also known, and accessible,  as \code{mort}.}
 \details{
   The interesting explanatory
   covariate is \code{ses} (socioeconomic status), which is a
@@ -38,7 +38,7 @@
 \url{http://www.ddb.umu.se}  
 }
 \examples{
-data(mort)
-coxreg(Surv(enter, exit, event) ~ ses, data = mort)
+data(male.mortality)
+coxreg(Surv(enter, exit, event) ~ ses, data = male.mortality)
 }
 \keyword{datasets}

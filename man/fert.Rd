@@ -3,10 +3,8 @@
 \docType{data}
 \title{Marital fertility nineteenth century}
 \description{
-  Males born in the years 1800-1820 and surving at least 40 years  in
-  the parish Skellefteå in northern 
-  Sweden are followed from their fortieth birthday until death or the
-  sixtieth birthday, whichever comes first.
+Birth intervals for married women with at least one birth, 19th northern
+Sweden 
 }
 \usage{data(fert)}
 \format{
