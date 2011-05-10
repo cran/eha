@@ -72,7 +72,7 @@ A list of class \code{c("coxreg", "coxph")} with components
   \item{linear.predictors}{The estimated linear predictors.}
   \item{residuals}{The martingale residuals.}
   \item{hazard}{The estimated baseline hazard, calculated at the means
-    of the covariates (rathre, columns of the design matrix. Is a list,
+    of the covariates (rather, columns of the design matrix). Is a list,
     with one component per stratum. Each 
     component is a matrix with two columns, the first contains
     risktimes, the second the corresponding hazard atom.}
@@ -84,7 +84,7 @@ A list of class \code{c("coxreg", "coxph")} with components
   \item{events}{Number of events in data.}
   \item{terms}{Used by extractor functions.}
   \item{assign}{Used by extractor functions.}
-  \item{wald.test}{The Walt test statistic (at the initial value).}
+  \item{wald.test}{The Wald test statistic (at the initial value).}
   \item{y}{The Surv vector.}
   \item{isF}{Logical vector indicating the covariates that are factors.}
   \item{covars}{The covariates.}

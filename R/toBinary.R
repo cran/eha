@@ -24,12 +24,15 @@ toBinary <- function(dat,
     if (missing(strats) || is.null(strats)) strats <- rep(1, nn)
     rs <- risksets(Surv(enter, exit, event), strata = strats, max.survs)
 
-    weg <- (abs(rs$size - rs$n.events) > 0.01)
-    rs$riskset <- rs$riskset[rep(weg, rs$size)]
-    rs$eventset <- rs$eventset[rep(weg, rs$n.events)]
-    rs$n.events <- rs$n.events[weg]
-    rs$size <- rs$size[weg]
-
+    ## Remove this to keep risksets with no survivors:
+    ## (Include this to remove risk sets with no survivors):
+    ##weg <- (abs(rs$size - rs$n.events) > 0.01)
+    ##rs$riskset <- rs$riskset[rep(weg, rs$size)]
+    ##rs$eventset <- rs$eventset[rep(weg, rs$n.events)]
+    ##rs$n.events <- rs$n.events[weg]
+    ##rs$size <- rs$size[weg]
+    ###################
+    
     n.rs <- length(rs$size)
     ev <- numeric(sum(rs$size))
     start <- 1
@@ -41,7 +44,8 @@ toBinary <- function(dat,
 
     out <- data.frame(event = rs$ev,
                       riskset = factor(rep(1:length(rs$size), rs$size)),
-                      risktime = rep(rs$risktimes[weg], rs$size)
+                      ##risktime = rep(rs$risktimes[weg], rs$size)
+                      risktime = rep(rs$risktimes, rs$size)
                       )
                       
     out <- cbind(out, covars[rs$riskset, , drop = FALSE])
