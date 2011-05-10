@@ -1,3 +1,12 @@
+1.3-4	(May 10, 2011)
+	* toBinary: Now includes also risksets without survivors (if any).
+
+	* fert: Row names changed to row numbers.
+
+	* swe07: New data set.
+
+	* Spelling errors (some!) corrected in documentation.
+
 1.3-3	(May 4, 2011)
 	* male.mortality: Old name (male.mortality) of data frame mort
 	reinstalled.

@@ -15,7 +15,7 @@ Sweden
     \item{\code{id}}{Personal identification number for mother.} 
     \item{\code{parity}}{Time order of birth interval for the present
       mother. The interval with \code{parity = 0} is the first, from
-    marroage to first birth.}
+    marriage to first birth.}
     \item{\code{age}}{The age of mother at start of interval.}
     \item{\code{year}}{The calendar year at start of interval.}
     \item{\code{next.ivl}}{The length of the coming time interval.}
@@ -24,7 +24,7 @@ Sweden
       (\code{event = 0}). Censoring occurs when the woman ends her
       fertility period within her first marriage (marriage dissolution
       or reaching the age of 48).}
-    \item{\code{prev.ivl}}{The length of the revious time interval. May
+    \item{\code{prev.ivl}}{The length of the previous time interval. May
       be used as explanatory variable in a Cox regression of birth intervals.}
     \item{\code{ses}}{Socio-economic status, a factor with levels
       \code{lower}, \code{upper}, \code{farmer}, and \code{unknown}.}
