@@ -251,6 +251,8 @@ coxreg.fit <- function(X, Y, rs, weights, t.offset = NULL,
 
 
     list(coefficients = fit$beta,
+         df = length(fit$beta),
+         n = NROW(X),
          sd = fit$sd.beta,
          var = var,
          loglik = fit$loglik,

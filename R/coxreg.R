@@ -98,11 +98,18 @@ coxreg <- function (formula = formula(data),
     if (length(covars)){
         for (i in 1:length(covars)){
             if (length(dropx)){
-                isF[i] <- ( is.factor(m[, -(dropx + 1)][, (i + 1)]) ||
-                               is.logical(m[, -(dropx + 1)][, (i + 1)]) )
+                if (is.logical(m[, -(dropx + 1)][, (i + 1)])){
+                    m[, -(dropx + 1)][, (i + 1)] <-
+                        as.factor(m[, -(dropx + 1)][, (i + 1)])
+                }
+                isF[i] <- is.factor(m[, -(dropx + 1)][, (i + 1)])## ||
+                ##is.logical(m[, -(dropx + 1)][, (i + 1)]) )
             }else{
-                isF[i] <- ( is.factor(m[, (i + 1)]) ||
-                           is.logical(m[, (i + 1)]) )
+                if (is.logical(m[, (i + 1)])){
+                    m[, (i + 1)] <- as.factor(m[, (i + 1)])
+                }
+                isF[i] <- is.factor(m[, (i + 1)]) ##||
+                ## is.logical(m[, (i + 1)]) )
             }
         }
     }
@@ -328,6 +335,9 @@ coxreg <- function (formula = formula(data),
         fit$means <- apply(X, 2, mean)
     }
     fit$method <- method
-    class(fit) <- c("coxreg", "coxph")
+    fit$n <- NROW(Y)
+    fit$df <- length(fit$coefficients)
+    class(fit) <- c("coxreg", "coxph") # Not Removed "coxph"; cox.zph!
+    ##class(fit) <- "coxreg"
     fit
 }
