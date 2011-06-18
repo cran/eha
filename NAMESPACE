@@ -1,6 +1,6 @@
 useDynLib(eha)
 import(survival)
-import(graphics)
+import(graphics,stats)
 export(aftreg, aftreg.fit,
        age.window, cal.window, check.dist, check.surv, coxreg,
        coxreg.fit, cro,
@@ -29,3 +29,9 @@ S3method(print, phreg)
 S3method(print, weibreg)
 S3method(summary, coxreg)
 S3method(summary, weibreg)
+S3method(extractAIC, coxreg)
+S3method(extractAIC, phreg)
+S3method(extractAIC, aftreg)
+S3method(nobs, coxreg)
+S3method(nobs, phreg)
+S3method(nobs, aftreg)

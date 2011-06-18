@@ -85,11 +85,18 @@ aftreg <- function (formula = formula(data),
         isF <- logical(length(covars))
         for (i in 1:length(covars)){
             if (length(dropx)){
-                isF[i] <- ( is.factor(m[, -(dropx + 1)][, (i + 1)]) ||
-                           is.logical(m[, -(dropx + 1)][, (i + 1)]) )
+                if (is.logical(m[, -(dropx + 1)][, (i + 1)])){
+                    m[, -(dropx + 1)][, (i + 1)] <-
+                        as.factor(m[, -(dropx + 1)][, (i + 1)])
+                }
+                isF[i] <- is.factor(m[, -(dropx + 1)][, (i + 1)])## ||
+                           ##is.logical(m[, -(dropx + 1)][, (i + 1)]) )
             }else{
-                isF[i] <- ( is.factor(m[, (i + 1)]) ||
-                           is.logical(m[, (i + 1)]) )
+                if (is.logical(m[, (i + 1)])){
+                    m[, (i + 1)] <- as.factor(m[, (i + 1)])
+                }
+                isF[i] <- is.factor(m[, (i + 1)]) ##||
+                           ##is.logical(m[, (i + 1)]) )
             }
         }
 
@@ -253,7 +260,8 @@ aftreg <- function (formula = formula(data),
     fit$call <- call
     fit$dist <- dist
     fit$events <- n.events
-    class(fit) <- c("aftreg", "phreg", "weibreg", "coxreg", "coxph")
+    ##class(fit) <- c("aftreg", "phreg", "weibreg", "coxreg", "coxph")
+    class(fit) <- c("aftreg", "phreg")
     fit$pfixed <- pfixed
     fit
 }
