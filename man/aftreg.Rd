@@ -60,7 +60,7 @@ scale, respectively.
 }
 
 \value{
-A list of class \code{c("aftreg", "coxreg", "coxph")} with components
+A list of class \code{c("aftreg", "coxreg")} with components
   \item{coefficients}{Fitted parameter estimates.}
   \item{var}{Covariance matrix of the estimates.}
   \item{loglik}{Vector of length two; first component is the value at

@@ -55,7 +55,7 @@ where S0 is some standardized survivor function.
 }
 
 \value{
-A list of class \code{c("phreg", "coxreg", "coxph")} with components
+A list of class \code{c("phreg", "coxreg")} with components
   \item{coefficients}{Fitted parameter estimates.}
   \item{var}{Covariance matrix of the estimates.}
   \item{loglik}{Vector of length two; first component is the value at

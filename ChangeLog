@@ -1,3 +1,8 @@
+1.3-7 	(June 20, 2011)
+	* eha: Depends (R >= 2.13.0)
+	* phreg, aftreg, weibreg: Errors in documentation corrected.
+	* ChangeLog: Errors in 1.3-6 corrected.
+
 1.3-6	(June 18, 2011)
 	* coxph, phreg, aftreg: Bug fix: Logical covariates now OK.
 	  (converted to factor).
@@ -5,8 +10,8 @@
 	* aftreg: Ditto.
 	* weibreg: Ditto.
 	* oldmort: New data set.
-	* coxph: added return values 'df' and 'n'.
-	* coxph, phreg, aftreg: Added extractAIC and nobs methods.
+	* coxreg: added return values 'df' and 'n'.
+	* coxreg, phreg, aftreg: Added extractAIC and nobs methods.
 
 1.3-5	(May 20, 2011)
 	* infants: New data set containing matched data on infant and
