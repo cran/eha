@@ -14,7 +14,7 @@ aftreg <- function (formula = formula(data),
                     center = NULL)
 {
 
-    if (dist == "gompertz") shape <- 1
+    ##if (dist == "gompertz") shape <- 1
     pfixed <- any(shape > 0)
     call <- match.call()
     m <- match.call(expand.dots = FALSE)
@@ -153,7 +153,8 @@ aftreg <- function (formula = formula(data),
                       id,
                       control,
                       center)  # Remove center? DONE!! NO!!! (1.2-17)
-
+    if (!is.null(fit$overlap)) return(fit$overlap)
+    
     if (ncov){
         fit$linear.predictors <- offset + X %*% fit$coefficients[1:ncov]
         fit$means <- apply(X, 2, mean)

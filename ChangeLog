@@ -1,3 +1,7 @@
+1.4	(June 26, 2011)
+	* aftreg: Gompertz distribution added (back again). Better start values.
+	* phreg: Better start values for Gompertz distribution.
+	
 1.3-7 	(June 20, 2011)
 	* eha: Depends (R >= 2.13.0)
 	* phreg, aftreg, weibreg: Errors in documentation corrected.

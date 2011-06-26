@@ -61,11 +61,11 @@ gompreg <- function(X, Y, strata, offset, init, control){
         
         grad <- numeric(ncov + 2 * ns)
         
-        RR <- function(T0, T, alpha, gamma){ # Changed 1.3-1; moved gamma;
-            ret <- exp(alpha) *
-                
-            ret
-        }
+        ##RR <- function(T0, T, alpha, gamma){ # Changed 1.3-1; moved gamma;
+          ##  ret <- exp(alpha) *
+            ##    
+        ##    ret
+        ##}
         for (i in 1:ns){
             T0 <- enter[strata == i]
             T <- exit[strata == i]
@@ -127,11 +127,16 @@ gompreg <- function(X, Y, strata, offset, init, control){
     beta0 <- numeric(2 * ns)
     ncov.save <- ncov
     ncov <- 0
-    ## Start values (primitive!!):
-    for (i in 1:ns){ 
-        beta0[ncov + 2 * i - 1] <- log(max(Y[strata == i, 2]))
-        beta0[ncov + 2 * i] <- log(sum(Y[strata == i, 3]) /
-                                    sum(Y[strata == i, 2])) - 1
+    ## Start values (primitive!!): # Better now (1.4)
+    for (i in 1:ns){
+        enter <- Y[strata == i, 1]
+        exit <- Y[strata == i, 2]
+        event <- Y[strata == i, 3]
+        beta0[(ncov + 2 * i - 1):(ncov + 2 * i)] <-
+            gompstart(enter, exit, event, width = 20) 
+        ##beta0[ncov + 2 * i - 1] <- log(max(Y[strata == i, 2]))
+        ##beta0[ncov + 2 * i] <- log(sum(Y[strata == i, 3]) /
+          ##                          sum(Y[strata == i, 2])) - 1
     }
 
     res0 <- optim(beta0, Fmin, gr = dGomp,
@@ -181,7 +186,7 @@ gompreg <- function(X, Y, strata, offset, init, control){
     }
     
     fit$n.strata <- ns
-
+    fit$df <- ncov
     fit$fail <- FALSE # Optimist!
     fit
 }
