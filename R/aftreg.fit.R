@@ -15,18 +15,28 @@ aftreg.fit <- function(X, Y, dist,
     offset <- offset[ord]
 
 ##### Check 'data integrity' ########
+    stop.flag <- FALSE
+    overlap <- NULL
     n.ind <- length(unique(id))
     if (length(id) > NROW(Y)) stop("'id' argument too long")
     if (any(Y[, 2] <= Y[, 1])) stop("Zero or negative length intervals")
     else if (n.ind < NROW(Y)){
         for (i in 2:NROW(Y)){
             if (id[i-1] == id[i]){
-                if (Y[i-1, 2] > Y[i, 1])
-                    stop(paste("Overlapping intervals for id ", id[i]))
+                if (Y[i-1, 2] > Y[i, 1]){
+                    cat(paste("Overlapping intervals for id ", id[i], "\n"))
+                    overlap <- c(overlap, id[i])
+                    stop.flag <- TRUE
+                }
             }
         }
     }
-
+    if (stop.flag) {
+        cat("Error(s) in data encountered\n")
+        fit <- list()
+        fit$overlap <- overlap
+        return(fit)
+    }
 #####################################
     if (dist == "weibull"){
         dis <- 0
@@ -37,10 +47,10 @@ aftreg.fit <- function(X, Y, dist,
     }else if (dist == "ev"){
         dis <- 3
     }else if (dist == "gompertz"){ # An EV with shape == 1: NOT REALLY!!
-        ## dis <- 4
+        dis <- 4
         ##dis <- 3
         ##shape <- 1
-        stop("The Gompertz is not available yet as AFT; try PH?")
+        ##stop("The Gompertz is not available yet as AFT; try PH?")
     }else{
         stop(paste(dist, "is not an implemented distribution"))
     }
@@ -80,197 +90,32 @@ aftreg.fit <- function(X, Y, dist,
 
 
     ## Not needed?? nstra <- c(0, cumsum(table(strata)))
-    if (all(shape <= 0)){ ## Then shape is estimated in all strata
 
-        Fmin <- function(beta){
-
-            fit <- .C("aftsup",
-                      as.integer(printlevel),
-                      ##
-                      as.integer(ns), # No. of strata
-                      as.integer(nn),
-                      as.integer(ncov),
-                      as.integer(bdim),
-                      ##
-                      as.integer(id),
-                      as.integer(strata - 1), # 0, ..., (ns-1); C-style!
-                      as.double(Y[, 1]),  ## 'enter'
-                      as.double(Y[, 2]),  ## 'exit'
-                      as.integer(Y[, 3]), ## 'event'
-                      ##
-                      ##as.double(t(scale(X, center = TRUE, scale = FALSE))),
-                      as.double(t(X)), # NOTE; scaling already done!
-                      ## NOTE transpose!
-                      as.double(offset),
-                      as.integer(dis),     # baseline distribution
-                      as.double(beta),
-                                        # results -->
-                      loglik = double(1),  # function value at beta
-                      fail = integer(1), # = 0: No failure
-                      DUP = FALSE,
-                      PACKAGE = "eha"
-                      )
-            if (fit$fail) stop("Error in likelihood calculation")
-            return(fit$loglik)
-        }
-        ## Start values (no covariates):
-        bdim <- 2 * ns
-        ncov.save <- ncov
-        ncov <- 0
-        beta <- numeric(bdim)
-        for (i in 1:ns){
-            beta[2 * i - 1] <- log(sum(Y[, 2] - Y[, 1]) / sum(Y[, 3]))
-            beta[2*i] <- 0
-        }
-
-        loglik.start <- -optim(beta, Fmin, method = "BFGS", hessian = FALSE)$value
-        ## And now the real thing:
-        ncov <- ncov.save
-        bdim <- ncov + 2 * ns
-        beta <- c(rep(0, ncov), beta)
-        fit <- optim(beta, Fmin, method = "BFGS",
-                     control = list(trace = as.integer(printlevel)),
-                     hessian = TRUE)
-        fit$beta <- fit$par
-        fit$loglik <- c(loglik.start, -fit$value)
-        fit$variance <- try(solve(fit$hessian))
-        fit$fail <- FALSE
-        if (ncov){
-            dxy <- diag(2 * ns + ncov)
-            for (i in 1:ns){ ## Really a HACK ??!!!!!!!!!!!!!!!
-                row <- ncov + 2 * i - 1
-                col <- row + 1
-                ## fit$beta[row] <- -fit$beta[row] NOT ANY MORE!
-                if (ncov){
-                    ##pi.hat <- exp(fit$beta[col])
-                    scale.corr <- sum(means * fit$beta[1:ncov]) #/
-                        ##pi.hat
-                    fit$beta[row] <- fit$beta[row] + scale.corr
-                    dxy[row, 1:ncov] <- means # / pi.hat
-                    dxy[row, col] <- -scale.corr
-                }
-                ##dxy[row, row] <- -1
-            }
-        }
-
-        coef.names <- colnames(X)
-        if (ns > 1){
-            for (i in 1:ns){
-                coef.names <- c(coef.names,
-                                paste("log(scale)", as.character(i), sep =":"),
-                                paste("log(shape)", as.character(i), sep =":"))
-            }
-
+    if (all(shape <= 0) || (dist == "gompertz")){
+        ## Then shape is estimated in all strata
+        if (dist == "gompertz"){
+            fit <- aftp0g(printlevel, ns, nn, id,
+                         strata, Y, X, offset, means)
         }else{
-            coef.names <- c(coef.names,
-                            "log(scale)", "log(shape)")
+            fit <- aftp0(printlevel, ns, nn, id,
+                         strata, Y, X, offset, dis, means)
         }
-
-
-        fit$shape.fixed <- FALSE
-
-    }else{  ## Then shape is fixed in all strata:
+    }else{
+        ## Then shape is fixed in all strata:
         ## Note: We must allow stratification even here (091006)!!
-
-
-        Fexpmin <- function(beta){
-
-            fit <- .C("aftexpsup",
-                      as.integer(printlevel),
-                                        #
-                      as.integer(ns), # No. of strata
-                      as.integer(nn),
-                      as.integer(ncov),
-                      as.integer(bdim),
-                                        #
-                      as.integer(id),
-                      as.integer(strata - 1), # 0, ..., (ns-1); C-style!
-                      as.double(Y[, 1]),  ## 'enter'
-                      as.double(Y[, 2]),  ## 'exit'
-                      as.integer(Y[, 3]), ## 'event'
-                                        #
-                      ##as.double(t(scale(X, center = TRUE, scale = FALSE))),
-                      as.double(t((X))), #NOTE: scaling already done!
-                      as.double(offset),
-                      as.double(shape), ## "p" (fixed)
-                      as.integer(dis),
-                      beta = as.double(beta),
-                                        # results -->
-                      loglik = double(1), # Return value at beta
-                      fail = integer(1),
-                      DUP = TRUE,
-                      PACKAGE = "eha"
-                      )
-            if (fit$fail) stop("Error in exp likelihood calculation")
-
-            return(fit$loglik)
-        }
-
-        if (length(shape) == 1){
-            shape <- rep(shape, ns)
-        }else if (length(shape) != ns){
-          stop("length(shape) must be equal to 1 or No. of strata")
-        }
-
-        bdim <- ns
-        ncov.save <- ncov
-        ncov <- 0
-        beta <- numeric(bdim)
-        for (i in 1:ns){
-            beta[i] <- log(sum(Y[, 2] - Y[, 1]) / sum(Y[, 3]))
-        }
-
-        res <- optim(beta, Fexpmin, method = "BFGS",
-                     control = list(trace = as.integer(printlevel)),
-                     hessian = FALSE)
-        ncov <- ncov.save
-        bdim <- ncov + ns
-        beta <- c(rep(0, ncov), res$par)
-        loglik.start <- -res$value
-
-        fit <- optim(beta, Fexpmin, method = "BFGS",
-                     control = list(trace = as.integer(printlevel)),
-                     hessian = TRUE)
-        fit$fail <- (fit$convergence > 0.5)
-        fit$beta <- fit$par
-        fit$loglik <- c(loglik.start, -fit$value)
-        fit$variance <- try(solve(fit$hessian))
-        fit$shape.fixed <- TRUE
-        fit$shape <- shape
-        fit$shape.sd <- NULL  ## Not necessary!?!?
-        ##fit$beta[bdim] <- -fit$beta[bdim] # To get "1 / lambda"! NO!!
-        ##if (ncov & !center){
-        if (ncov){
-            dxy <- diag(bdim)
-            dxy[bdim, 1:ncov] <- means# / shape
-            scale.corr <- sum(means * fit$beta[1:ncov])# / shape
-            fit$beta[bdim] <- fit$beta[bdim] + scale.corr
-            dxy[bdim, bdim] <- -1
-        }
-        coef.names <- c(colnames(X), "log(scale)")
-
-        ## Note; this is really a "hack"!!!!!!!!!!!!!!!
-    }
+        fit <- aftp1(printlevel, ns, nn, id,
+                     strata, Y, X, offset, shape, dis, means)
+    }            
+    
 
     ##cat("done!\n")
 
-    if (!fit$fail){
-        if (ncov && is.numeric(fit$variance)){
-            var <- dxy %*% matrix(fit$variance, bdim, bdim) %*% t(dxy)
-            colnames(var) <- rownames(var) <- coef.names
-        }else{
-            var <- fit$variance
-        }
-    }
-    else
-        var <- NULL
-
     coefficients <- fit$beta
-    names(coefficients) <- coef.names
+    names(coefficients) <- fit$coef.names
 
     list(coefficients = coefficients,
-         df = ncov,
-         var = var,
+         df = fit$ncov,
+         var = fit$var,
          loglik = fit$loglik,
          score = fit$sctest,
          conver = fit$conver,
