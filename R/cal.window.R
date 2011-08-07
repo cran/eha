@@ -18,16 +18,20 @@ cal.window <- function(dat, window,
   event <- ifelse(exit > (window[2] - bdate), 0, event)
   who <- ((exit > (window[1] - bdate)) &
           (enter < (window[2] - bdate)))
-  event <- event[who]
-  bdate <- bdate[who]
-  exit <- pmin(exit[who], (window[2] - bdate))
-  enter <- pmax(enter[who], (window[1] - bdate))
-
-  dat <- dat[who, ]
-  dat[, surv.indices[1]] <- enter
-  dat[, surv.indices[2]] <- exit
-  dat[, surv.indices[3]] <- event
-  dat[, surv.indices[4]] <- bdate
-  
+  if (sum(who) > 0.5){
+      event <- event[who]
+      bdate <- bdate[who]
+      exit <- pmin(exit[who], (window[2] - bdate))
+      enter <- pmax(enter[who], (window[1] - bdate))
+      
+      dat <- dat[who, ]
+      dat[, surv.indices[1]] <- enter
+      dat[, surv.indices[2]] <- exit
+      dat[, surv.indices[3]] <- event
+      dat[, surv.indices[4]] <- bdate
+  }else{
+      warning(paste("The period", window[1], "-", window[2], "is empty."))
+      dat <- NULL
+  }
   dat
 }

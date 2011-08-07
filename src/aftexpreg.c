@@ -25,7 +25,7 @@ static double aftexp_fun(int n, double *beta, void *vex){
     /* the fixed shape is found in ex->pfix. */
     int i, j, rec;
     Exts *ex;
-    double f, alpha, gamma, res;
+    double alpha, gamma;
     int nn, indiv, stratum, mb;
     double res1, res2;
     double alphambz;
@@ -125,20 +125,13 @@ void aftexpsup(int *printlevel,
 	       double *loglik, int *fail){
 /* Here shape is FIXED, i.e. NOT estimated, and NOT part of beta! */
     Exts *ex;
-    int i, j;
     int iok;
     int maxiter;
     int trace;
     int *mask;
-    int events;
-    int nREPORT = 1;
-    int fncount, grcount;
     double *xin;
-    double Fmin;
 
     void *vex;
-
-    int info;
 
     dist = *dis;
 

@@ -63,6 +63,7 @@ void frail_ml(int *family,
     int info;
     int vm_trace;
     int true_bdim;
+    int modified = 0; /* Check this!! */
 
     vm_trace = *trace;
     bdim = *p + *n_rs + 1;
@@ -117,7 +118,7 @@ void frail_ml(int *family,
 
     mask = Calloc(bdim, int );
 
-    F77_CALL(ghq)(n_points, ext->zeros, ext->weights); 
+    F77_CALL(ghq)(n_points, ext->zeros, ext->weights, &modified); 
 
     ext->n = 0;
     for (i = 0; i < *n_fam; i++){

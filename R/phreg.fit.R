@@ -1,7 +1,12 @@
-phreg.fit <- function(X, Y, dist,
-                      strata, offset,
-                      init, shape,
-                      control, center = NULL){
+phreg.fit <- function(X,
+                      Y,
+                      dist,
+                      strata,
+                      offset,
+                      init,
+                      shape,
+                      control,
+                      center = TRUE){
 
     if (dist == "weibull"){
         dis <- 0
@@ -13,6 +18,8 @@ phreg.fit <- function(X, Y, dist,
         dis <- 3
     }else if (dist == "gompertz"){
         stop("phreg.fit cannot be used with 'gompertz', try 'gompreg'")
+    }else if (dist == "pch"){
+        stop("phreg.fit cannot be used with 'pch', try 'pchreg'")
     }else{
         stop(paste(dist, "is not an implemented distribution"))
     }
@@ -105,7 +112,7 @@ phreg.fit <- function(X, Y, dist,
                                   value = fit$beta[fit$fail])
                              )
         ##if (!center){ # Transform to original values
-        if (FALSE){ # NOPE!!! Transform to original values
+        if (!center){ # NOPE!!! Transform to original values
             dxy <- diag(2 * ns + ncov)
             for (i in 1:ns){ ## Really a HACK ??!!!!!!!!!!!!!!!
                 row <- ncov + 2 * i - 1
@@ -194,7 +201,7 @@ phreg.fit <- function(X, Y, dist,
         fit$shape.sd <- NULL  ## Not necessary!?!?
         ##fit$beta[bdim] <- -fit$beta[bdim] # To get "1 / lambda"! NO!!
         ##if (!center){# i.e., never...
-        if (FALSE){# i.e., never...
+        if (!center){# i.e., never...
             dxy <- diag(bdim)
             if (ncov){
                 dxy[bdim, 1:ncov] <- means / shape

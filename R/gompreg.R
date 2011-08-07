@@ -1,4 +1,4 @@
-gompreg <- function(X, Y, strata, offset, init, control){
+gompreg <- function(X, Y, strata, offset, init, control, center){
     ## Gompertz proportional hazards:
     ## Stratum i: h_i(t; beta) = a_i * exp(t / b_i) * exp(x*beta),
     ## i = 1, ..., ns
@@ -14,8 +14,10 @@ gompreg <- function(X, Y, strata, offset, init, control){
         means <- apply(X, 2, weighted.mean, w = wts)
         means <- apply(X, 2, mean)
 
-        for (i in 1:ncov){
-            X[, i] <- X[, i] - means[i]
+        if (center){
+            for (i in 1:ncov){
+                X[, i] <- X[, i] - means[i]
+            }
         }
     }
     if (missing(strata) || is.null(strata)){

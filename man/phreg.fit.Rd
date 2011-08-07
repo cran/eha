@@ -7,7 +7,7 @@ This function is called by \code{\link{phreg}}, but it can also be
 directly called by a user.
 }
 \usage{
-phreg.fit(X, Y, dist, strata, offset, init, shape, control, center = NULL)
+phreg.fit(X, Y, dist, strata, offset, init, shape, control, center = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -20,7 +20,8 @@ phreg.fit(X, Y, dist, strata, offset, init, shape, control, center = NULL)
   \item{shape}{If positive, a fixed value of the shape parameter in the
     distribution. Otherwise, the shape is estimated.}
   \item{control}{Controls convergence and output.}
-  \item{center}{Deplecated, and not used.}
+  \item{center}{Should resuls be reportes at centered covariates?
+    Defaults to \code{TRUE}.}
 }
 \details{
 See \code{\link{phreg}} for more detail.

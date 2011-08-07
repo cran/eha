@@ -26,7 +26,7 @@ static double aft_fun(int n, double *beta, void *vex){
 /* Here shape is NOT fixed, i.e. estimated, and part of beta! */
     int i, j, rec;
     Exts *ex;
-    double f, alpha, gamma, res;
+    double alpha, gamma;
     int nn, indiv, stratum, mb;
     double res1, res2;
     double alphambz;
@@ -161,11 +161,7 @@ void aftsup(int *printlevel,
 /*                          beta[*mb, *mb+2, ...] are scale parameters  */
 /*                          beta[*mb+1, *mb+3, ...] are shape parameter */
     Exts *ex;
-    int i, j;
     int iok;
-    int maxiter;
-    int events;
-    int nREPORT = 1;
 
     void *vex;
 

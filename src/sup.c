@@ -105,10 +105,11 @@ C     the correct procedure! Will be fixed (some day ...)
     Free(perm);
 }
 
+/*     Start values:
 static void fill_haz(int totrs, RiskSet *risks){
     
     int rs, antevents, size;
-/*     Start values: */
+
     for (rs = 0; rs < totrs; rs++){
 	antevents = (risks + rs)->antevents;
 	size = (risks + rs)->size;
@@ -119,7 +120,7 @@ static void fill_haz(int totrs, RiskSet *risks){
 	    (risks + rs)->hazard = 1.0;
     }
 }
-
+*/
 
 static void inv_hess(double *h22, int *fail){
 

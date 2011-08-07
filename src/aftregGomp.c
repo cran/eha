@@ -26,7 +26,7 @@ static double aft_funGomp(int n, double *beta, void *vex){
 /* Here shape is NOT fixed, i.e. estimated, and part of beta! */
     int i, j, rec;
     Exts *ex;
-    double f, alpha, gamma, res;
+    double alpha, gamma;
     double lambda, p;
     int nn, indiv, stratum, mb;
     double res1, res2;
@@ -34,7 +34,6 @@ static double aft_funGomp(int n, double *beta, void *vex){
     double *bz;
     int *n_rec;
     double a_time, b_time;
-    int log_p = 1;
 
     ex = vex;
     mb = *(ex->mb);
@@ -143,11 +142,7 @@ void aftregGomp(int *printlevel,
 /*                          beta[*mb, *mb+2, ...] are scale parameters  */
 /*                          beta[*mb+1, *mb+3, ...] are shape parameter */
     Exts *ex;
-    int i, j;
     int iok;
-    int maxiter;
-    int events;
-    int nREPORT = 1;
 
     void *vex;
 

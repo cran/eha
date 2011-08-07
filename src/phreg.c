@@ -134,7 +134,7 @@ static void ph_nr(int iter, double eps, int printlevel,
 		  int *conver, int *fail, Exts *ex){
     
     int ione = 1;
-    int job = 1; /* Gives inverse from dpodi */ 
+
     int	itmax, info;
     double one = 1.0;
     double L2;
@@ -289,8 +289,6 @@ void phsup(int *iter, double *eps, int *printlevel,
 
     void *vex;
 
-    int info;
-    int job = 1;
     double * det;
 
     det = Calloc(2, double);
