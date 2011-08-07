@@ -1,7 +1,20 @@
+2.0	(August 6, 2011)
+	* glmmML: Merged into eha. This adds binary and count data
+	regression for clustered data to eha. glmmML is still a standalone
+	package on CRAN, for how long remains to be seen.
+	* Pch: New class of distributions; Piecewise constant hazards (Pch).
+	* phreg: piecewise constant baseline hazard function introduced.
+	* phreg: 'center' reinstalled as a logical, default = TRUE, so
+	nothing changes if 'center' is left untouched.
+	* age.window: If the selected window is empty, an error was
+	previously thrown. Now NULL is returned, with a warning.
+	* cal.window: Now returns NULL, with a warning, if the selected
+	window is empty.
+
 1.4	(June 26, 2011)
 	* aftreg: Gompertz distribution added (back again). Better start values.
 	* phreg: Better start values for Gompertz distribution.
-	
+
 1.3-7 	(June 20, 2011)
 	* eha: Depends (R >= 2.13.0)
 	* phreg, aftreg, weibreg: Errors in documentation corrected.

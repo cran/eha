@@ -2,6 +2,7 @@ phreg <- function (formula = formula(data),
                    data = parent.frame(),
                    na.action = getOption("na.action"),
                    dist = "weibull",
+                   cuts = NULL,
                    init,
                    shape = 0,
                    ## Means shape is estimated, ie true Weibull; > 0 fixed!
@@ -10,7 +11,7 @@ phreg <- function (formula = formula(data),
                    model = FALSE,
                    x = FALSE,
                    y = TRUE,
-                   center = NULL)
+                   center = TRUE) # NOTE: Changed from 'NULL' in 1.4-1
 {
 
     pfixed <- any(shape > 0)
@@ -144,9 +145,17 @@ phreg <- function (formula = formula(data),
                        strats,
                        offset,
                        init,
-                       control)
+                       control,
+                       center)
+    }else if(dist == "pch"){
+        fit <- pchreg(X,
+                      Y,
+                      cuts,
+                      offset,
+                      init,
+                      control,
+                      center)
     }else{
-    
         fit <- phreg.fit(X,
                          Y,
                          dist,
@@ -270,7 +279,11 @@ phreg <- function (formula = formula(data),
     fit$dist <- dist
     fit$events <- n.events
     ##class(fit) <- c("phreg", "weibreg", "coxreg", "coxph")
-    class(fit) <- "phreg"
+    if (fit$dist == "pch"){
+        class(fit) <- c("pchreg", "phreg")
+    }else{
+        class(fit) <- "phreg"
+    }
     fit$pfixed <- pfixed
     fit
 }

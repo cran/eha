@@ -8,9 +8,10 @@
 }
 \usage{
 phreg(formula = formula(data), data = parent.frame(),
-na.action = getOption("na.action"), dist = "weibull", init, shape = 0,
+na.action = getOption("na.action"), dist = "weibull", cuts = NULL,
+init, shape = 0,
 control = list(eps = 1e-08, maxiter = 20, trace = FALSE),
-singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE, center = NULL)
+singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE, center = TRUE)
 }
 
 \arguments{
@@ -23,9 +24,12 @@ singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE, center = NULL)
     model.frame, after any subset argument has been used.
     Default is \code{options()$na.action}.}
 \item{dist}{Which distribution? Default is "weibull", with the
-  alternatives "loglogistic" and "lognormal". A special 
+  alternatives "ev" (Extreme value), "gompertz", "pch" (piecewise
+  constant hazards function), "loglogistic" and "lognormal". A special 
   case like the \code{exponential} can be obtained by choosing "weibull"
   in combination with \code{shape = 1}.}
+\item{cuts}{Only used with \code{dist = "pch"}. Specifies the points in
+  time where the hazard function jumps.}
   \item{init}{vector of initial values of the iteration.
     Default initial value is zero for all variables.}
   \item{shape}{If positive, the shape parameter is fixed at that value
@@ -40,14 +44,16 @@ singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE, center = NULL)
   \item{model}{Not used.}
   \item{x}{Return the design matrix in the model object?}
   \item{y}{Return the response in the model object?}
-  \item{center}{Now deprecated and not used. Baseline parameters are now always
-  calculated at the means of the columns of the design matrix.}
+  \item{center}{Baseline parameters are
+    calculated at the means of the columns of the design matrix.
+    If \code{center == FALSE}, results are reported as without centering.}
 }
 
 \details{
 The parameterization is the same as in \code{\link{coxreg}}
 and \code{\link[survival]{coxph}}, but different
-from the one used by \code{\link[survival]{survreg}}.
+from the one used by \code{\link[survival]{survreg}} (which is not a
+proportional hazards modelling function).
 The model is
 \deqn{S(t; a, b, \beta, z) = S_0((t/b)^a)^{\exp((z-mean(z))\beta)}}{%
   S(t; a, b, beta, z) =  S0((t/b)^a)^exp((z - mean(z)) beta)}
@@ -56,7 +62,11 @@ where S0 is some standardized survivor function.
 
 \value{
 A list of class \code{c("phreg", "coxreg")} with components
-  \item{coefficients}{Fitted parameter estimates.}
+\item{coefficients}{Fitted parameter estimates.}
+\item{cuts}{Cut points for the "pch" distribution. \code{NULL}
+  otherwise.}
+\item{hazards}{The estimated constant levels in the case of the "pch"
+  distribution. \code{NULL} otherwise.}
   \item{var}{Covariance matrix of the estimates.}
   \item{loglik}{Vector of length two; first component is the value at
     the initial parameter values, the second componet is the maximized value.}
@@ -93,7 +103,8 @@ A list of class \code{c("phreg", "coxreg")} with components
 \section{Warning}{Note that covariates are internally centered by this
   function,  
 and this is not corrected for in the output. This affects the estimate
-of \eqn{\log(scale)}{log(scale)}, but nothing else.}
+of \eqn{\log(scale)}{log(scale)}, but nothing else. It is possible to
+  choose not to center, though. }
 
 \seealso{\code{\link{coxreg}}, \code{\link{check.dist}}, \code{link{aftreg}}.}
 
