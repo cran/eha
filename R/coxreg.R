@@ -297,6 +297,8 @@ coxreg <- function (formula = formula(data),
     }
     if (y)
         fit$y <- Y
+    if (x)
+        fit$x <- X
     ##if (!is.null(weights) && any(weights != 1))
     ##    fit$weights <- weights
 
