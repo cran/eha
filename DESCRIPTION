@@ -1,14 +1,21 @@
 Encoding: UTF-8
 Package: eha
-Version: 2.0-1
-Date: 2011-08-07
-Title: Event History Analysis and Discrete Models
-Description: A package for the analysis event history, binary, and
-        count data.
+Version: 2.0-2
+Date: 2011-08-08
+Title: Event History Analysis
+Description: Event history analysis: Sampling of risk sets in Cox
+        regression, selections in the Lexis diagram, bootstrapping.
+        Parametric proportional hazards fitting with left truncation
+        and right censoring for common families of distributions,
+        piecewise constant hazards, and discrete models. AFT regression
+        for left truncated and right censored data. Binary and Poisson
+        regression for clustered data, fixed and random effects with
+        bootstrapping.
+Enhances: survival, stats
 License: GPL (>= 3)
-Author: \enc{Göran Broström}{George Bridgewater}
-Depends: R (>= 2.13.0), survival, graphics
-Maintainer: \enc{Göran Broström}{George Bridgewater} <gb@stat.umu.se>
-Packaged: 2011-08-07 15:49:12 UTC; gb
+Author: Göran Broström
+Depends: R (>= 2.13.0), stats, graphics, utils, survival
+Maintainer: Göran Broström <gb@stat.umu.se>
+Packaged: 2011-08-08 13:31:16 UTC; gb
 Repository: CRAN
-Date/Publication: 2011-08-08 05:41:50
+Date/Publication: 2011-08-08 15:45:44

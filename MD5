@@ -1,5 +1,5 @@
 b115a59706b48b1784db4dc7f8c479a1 *ChangeLog
-70a65b1132588eaab5bc327614495f00 *DESCRIPTION
+94646b587f4dacd7cee4cc095869e4e1 *DESCRIPTION
 68448d7bee1a94013dabac6e55499177 *NAMESPACE
 07d4b8ccfddd26b518495ec8df997df0 *R/Extreme_Value.R
 6026e4a50c00f3cb29116f0ff2f9689d *R/Gompertz.R
@@ -18,7 +18,7 @@ d3d294013a4f2e8ad42c6186d9b34591 *R/age.window.R
 1b6ac083dfbd52c6b4ddb6c913570986 *R/cal.window.R
 b419c31334caf44fcb495809f5f32403 *R/check.dist.R
 f55eec15444d7fb6679192a0c23e49c2 *R/check.surv.R
-0ebd412895d28bfabeb79b57069b155e *R/coxreg.R
+a94930c346ff026dabf474ee876ed307 *R/coxreg.R
 c99eca6e09a94c564179074caaea88f8 *R/coxreg.fit.R
 7da682fc2b528a92c622af997bca5eca *R/cro.R
 ed25d9fe3c95bacf1f432f0717db5607 *R/cumhweibull.R
@@ -77,10 +77,10 @@ bdc7fe303a26de9471ce9773696726fb *data/fert.rda
 ee9991b2773c20b7b599682cf281b8b6 *data/swe07.rda
 7f19861a360262ef074a63d7f2a1119e *inst/doc/cluster.bib
 19d6d7e996c1c59fa73b9f72db926e03 *inst/doc/glmmML.Rnw
-ce2db58d3e84151f3942e7e61317baed *inst/doc/glmmML.pdf
+dfa2d175242e1c100ab8cbf972d36b53 *inst/doc/glmmML.pdf
 d96d31916811bbf06fd4193811c75e33 *inst/doc/glmmML.tex
 61f37c51fc7daebe1a27ac5e78393004 *inst/doc/parametric.Rnw
-6f8865aaa7ef52f9ca1eaeb2c7be1229 *inst/doc/parametric.pdf
+16d8a40f0d415f8bbf1b6051780803e1 *inst/doc/parametric.pdf
 9fcadd2e16c7a941d863dd302894982b *man/EV.Rd
 2caedb45ff946cf6ac51ff51cc9e6397 *man/Gompertz.Rd
 28e4d0980a03c2d80b47dcdb292f9809 *man/Loglogistic.Rd
