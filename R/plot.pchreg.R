@@ -76,7 +76,7 @@ plot.pchreg <- function(x,
             hmain <- main
         }
         plot(cuts[1:2], c(haz[1], haz[1]), type = "l",
-             xlim = c(cuts[1], max(cuts)), ylim = c(0, max(haz)),
+             xlim = xlim, ylim = hylim,
              xlab = hxlab, ylab = hylab, main = hmain, ...)
         for (i in 2:(length(cuts) - 1)){
             lines(cuts[i:(i+1)], c(haz[i], haz[i]))
@@ -95,6 +95,12 @@ plot.pchreg <- function(x,
         for (i in 2:length(Haz)){
             Haz[i] <- Haz[i-1] + haz[i-1] * (cuts[i] - cuts[i-1])
         }
+        if (is.null(ylim)){
+            hylim <- c(0, max(Haz))
+        }else{
+            hylim <- ylim
+            hylim[2] <- max(hylim[2], max(Haz))
+        }
         if (is.null(xlab)){
             hxlab <- "Duration"
         }else{
@@ -111,7 +117,7 @@ plot.pchreg <- function(x,
             hmain <- main
         }
         plot(cuts, Haz, type = "l",
-             xlim = c(cuts[1], max(cuts)),
+             xlim = xlim, ylim = hylim,
              xlab = hxlab, ylab = hylab, main = hmain, ...)
 
         abline(h = 0)
@@ -137,9 +143,13 @@ plot.pchreg <- function(x,
         }else{
             hmain <- main
         }
-        ylim <- c(0, max(yy))
+        if (is.null(ylim)){
+            hylim <- c(0, max(yy))
+        }else{
+            hylim <- ylim
+        }
         who <- (xx >= 0) & (xx <= x$cuts[1]) 
-        plot(xx[who], yy[who], type = "l", xlim = xlim, ylim = ylim,
+        plot(xx[who], yy[who], type = "l", xlim = xlim, ylim = hylim,
              xlab = hxlab, ylab = hylab, main = hmain, ...)
         for (i in 2:(length(cuts) - 1)){
             who <- (xx > cuts[i]) & (xx <= cuts[i + 1]) 

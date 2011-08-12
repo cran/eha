@@ -93,8 +93,12 @@ plot.phreg <- function(x,
             haz[i, ] <- haza(xx, scale = lambda[i], shape = p[i]) * score
         }
 
-        if (is.null(ylim)) ylim <- c(0, max(haz))
-        if (min(p) < 1) ylim[2] <- min(ylim[2], max(haz[, -1]))
+        if (is.null(ylim)) {
+            ylim0 <- c(0, max(haz))
+        }else{
+            ylim0 <- ylim
+        }
+        if (min(p) < 1) ylim0[2] <- min(ylim0[2], max(haz[, -1]))
 
         if (is.null(xlab)) xlab <- "Duration"
         if (is.null(ylab)) ylab <- "Hazard"
@@ -103,7 +107,7 @@ plot.phreg <- function(x,
         }else{
             hmain <- main
         }
-        plot(xx, haz[1, ], type = "l", xlim = xlim, ylim = ylim,
+        plot(xx, haz[1, ], type = "l", xlim = xlim, ylim = ylim0,
              xlab = xlab, ylab = ylab, main = hmain, ...)
         if (ns > 1){
             for (i in 2:ns){
@@ -122,8 +126,12 @@ plot.phreg <- function(x,
         for (i in 1:ns){
             Haz[i, ] <- Haza(xx, scale = lambda[i], shape = p[i]) * score
         }
-        ##if (is.null(ylim))
-        ylim <- c(0, max(Haz))
+        if (is.null(ylim)){
+            ylim0 <- c(0, max(Haz))
+        }else{
+            ylim0 <- ylim
+            ylim0[2] <- max(ylim0[2], max(Haz))
+        }
         ##if (is.null(xlab))
         xlab <- "Duration"
         ##if (is.null(ylab))
@@ -133,7 +141,7 @@ plot.phreg <- function(x,
         }else{
             Hmain <- main
         }
-        plot(xx, Haz[1, ], type = "l", xlim = xlim, ylim = ylim,
+        plot(xx, Haz[1, ], type = "l", xlim = xlim, ylim = ylim0,
              xlab = xlab, ylab = ylab, main = Hmain, ...)
         if (ns > 1){
             for (i in 2:ns){

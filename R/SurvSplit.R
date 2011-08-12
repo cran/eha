@@ -13,7 +13,7 @@ SurvSplit <- function(Y, cuts){
     for (i in 1:n){
         out[[i]] <- age.window(indat, cuts[i:(i+1)])
         out[[i]]$ivl <- i
-        out[[i]] <- t(out[[i]])
+        ##out[[i]] <- t(out[[i]]) Needed for old method with unlist.
     }
     ## Y <- matrix(unlist(out), ncol = 5, byrow = TRUE)
     ## Faster (and cleaner):

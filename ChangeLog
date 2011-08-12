@@ -1,3 +1,16 @@
+2.0-3	(August 8, 2011)
+	* SurvSplit: Bug fixed. It works now.
+	* glmmboot: Bug in calculation of 'frail' fixed.
+	* plot.phreg: Bug in argument 'ylim' fixed. Bug with stratified
+	fits fixed.
+	* aftreg, phreg: summary method added (just printing).
+
+2.0-2	(August 8, 2011)
+	* coxreg: 'x = TRUE' now really returns the design matrix.
+
+2.0-1   (August 7, 2011)
+	* sw_fun: C function (internal) now declared and defined.
+
 2.0	(August 6, 2011)
 	* glmmML: Merged into eha. This adds binary and count data
 	regression for clustered data to eha. glmmML is still a standalone
