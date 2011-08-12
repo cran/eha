@@ -43,31 +43,18 @@ pchreg <- function(X, Y, cuts, offset, init, control, center){
     split <- SurvSplit(Y, cuts)
     event <- split$Y[, 3]
     Y <- split$Y
-    ##cat("Y = \n")
-    ##print(Y)
-    X <- X[split$idx, drop = FALSE]
-    ##cat("X = \n")
-    ##print(X)
-    ##cat("ivl = \n")
-    ##print(split$ivl)
+    X <- X[split$idx, ,drop = FALSE]
     offset <- offset[split$idx] + log(Y[, 2] - Y[, 1])
     res0 <- glmmboot(event ~ offset(offset), cluster = split$ivl,
                      family = "poisson")
 
-    ## Done; now the real thing: (The above is really unnecessary!)
+    ## Done; now the real thing: (The above is really unnecessary? No!!)
     ##ncov <- ncov.save
     
     ##if (ncov)
       ##  beta[1:ncov] <- init  # Start values
     res <- glmmbootFit(X, event, cluster = split$ivl,
                        offset = offset, family = poisson())
-##    if (res$convergence != 0) stop("[gompreg]: No convergence")
-  ##  else {
-  ##      print(names(res))
-  ##      stop("Until finished")
-    ##}
-    ##cat("res = \n")
-    ##print(res)
     coefficients <- res$coefficients
     coef.names <- colnames(X)
     names(coefficients) <- coef.names
