@@ -31,18 +31,18 @@ See \code{\link{aftreg}} for more detail.
 \value{
   \item{coefficients}{Estimated regression coefficients plus estimated
     scale and shape coefficients, sorted by strata, if present.}
+  \item{df}{Degrees of freedom; No. of regression parameters.}
   \item{var}{Variance-covariance matrix}
   \item{loglik}{Vector of length 2. The first component is the maximized
   loglihood with only scale and shape in the model, the second the final
   maximum.}
-  \item{score}{Score test statistic at initial values}
-  \item{linear.predictors}{Linear predictors for each interval.}
-  \item{means}{Means of the covariates}
+  %\item{score}{Score test statistic at initial values}
+  %\item{linear.predictors}{Linear predictors for each interval.}
+  %\item{means}{Means of the covariates}
   \item{conver}{TRUE if convergence}
   \item{fail}{TRUE if failure}
   \item{iter}{Number of Newton-Raphson iterates.}
   \item{n.strata}{The number of strata in the data.}
-
 }
 %\references{ ~put references to the literature/web site here ~ }
 \author{\enc{Göran}{Goran} \enc{Broström}{Brostrom}}

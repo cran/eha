@@ -38,7 +38,7 @@ singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE, center = NULL)
   time-varying covariates.}
     \item{control}{a list with components \code{eps} (convergence
     criterion), \code{maxiter} (maximum number of iterations), and
-    \code{silent} (logical, controlling amount of output).  You can
+    \code{trace} (logical, debug output if \code{TRUE}).  You can
     change any component without mention the other(s).}
   \item{singular.ok}{Not used.}
   \item{model}{Not used.}
@@ -92,12 +92,12 @@ A list of class \code{c("aftreg", "coxreg")} with components
 \author{\enc{Göran Broström}{George Bridgewater}}
 
 
-\section{Warning}{The print method \code{\link{print.aftreg}} doesn't work if
-threeway or higher order interactions are present. Use
-\code{\link[survival]{print.coxph}} in that case.
-}
+%\section{Warning}{The print method \code{\link{print.aftreg}} doesn't work if
+%threeway or higher order interactions are present. Use
+%\code{\link[survival]{print.coxph}} in that case.
+%}
 
-\seealso{\code{\link{coxreg}}, \code{\link{phreg}}
+\seealso{\code{\link{coxreg}}, \code{\link{phreg}}, \code{link[survival]{survreg}}
   }
 
 \examples{
