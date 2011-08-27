@@ -1,5 +1,5 @@
-bc2ce255f24e50323f80a73d07da7fec *ChangeLog
-3f9eba23a7fea49993705239c7dfc4ef *DESCRIPTION
+36d2be9f9dfaaf17454d193935779d2d *ChangeLog
+c6f310433ee6a7f4cf6a60ebc5aae50b *DESCRIPTION
 62769b6f5a017cdd6a9606e187535fc5 *NAMESPACE
 07d4b8ccfddd26b518495ec8df997df0 *R/Extreme_Value.R
 6026e4a50c00f3cb29116f0ff2f9689d *R/Gompertz.R
@@ -13,7 +13,7 @@ ad9097e78390345b09742350226d89e8 *R/aftp0.R
 fce93eb614d99d08c5561805b553bcb8 *R/aftp0g.R
 8a7430c28a2edae8d3b0f492a36d3e22 *R/aftp1.R
 3a93b7adcec441983d4c518dacd133cc *R/aftreg.R
-75ca3feb6f0ddccd06e01a9e2a627d28 *R/aftreg.fit.R
+af82a92086f472fe767d2f3a089c6e1e *R/aftreg.fit.R
 d3d294013a4f2e8ad42c6186d9b34591 *R/age.window.R
 1b6ac083dfbd52c6b4ddb6c913570986 *R/cal.window.R
 c8e2cb1abdb374f5f0e3703cb69b7ddb *R/check.dist.R
@@ -75,14 +75,14 @@ bdc7fe303a26de9471ce9773696726fb *data/fert.rda
 287776a6ceb56e4b87730705d485cc8b *data/infants.rda
 869df626ee3bdcfbffb3c0d16e9f0866 *data/male.mortality.rda
 18abf8357bb4db56ac58e2dc9b304039 *data/mort.rda
-040ead13156374e4d2bf5d9f8a114313 *data/oldmort.rda
+a5aab875249c6a0722275d5672448219 *data/oldmort.rda
 ee9991b2773c20b7b599682cf281b8b6 *data/swe07.rda
 7f19861a360262ef074a63d7f2a1119e *inst/doc/cluster.bib
 19d6d7e996c1c59fa73b9f72db926e03 *inst/doc/glmmML.Rnw
-90c8be014883f1f6463bc956813e9d3a *inst/doc/glmmML.pdf
+e332ec6ddbfd34fddf45c641acdc9826 *inst/doc/glmmML.pdf
 d96d31916811bbf06fd4193811c75e33 *inst/doc/glmmML.tex
 61f37c51fc7daebe1a27ac5e78393004 *inst/doc/parametric.Rnw
-8425ad16a4304f0d6593190071807739 *inst/doc/parametric.pdf
+9dd2a7daf6a4bc01dec9d90159af38fc *inst/doc/parametric.pdf
 9fcadd2e16c7a941d863dd302894982b *man/EV.Rd
 2caedb45ff946cf6ac51ff51cc9e6397 *man/Gompertz.Rd
 28e4d0980a03c2d80b47dcdb292f9809 *man/Loglogistic.Rd
@@ -90,8 +90,8 @@ f06d7cb9962142cd3173f4899bd40bf8 *man/Lognormal.Rd
 340b058a8f0645bfe2ccde810cafa7c6 *man/Makeham.Rd
 57bce762b2ea97b884a412eebedbcc26 *man/Pch.Rd
 b4eaea96df1231a8f8ffda51e39e4384 *man/SurvSplit.Rd
-8f0461e9c50cff8a8ff12197364187c1 *man/aftreg.Rd
-db7765020722ae056cf4a653e076db9a *man/aftreg.fit.Rd
+b967502cf9f0867e447d105bed5fb065 *man/aftreg.Rd
+95420fb3389cd0b2623ab15ad20f6786 *man/aftreg.fit.Rd
 a0e10b89a09e695a3398bc30fe29dd01 *man/age.window.Rd
 8ea7ea573d917e7d3e9bbc77d43eb238 *man/cal.window.Rd
 d96eb2d8b5d22cde3470616aa39676c4 *man/check.dist.Rd

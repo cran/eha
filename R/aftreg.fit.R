@@ -8,6 +8,11 @@ aftreg.fit <- function(X, Y, dist,
     ## stratum comes second, beacuse we can then let individuals
     ## change stratum over time!
     ord <- order(id, Y[, 1])
+    if (!is.matrix(X)) X <- matrix(X, ncol = 1)
+    if (length(colnames(X)) != NCOL(X)){
+        colnames(X) <- paste("X", 1:NCOL(X), sep = ".")
+    }
+    if (NROW(X) != NROW(Y)) stop("Wrong No. of rows in X")
     X <- X[ord, , drop = FALSE]
     Y <- Y[ord, , drop = FALSE]
     id <- id[ord]
@@ -117,12 +122,12 @@ aftreg.fit <- function(X, Y, dist,
          df = fit$ncov,
          var = fit$var,
          loglik = fit$loglik,
-         score = fit$sctest,
-         conver = fit$conver,
+         ##score = fit$sctest,
+         convergence = (fit$conver == 0),
          fail = fit$fail,
-         iter = fit$iter,
-         n.strata = ns,
-         shape = fit$shape
+         ##iter = fit$iter,
+         n.strata = ns#,
+         ##shape = fit$shape
          )
 
 }

@@ -1,4 +1,8 @@
-2.0-3	(August 8, 2011)
+2.0-4   (August 27, 2011)
+	* oldmort: Data set updated.
+	* aftreg.fit: Errors in documentation corrected.
+
+2.0-3	(August 12, 2011)
 	* SurvSplit: Bug fixed. It works now.
 	* glmmboot: Bug in calculation of 'frail' fixed.
 	* plot.phreg: Bug in argument 'ylim' fixed. Bug with stratified
