@@ -1,6 +1,6 @@
-36d2be9f9dfaaf17454d193935779d2d *ChangeLog
-c6f310433ee6a7f4cf6a60ebc5aae50b *DESCRIPTION
-62769b6f5a017cdd6a9606e187535fc5 *NAMESPACE
+cc6f59b9746b92537c7bbb463e28eab0 *ChangeLog
+91411ef74a870efab093bd7f289d8261 *DESCRIPTION
+5a49233c16f552e4992e1514685748aa *NAMESPACE
 07d4b8ccfddd26b518495ec8df997df0 *R/Extreme_Value.R
 6026e4a50c00f3cb29116f0ff2f9689d *R/Gompertz.R
 58aab957797e0a559b75430b4b981f94 *R/Loglogistic.R
@@ -33,6 +33,7 @@ d64d31cc1761ca921d2f34e94096a1d3 *R/glmmML.fit.R
 0dafad459c7bb612659c1cec9e932eb0 *R/gompreg.R
 f22362785c7fdf613e0bfb7c29fc776b *R/gompstart.R
 e741c7ba8d97ed577c006a5d96133b8f *R/join.spells.R
+5c87679e781b3d977be7d229babd85d8 *R/ltx.R
 31913298428186e9b164bf8b7335b9b2 *R/make.communal.R
 7dd27fca2b3d3645607b618d10aed484 *R/mlreg.R
 12dc40e280df666c539f1d66bb6ffa7a *R/pchreg.R
@@ -46,7 +47,7 @@ a131bf77cf5ba1d1d80cfb5ecf190fd2 *R/plot.coxreg.R
 66404c009af6f927eba0ae94b88b1bd6 *R/plot.hazdata.R
 46d717ea8dacd53595f9a6f63f84bc17 *R/plot.pchreg.R
 620a950026f7a48fc8ce47e796214ce8 *R/plot.phreg.R
-c4719124f9e8ca9b9179437c8b0cfe7a *R/plot.surv.R
+b44c5fe883b4b9cce543d04924eec0ed *R/plot.surv.R
 69321efccbd5992874d54bb4a4f01d27 *R/plot.weibreg.R
 65f478cfb8b0039b895f848ad45065a2 *R/print.aftreg.R
 4ffc16f056bcbb281136a0cd44ca3ac3 *R/print.coxreg.R
@@ -70,19 +71,21 @@ b72e2b21e573581e605fc603701da355 *R/toBinary.R
 9428f23dfa2b87886759e47574764c3c *R/weibreg.R
 07b34e2104f02e1d07636536044a4f2a *R/weibreg.fit.R
 505a5e0c3f6d2044ccc14035ebbf2b59 *R/wfunk.R
-7f5efa85633339dfbe68bfb24cc4d4cf *ToDo
+bb04176f66046cd85026b8a8d8450fcc *ToDo
 bdc7fe303a26de9471ce9773696726fb *data/fert.rda
 287776a6ceb56e4b87730705d485cc8b *data/infants.rda
+95663cb86dd4347ec2a3739dc405d164 *data/logrye.rda
 869df626ee3bdcfbffb3c0d16e9f0866 *data/male.mortality.rda
 18abf8357bb4db56ac58e2dc9b304039 *data/mort.rda
 a5aab875249c6a0722275d5672448219 *data/oldmort.rda
+77dfab80daebd8cc7051ea9a659e02ed *data/scania.rda
 ee9991b2773c20b7b599682cf281b8b6 *data/swe07.rda
 7f19861a360262ef074a63d7f2a1119e *inst/doc/cluster.bib
 19d6d7e996c1c59fa73b9f72db926e03 *inst/doc/glmmML.Rnw
-e332ec6ddbfd34fddf45c641acdc9826 *inst/doc/glmmML.pdf
+37272cca4073f1ad9c01cc5c9e2a5e95 *inst/doc/glmmML.pdf
 d96d31916811bbf06fd4193811c75e33 *inst/doc/glmmML.tex
 61f37c51fc7daebe1a27ac5e78393004 *inst/doc/parametric.Rnw
-9dd2a7daf6a4bc01dec9d90159af38fc *inst/doc/parametric.pdf
+1db5fff9eb6c10d9d0baebddc2e95553 *inst/doc/parametric.pdf
 9fcadd2e16c7a941d863dd302894982b *man/EV.Rd
 2caedb45ff946cf6ac51ff51cc9e6397 *man/Gompertz.Rd
 28e4d0980a03c2d80b47dcdb292f9809 *man/Loglogistic.Rd
@@ -109,6 +112,8 @@ cc8f621e505f818ceb24bcab18fbd662 *man/glmmbootFit.Rd
 f1be7d0b5e2ce06fe1b9731e6803e78b *man/hweibull.Rd
 89ca465acadc8dd69b25c754a28d8826 *man/infants.Rd
 00a2ed84b0b9cd3df5ff5506b7d14f96 *man/join.spells.Rd
+b468f54b91583677a541d9cc1cbae4b6 *man/logrye.Rd
+2a84bbd1a0ad6a31d43766e9971079a6 *man/ltx.Rd
 842a6dca84d7dde343e6469b43014353 *man/make.communal.Rd
 95e757a768c82a01e760a266137ab672 *man/male.mortality.Rd
 f9b5134c70ca218edaafaaa2d4e04771 *man/mlreg.Rd
@@ -119,7 +124,7 @@ e65baa27ba03ef00b82059109f18fced *man/oldmort.Rd
 51224ebde7c069a8393f61fa98ed1342 *man/phreg.Rd
 9830e1f6d43b6913f7141cde9f162d09 *man/phreg.fit.Rd
 d60e0c94dedb3f133e28b8ce0ce9f293 *man/piecewise.Rd
-8a858ea3604fbe4db683c2c4004ea564 *man/plot.Surv.Rd
+c4167316da64419c0531fe5ad89dda17 *man/plot.Surv.Rd
 8d0ff0d85bddc1c35031f53e50e7e26a *man/plot.aftreg.Rd
 d5c996fe78abf31f9fea56b4fad3daef *man/plot.coxreg.Rd
 62019898cb153279d730fc0cac00c8ba *man/plot.hazdata.Rd
@@ -132,6 +137,7 @@ a4f2bc8ef96e92ee89e6f2bc0a0a998b *man/print.glmmML.Rd
 e5558960dad328de5c9e50ed8894708d *man/print.phreg.Rd
 6f9efeb38ca7a04ea26c4ea1942fe23a *man/print.weibreg.Rd
 2149a90f365e7aed7349c6a75fa93003 *man/risksets.Rd
+05f015cf67b54ee575b5e7fe4b777673 *man/scania.Rd
 54109159fc0d92e794c9d6da89e4f89b *man/summary.coxreg.Rd
 a4a81a4c694fe1e5c5f8513fe3f3826a *man/summary.glmmML.Rd
 f3333cb93c3ee2d2a274223d665745f9 *man/summary.glmmboot.Rd
