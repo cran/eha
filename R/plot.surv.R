@@ -8,6 +8,8 @@ plot.Surv <- function(x,
                       ylab = NULL,
                       xlim = NULL,
                       ylim = NULL,
+                      lty = NULL,
+                      col = NULL,
                       lty.con = NULL,
                       col.con = NULL,
                       x.axis = TRUE,
@@ -54,7 +56,12 @@ plot.Surv <- function(x,
     }
     noOfGroups <- length(strata)
     if (noOfGroups > 1) limits <- FALSE
-
+    if (is.null(col)){
+        col <- rep(1, noOfGroups)
+    }
+    if (is.null(lty)){
+        lty <- 1:noOfGroups
+    }
     fn <- fn[1] # What type of plot?
     ##
 
@@ -130,21 +137,25 @@ plot.Surv <- function(x,
 
     plot(times[[1]], atoms[[1]],
          main = main, xlab = xlab, ylab = ylab,
-         xlim = xlim, ylim = ylim, type = "s", lty = 1, col = 1, ...)
+         xlim = xlim, ylim = ylim, type = "s", lty = lty[1], col = col[1], ...)
     if (noOfGroups > 1){
         for (st in 2:noOfGroups){
-            lines(times[[st]], atoms[[st]], type = "s", lty = st, col = st)
+            lines(times[[st]], atoms[[st]], type = "s",
+                  lty = lty[st], col = col[st])
         }
         x <- 0.7 * (x.max - x.min) + x.min
         if (fn == "surv"){
+            y <- 0.9 * (y.max - y.min) + y.min
+        }else if (fn == "cumhaz"){
+            x <- x.min + 0.01 * (x.max - x.min)
             y <- 0.9 * (y.max - y.min) + y.min
         }else{
             y <- 0.4 * (y.max - y.min) + y.min
         }
         ##cat("x = ", x, ", y = ", y, "\n")
         legend(x, y, legend = strata, bty = "n",
-               lty = 1:noOfGroups,
-               col = 1:noOfGroups)
+               lty = lty[1:noOfGroups],
+               col = col[1:noOfGroups])
     }
 
     if (fn %in% c("surv", "cum") & x.axis) abline(h = 0)

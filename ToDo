@@ -1,1 +1,7 @@
-* phreg and aftreg with 'gompertz' need to be checked.
+* (2011-09-12) Fix 'cluster' option in coxreg (coxph).
+
+* (2011-08-29) 'centering' and 'newdata' must be performed in a sensible way, 
+e.g., 
+1. Refering to the original variables and not the 'design matrix'.
+2. Factors should not be "centered" (keep a "reference group").
++++++++++++++++++++++

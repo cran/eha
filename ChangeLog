@@ -1,3 +1,8 @@
+2.0-5	(October 13, 2011)
+	* ltx: New function for printing coxreg fits in latex format.
+	* plot.Surv: New arguments, col and lty, added. The default is now
+	black-and-white plotting.
+	* data: Two new data sets, "logrye" and "scania".
 2.0-4   (August 27, 2011)
 	* oldmort: Data set updated.
 	* aftreg.fit: Errors in documentation corrected.

@@ -9,7 +9,8 @@
 \usage{
 plot.Surv(x, strata=NULL, fn = c("cum", "surv", "log", "loglog"),
 limits=TRUE, conf=0.95, main=NULL, xlab=NULL, ylab=NULL,
-xlim=NULL, ylim=NULL, lty.con=NULL, col.con = NULL, x.axis = TRUE, ...)
+xlim=NULL, ylim=NULL, lty = NULL, col = NULL,
+lty.con=NULL, col.con = NULL, x.axis = TRUE, ...)
 }
 \arguments{
   \item{x}{A \code{Surv} object.}
@@ -24,6 +25,8 @@ xlim=NULL, ylim=NULL, lty.con=NULL, col.con = NULL, x.axis = TRUE, ...)
   \item{ylab}{Label on the y-axis.}
   \item{xlim}{Horizontal plot limits. If NULL, calculated by the function.}
   \item{ylim}{Vertical plot limits. If NULL, set to \code{c(0, 1)}}
+  \item{lty}{Line type of curves.}
+  \item{col}{Color of curves.}
   \item{lty.con}{Line type of confidence bands.}
   \item{col.con}{Color of confidence bands.}
   \item{x.axis}{Should \code{abline(h=0)} be drawn?}
