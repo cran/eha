@@ -6,7 +6,7 @@
 This is the same as \code{\link{print.weibreg}}
 }
 \usage{
-summary.weibreg(object, ...)
+\method{summary}{weibreg}(object, \ldots)
 }
 
 \arguments{

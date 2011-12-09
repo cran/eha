@@ -712,7 +712,7 @@ void eha_fun1(int bdim,
 	gr[i] = -gr[i]; /* Minimization! */
 	ext->gr[i] = gr[i];
     }
-    /* printf("\n"); */
+    /* Rprintf("\n"); */
 }
 
 void eha_fun2(int bdim, 

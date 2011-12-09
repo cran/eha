@@ -1,3 +1,7 @@
+2.0-6	(November 30, 2011)
+	* plot.Surv: Can now handle missing values in strata variable (by
+	deleting corresponding cases!)
+
 2.0-5	(October 13, 2011)
 	* ltx: New function for printing coxreg fits in latex format.
 	* plot.Surv: New arguments, col and lty, added. The default is now

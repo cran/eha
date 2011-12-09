@@ -6,8 +6,8 @@
   Baseline hazards estimates.
 }
 \usage{
-plot.hazdata(x, fn = c("cum", "surv", "log", "loglog"), fig = TRUE,
-xlim=NULL, ylim=NULL, main=NULL, xlab=NULL, ylab=NULL, ...)
+\method{plot}{hazdata}(x, fn = c("cum", "surv", "log", "loglog"), fig = TRUE,
+xlim=NULL, ylim=NULL, main=NULL, xlab=NULL, ylab=NULL, \ldots)
 }
 \arguments{
   \item{x}{A \code{hazdata} object, typically the 'hazards' element in

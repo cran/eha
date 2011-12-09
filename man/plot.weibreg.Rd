@@ -6,9 +6,9 @@
 Just a simple plot of the hazard functions for each stratum.
 }
 \usage{
-plot.weibreg(x, fn = c("haz", "cum", "den", "sur"), main = NULL,
+\method{plot}{weibreg}(x, fn = c("haz", "cum", "den", "sur"), main = NULL,
 xlim = NULL, ylim = NULL, xlab = NULL, ylab = NULL,
-new.data = x$means, ...)
+new.data = x$means, \ldots)
 }
 
 \arguments{

@@ -1539,7 +1539,7 @@ double fun(int pp1,
     }
     Free(fam->x);
     Free(fam);
-    /* printf("[fun]; -loglik = %f\n", -loglik); */ 
+    /* Rprintf("[fun]; -loglik = %f\n", -loglik); */ 
     return ( -loglik ); /* Note: minimizing!!! */
 }
 

@@ -6,9 +6,9 @@
 Just a simple plot of the hazard functions for each stratum.
 }
 \usage{
-plot.aftreg(x, fn = c("haz", "cum", "den", "sur"), main = NULL,
+\method{plot}{aftreg}(x, fn = c("haz", "cum", "den", "sur"), main = NULL,
 xlim = NULL, ylim = NULL, xlab = "Duration", ylab = "",
-new.data = x$means, ...)
+new.data = x$means, \ldots)
 }
 
 \arguments{

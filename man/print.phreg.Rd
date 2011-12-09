@@ -7,7 +7,7 @@ The hazard, the cumulative hazard, the density, and the survivor
 baseline functions are plotted. 
 }
 \usage{
-print.phreg(x, digits = max(options()$digits - 4, 3), ...)
+\method{print}{phreg}(x, digits = max(options()$digits - 4, 3), \ldots)
 }
 
 \arguments{
