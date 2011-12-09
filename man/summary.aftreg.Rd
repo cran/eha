@@ -1,16 +1,16 @@
-\name{summary.coxreg}
-\alias{summary.coxreg}
+\name{summary.aftreg}
+\alias{summary.aftreg}
 
-\title{Prints coxreg objects}
+\title{Prints aftreg objects}
 \description{
-This is the same as \code{\link{print.coxreg}}
+This is the same as \code{\link{print.aftreg}}
 }
 \usage{
-\method{summary}{coxreg}(object, \ldots)
+\method{summary}{aftreg}(object, \ldots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{object}{A \code{coxreg} object}
+  \item{object}{A \code{aftreg} object}
   \item{\dots}{Additional ...}
 }
 

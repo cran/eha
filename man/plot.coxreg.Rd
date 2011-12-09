@@ -6,9 +6,9 @@
   Baseline hazards estimates.
 }
 \usage{
-plot.coxreg(x, fn = c("cum", "surv", "log", "loglog"), fig = TRUE,
+\method{plot}{coxreg}(x, fn = c("cum", "surv", "log", "loglog"), fig = TRUE,
 xlim=NULL, ylim=NULL, main=NULL, xlab="Duration", ylab="",
-new.data = NULL, ...)
+new.data = NULL, \ldots)
 }
 \arguments{
   \item{x}{A \code{coxreg} object, typically the output from

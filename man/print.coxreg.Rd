@@ -7,7 +7,7 @@ More "pretty-printing" than \code{print.coxph}, which is a fall-back for
 'difficult' objects.
 }
 \usage{
-print.coxreg(x, digits = max(options()$digits - 4, 3), ...)
+\method{print}{coxreg}(x, digits = max(options()$digits - 4, 3), \ldots)
 }
 \arguments{
   \item{x}{A \code{coxreg} object, typically the result of running

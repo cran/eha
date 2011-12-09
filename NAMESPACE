@@ -18,8 +18,10 @@ export(ghq, glmmboot, glmmbootFit, glmmML, glmmML.fit, print.glmmML,
        print.aftreg, print.coxreg, print.phreg, print.weibreg,
        qEV, qllogis, qgompertz, qmakeham, qpch, risksets,
        rEV, rllogis, rgompertz, rmakeham, rpch,
-       summary.coxreg, summary.weibreg, SurvSplit,
-       table.events, toBinary, toDate, toTime, weibreg, weibreg.fit, wfunk)
+       summary.aftreg, summary.coxreg,
+       summary.phreg, summary.weibreg,
+       SurvSplit, table.events, toBinary, toDate, toTime,
+       weibreg, weibreg.fit, wfunk)
 S3method(plot, Surv)
 S3method(plot, coxreg)
 S3method(plot, weibreg)

@@ -165,7 +165,7 @@ void frail_ml(int *family,
 	    Rprintf(" %f, ", b[i]);
 	}
 	Rprintf("\n");
-	printf("Gradients: ");
+	Rprintf("Gradients: ");
 	for (i = *n_rs; i < *n_rs + *p + 1; i++){
 	    Rprintf(" %f, ", -ext->gr[i]);
 	}

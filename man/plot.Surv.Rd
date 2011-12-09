@@ -7,10 +7,10 @@
   to Greenwood's formula are drawn.
 }
 \usage{
-plot.Surv(x, strata=NULL, fn = c("cum", "surv", "log", "loglog"),
+\method{plot}{Surv}(x, strata=NULL, fn = c("cum", "surv", "log", "loglog"),
 limits=TRUE, conf=0.95, main=NULL, xlab=NULL, ylab=NULL,
 xlim=NULL, ylim=NULL, lty = NULL, col = NULL,
-lty.con=NULL, col.con = NULL, x.axis = TRUE, ...)
+lty.con=NULL, col.con = NULL, x.axis = TRUE, \ldots)
 }
 \arguments{
   \item{x}{A \code{Surv} object.}

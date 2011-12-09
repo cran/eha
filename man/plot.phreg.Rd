@@ -6,9 +6,9 @@
 Just a simple plot of the hazard functions for each stratum.
 }
 \usage{
-plot.phreg(x, fn = c("haz", "cum", "den", "sur"), main = NULL,
+\method{plot}{phreg}(x, fn = c("haz", "cum", "den", "sur"), main = NULL,
 xlim = NULL, ylim = NULL, xlab = "Duration", ylab = "",
-new.data = NULL, ...)
+new.data = NULL, \ldots)
 }
 
 \arguments{
