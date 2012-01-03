@@ -86,12 +86,12 @@ void glmm_ml(int *family,
 
     int modified = 1;
 
-    int *conditional;
+    /* int *conditional; */
     int condi = 1;
 
     laplace = *method; /* 1 = Laplace, 0 = Gauss-Hermite */
 /* This is done to prepare for having conditional as an input parameter */     
-    conditional = &condi;
+    /* conditional = &condi; */
 
     if (*trace){
 	Rprintf("************* Entering [glmmml] **************** \n");

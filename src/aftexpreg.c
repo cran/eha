@@ -125,11 +125,11 @@ void aftexpsup(int *printlevel,
 	       double *loglik, int *fail){
 /* Here shape is FIXED, i.e. NOT estimated, and NOT part of beta! */
     Exts *ex;
-    int iok;
-    int maxiter;
+    /* int iok; */
+    /* int maxiter; */
     int trace;
-    int *mask;
-    double *xin;
+    /* int *mask; */
+    /* double *xin; */
 
     void *vex;
 
@@ -169,13 +169,13 @@ void aftexpsup(int *printlevel,
 
     ex = (Exts *)R_alloc(1, sizeof(Exts));
     vex = ex; /* NOTE!!! */
-    mask = (int *)R_alloc(*bdim, sizeof(int));
-    xin = (double *)R_alloc(*bdim, sizeof(double));
+    /* mask = (int *)R_alloc(*bdim, sizeof(int)); */
+    /* xin = (double *)R_alloc(*bdim, sizeof(double)); */
 
-    maxiter = 1000;
-    trace = *printlevel;
+    /* maxiter = 1000; */
+    /* trace = *printlevel; */
 
-    iok = 0;
+    /* iok = 0; */
 
 /* Fill in 'ex': */
     ex->id = id;

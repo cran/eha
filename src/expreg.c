@@ -126,7 +126,7 @@ void expsup(int *iter, double *eps, int *printlevel,
 	}
 	s += *lambda * exp(zb) * (time[i] - time0[i]);
 	d += ind[i];
-	Fmin += ind[i] * (log(*lambda) + zb);
+	Fmin += ind[i] * (ap + zb);
 	Fmin -= *lambda * exp(zb) * (time[i] - time0[i]);
     }
 

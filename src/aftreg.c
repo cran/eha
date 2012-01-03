@@ -161,7 +161,7 @@ void aftsup(int *printlevel,
 /*                          beta[*mb, *mb+2, ...] are scale parameters  */
 /*                          beta[*mb+1, *mb+3, ...] are shape parameter */
     Exts *ex;
-    int iok;
+    /* int iok; */
 
     void *vex;
 
@@ -202,7 +202,7 @@ void aftsup(int *printlevel,
     ex = (Exts *)R_alloc(1, sizeof(Exts));
     vex = ex; /* NOTE!!! */
 
-    iok = 0;
+    /* iok = 0; */
 
 /* Fill in 'ex': */
     ex->id = id;
