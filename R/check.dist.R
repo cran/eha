@@ -1,4 +1,4 @@
-check.dist <- function(sp, pp, main = NULL){
+check.dist <- function(sp, pp, main = NULL, col = NULL){
     if (!inherits(sp, "coxreg"))
         stop ("First argument must be of type 'coxreg'")
     if (!inherits(pp, "phreg"))
@@ -14,12 +14,17 @@ check.dist <- function(sp, pp, main = NULL){
     if (length(x) > 1){
         for (i in 2:length(x)) y.max <- max(y.max, x[[i]][, 2])
     }
+    if (is.null(col)){
+        col <- c(1, 1)
+    }else{
+        if (length(col) != 2) stop("Length of 'col' must be 0 or 2.")
+    }
     plot(pp, fn = "cum", fig = TRUE,
-         ylim = c(0, y.max), main = main)
+         ylim = c(0, y.max), main = main, col = col[1])
     for (rr in 1:length(x)){
         xx <- x[[rr]]
         xx <- rbind(xx, c(x.max, xx[NROW(xx), 2])) # Added 2011-08-10 (2.0-3)
-        lines(xx[, 1], xx[, 2], type = "s", lty = 2, col = "red")
+        lines(xx[, 1], xx[, 2], type = "s", lty = 2, col = col[2])
     }
 }
 

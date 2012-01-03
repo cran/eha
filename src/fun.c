@@ -915,7 +915,7 @@ static void update(int level,
     double h = 0.0;
     double *hb = NULL;
     double *hbb = NULL; /* (p+1) x (p+1) */
-    double sigma;
+    /* double sigma; */
     double tmp, tmp1, tmp2;
     int i, m, k;
 
@@ -929,10 +929,10 @@ static void update(int level,
     
     void *ex;
     double ax, bx;
-    int n;
-    double **x;
-    double *x_beta;
-    double *yw;
+    /* int n; */
+    /* double **x; */
+    /* double *x_beta; */
+    /* double *yw; */
 
     double u_hat, sigma_hat, sigma2_hat;
     double reltol = 0.000001;
@@ -966,16 +966,16 @@ static void update(int level,
 
     ex = fam;
 
-    n = fam->n;
-    x = fam->x;
-    x_beta = fam->x_beta;
-    yw = fam->yw;
+    /* n = fam->n; */
+    /* x = fam->x; */
+    /* x_beta = fam->x_beta; */
+    /* yw = fam->yw; */
 
     lenw = 4 * limit;
     iwork = Calloc(limit, int);
     work = Calloc(lenw, double);
 
-    sigma = beta[p];
+    /* sigma = beta[p]; */
 
     /* First, find the u value that maximizes the integrand */
     /* (or, equivalently, the log of it:                    */ 

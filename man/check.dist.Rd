@@ -7,7 +7,7 @@ Comparison of the cumulative hazards functions for a semi-parametric and
 a parametric model.
 }
 \usage{
-check.dist(sp, pp, main = NULL)
+check.dist(sp, pp, main = NULL, col = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -15,8 +15,10 @@ check.dist(sp, pp, main = NULL)
 \code{\link{coxreg}}} 
   \item{pp}{An object of type "phreg", typically output from
 \code{\link{phreg}}}
-\item{main}{Header for the plot. Default is distribution and "cumulativa
+\item{main}{Header for the plot. Default is distribution and "cumulative
   hazard function"}
+\item{col}{Line colors. should be \code{NULL} (black lines) or of length
+  2}
 }
 \details{
   For the moment only a graphical comparison.

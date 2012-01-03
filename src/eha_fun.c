@@ -527,7 +527,7 @@ void eha_frail_fun(int pp1,
     int i, j;
 
     Exts *ext;
-    double loglik;
+    /* double loglik; */
 
     int who;
 
@@ -535,7 +535,7 @@ void eha_frail_fun(int pp1,
 
     ext = ex;
 
-    loglik = 0.0;
+    /* loglik = 0.0; */
 
     for (i = 0; i < ext->n; i++){
 	who = ext->riskset[i];
@@ -799,7 +799,7 @@ void eha_nr_opt(int bdim, double *beta, double *loglik, int *mask,
     double L1;
     int i;
 
-    int p, k, m;
+    int k, m;
     int true_bdim;
 
     int *ipiv;
@@ -814,7 +814,7 @@ void eha_nr_opt(int bdim, double *beta, double *loglik, int *mask,
 
     det = Calloc(2, double);
 
-    p = ext->p;
+    /* p = ext->p; */
 
     true_bdim = 0;
     for (i = 0; i < bdim; i++){

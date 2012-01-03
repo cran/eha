@@ -28,7 +28,7 @@ void glmm_boot0(int *family,
     
 #ifndef MATHLIB_STANDALONE
     double abstol;
-    double reltol;
+    /* double reltol; */
 #endif
     Extb *ext;
     Cluster *clust;
@@ -64,7 +64,7 @@ void glmm_boot0(int *family,
     }
 
     abstol = 0.00000001;
-    reltol = abstol;
+    /* reltol = abstol; */
 
     ext = Calloc(1, Extb);
     clust = Calloc(*n_fam, Cluster);
