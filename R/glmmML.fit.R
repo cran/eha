@@ -147,42 +147,48 @@ glmmML.fit <- function (X, Y,
         stop("Unknown family; only 'binomial' and 'poisson' implemented")
     }
 
-    fit <- .C("glmm_ml",
-              as.integer(fam),
-              as.integer(p),
-              as.double(start.coef),
-              as.integer(cluster),
-              as.double(weights),
-              as.double(cluster.weights),
-              as.double(start.sigma),
-              as.integer(fix.sigma),
-              as.double(X), # Note CAREFULLY (03-01-09) AND 06-07-08 (back)!!!
-              as.double(Y), # Note!
-              as.double(offset),
-              as.integer(fam.size),
-              as.integer(n.fam),
-              as.integer(method),
-              as.integer(n.points),
-              as.double(control$epsilon),
-              as.integer(control$maxit),
-              as.integer(control$trace),
-              as.integer(boot),
-              as.integer(prior),
-              as.double(predicted),
-              beta = double(p),  ## Return values from here.
-              sigma = double(1),
-              loglik = double(1),
-              variance = double((p + 1) * (p + 1)),
-              post.mode = double(n.fam),
-              post.mean = double(n.fam),
-              mu = double(nobs),
-              bootP = double(1),
-              bootLog = double(boot),
-              convergence = integer(1),
-              info = integer(1),
-              DUP = FALSE,
-              PACKAGE = "eha"
-              )
+    if (prior == 3){
+        fit <- poisgam(X, Y, start.coef,
+                       start.sigma, fix.sigma,
+                       cluster, offset)
+    }else{
+        fit <- .C("glmm_ml",
+                  as.integer(fam),
+                  as.integer(p),
+                  as.double(start.coef),
+                  as.integer(cluster),
+                  as.double(weights),
+                  as.double(cluster.weights),
+                  as.double(start.sigma),
+                  as.integer(fix.sigma),
+                  as.double(X), # Note CAREFULLY (03-01-09) AND 06-07-08 (back)!!!
+                  as.double(Y), # Note!
+                  as.double(offset),
+                  as.integer(fam.size),
+                  as.integer(n.fam),
+                  as.integer(method),
+                  as.integer(n.points),
+                  as.double(control$epsilon),
+                  as.integer(control$maxit),
+                  as.integer(control$trace),
+                  as.integer(boot),
+                  as.integer(prior),
+                  as.double(predicted),
+                  beta = double(p),  ## Return values from here.
+                  sigma = double(1),
+                  loglik = double(1),
+                  variance = double((p + 1) * (p + 1)),
+                  post.mode = double(n.fam),
+                  post.mean = double(n.fam),
+                  mu = double(nobs),
+                  bootP = double(1),
+                  bootLog = double(boot),
+                  convergence = integer(1),
+                  info = integer(1),
+                  DUP = FALSE,
+                  PACKAGE = "eha"
+                  )
+    }
     if (fit$info) vari <- NULL
     else vari <- matrix(fit$variance, ncol = (p + 1))
     if (fix.sigma){

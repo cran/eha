@@ -32,7 +32,11 @@ print.aftreg <- function(x, digits=max(options()$digits - 4, 3), ...){
     if (is.null(coef) || is.null(se))
         stop("Input is not valid")
 #####################################
-    cat("Covariate          W.mean      Coef Exp(Coef)  se(Coef)    Wald p\n")
+    if (x$param == "default"){
+        cat("Covariate          W.mean      Coef Time-Accn  se(Coef)    Wald p\n")
+    }else{
+        cat("Covariate          W.mean      Coef Life-Expn  se(Coef)    Wald p\n")
+    }
     e.coef <- formatC(exp(coef), width = 9, digits = 3, format = "f")
     coef <- formatC(coef, width = 9, digits = 3, format = "f")
     se <- formatC(se, width = 9, digits = 3, format = "f")
@@ -234,4 +238,4 @@ print.aftreg <- function(x, digits=max(options()$digits - 4, 3), ...){
       cat("   number of clusters=", x$icc[1],
           "    ICC=", format(x$icc[2:3]), "\n")
     invisible(x)
-}
+ }

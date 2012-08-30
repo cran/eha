@@ -7,7 +7,7 @@ glmmML <- function(formula,
                    subset,
                    na.action,
                    offset,
-                   prior = c("gaussian", "logistic", "cauchy"),
+                   prior = c("gaussian", "logistic", "cauchy", "gamma"),
                    start.coef = NULL,
                    start.sigma = NULL,
                    fix.sigma = FALSE,
@@ -40,18 +40,6 @@ glmmML <- function(formula,
     method <- as.numeric(method[1] == "Laplace")
     if (method) n.points <- 1
 
-    a.prior <- prior[1]
-    if (!(a.prior %in% c("gaussian", "logistic", "cauchy")))
-      stop("Prior distribution not known")
-
-    if (a.prior == "gaussian") prior <- 0
-    else if (a.prior == "logistic") prior <- 1
-    else prior <- 2
-    
-    ## 'gaussian' is the default
-    
-    cl <- match.call()
-
     if (is.character(family)) 
         family <- get(family)
     if (is.function(family)) 
@@ -61,6 +49,24 @@ glmmML <- function(formula,
         stop("`family' not recognized")
     }
     
+    a.prior <- prior[1]
+    if (!(a.prior %in% c("gaussian", "logistic", "cauchy"))){
+        if ((a.prior == "gamma") && (family$family == "binomial")){
+            stop("The gamma prior only works with Poisson responses")
+        }else if (a.prior != "gamma"){
+            stop("Prior distribution not known")
+        }
+    }
+
+    if (a.prior == "gaussian") prior <- 0
+    else if (a.prior == "logistic") prior <- 1
+    else if (a.prior == "gamma") prior <- 3
+    else prior <- 2 # Cauchy
+    
+    ## 'gaussian' is the default
+    
+    cl <- match.call()
+
     if (missing(data))
         data <- environment(formula)
     

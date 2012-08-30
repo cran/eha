@@ -96,11 +96,13 @@ static double aft_funGomp(int n, double *beta, void *vex){
 */
 	if (n_rec[i] >= 2){
 	    for (j = 1; j < n_rec[i]; j++){
-		rec++;
+		rec++; /* This part revised for 2.1-1 */
 		stratum = ex->strata[rec];
 		alpha = beta[mb + 2 * stratum];           /* See    */
-		gamma = exp(beta[mb + 2 * stratum + 1]);  /* above! */
-		bzmalpha = -(bz[rec] - alpha);
+		lambda = exp(alpha);
+		gamma = beta[mb + 2 * stratum + 1];  /* above! */
+		p = exp(gamma);
+		bzmalpha = bz[rec] - alpha;
 		a_time = b_time;
 		b_time = a_time + 
 		    (ex->time[rec] - ex->time0[rec]) * exp(bzmalpha);
