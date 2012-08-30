@@ -1,3 +1,20 @@
+2.1-2	(August 30, 2012)
+	* glmmboot, glmmbootFit: Reduced the numbers of iterations in the
+	examples.
+
+2.1-1	(August 29, 2012)
+	* aftreg: New input argument: 'param', with two values, "default"
+	(which is the default;) and "survreg". The value "default" uses
+	the standard parametrization, while "survreg" uses the same
+	parametrization as the survreg function in the survival package.
+	* aftreg: There was a bug when using 'dist="gompertz"' and
+	the 'id' argument with more than one record per id. This is now
+	hopefully solved.
+
+2.1-0	(June 25, 2012)
+	* glmmML: Added the gamma distribution to the possible priors in
+	the case of the Poisson model.
+
 2.0-7	(January 3, 2012)
 	* C code cleaned (avoiding some Warnings at CRAN).
 	* check.dist: New argument, col, added. Default is now
@@ -12,6 +29,7 @@
 	* plot.Surv: New arguments, col and lty, added. The default is now
 	black-and-white plotting.
 	* data: Two new data sets, "logrye" and "scania".
+
 2.0-4   (August 27, 2011)
 	* oldmort: Data set updated.
 	* aftreg.fit: Errors in documentation corrected.

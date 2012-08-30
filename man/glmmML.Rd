@@ -10,7 +10,7 @@ integration via Gauss-Hermite quadrature.
 \usage{
 glmmML(formula, family = binomial, data, cluster, weights,
 cluster.weights, subset, na.action, 
-offset, prior = c("gaussian", "logistic", "cauchy"),
+offset, prior = c("gaussian", "logistic", "cauchy", "gamma"),
 start.coef = NULL, start.sigma = NULL, fix.sigma = FALSE, x = FALSE, 
 control = list(epsilon = 1e-08, maxit = 200, trace = FALSE),
 method = c("Laplace", "ghq"), n.points = 8, boot = 0) 
@@ -42,7 +42,9 @@ method = c("Laplace", "ghq"), n.points = 8, boot = 0)
   \item{offset}{this can be used to specify an a priori known component to be
           included in the linear predictor during fitting.}
 \item{prior}{Which "prior" distribution (for the random effects)?
-Possible choices are "gaussian" (default), "logistic", and "cauchy".} 
+Possible choices are "gaussian" (default), "logistic", and "cauchy". For
+the poisson family, it is possible to use the conjugate "gamma" prior,
+which avoids numerical integration.} 
   \item{control}{Controls the convergence criteria. See
 	  \code{\link{glm.control}} for details.}
   \item{method}{There are two choices "Laplace" (default) and "ghq"

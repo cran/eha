@@ -42,9 +42,25 @@ ltx <- function(x, caption = NULL, label = NULL, dr = NULL,
     cat("\\begin{tabular}{lrrrrr} \n")
     cat("\\hline \n")
     if (lp){
-        cat("Covariate & Mean & Coef & Rel.Risk & S.E. &   L-R p \\\\ \\hline\n")
+        if ("aftreg" %in% x$class){
+            if (x$param == "default"){
+                cat("Covariate & Mean & Coef & Time accn. & S.E. &   L-R p \\\\ \\hline\n")
+            }else{
+                cat("Covariate & Mean & Coef & Life expn. & S.E. &   L-R p \\\\ \\hline\n")
+            }
+        }else{
+            cat("Covariate & Mean & Coef & Rel.Risk & S.E. &   L-R p \\\\ \\hline\n")
+        }
     }else{
-        cat("Covariate & Mean & Coef & Rel.Risk & S.E. &   Wald p \\\\ \\hline\n")
+        if ("aftreg" %in% x$class){
+            if (x$param == "default"){
+                cat("Covariate & Mean & Coef & Time accn. & S.E. &  Wald p \\\\ \\hline\n")
+            }else{
+                cat("Covariate & Mean & Coef & Life expn.. & S.E. &  Wald p \\\\ \\hline\n")
+            }
+        }else{
+            cat("Covariate & Mean & Coef & Rel.Risk & S.E. &   Wald p \\\\ \\hline\n")
+        }
     }
     e.coef <- formatC(exp(coef), digits = digits, format = "f")
     coef <- formatC(coef, digits = digits, format = "f")

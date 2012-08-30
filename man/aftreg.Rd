@@ -9,7 +9,7 @@
 \usage{
 aftreg(formula = formula(data), data = parent.frame(),
 na.action = getOption("na.action"), dist = "weibull", init, shape = 0,
-id, control = list(eps = 1e-08, maxiter = 20, trace = FALSE),
+id, param = c("default", "survreg"), control = list(eps = 1e-08, maxiter = 20, trace = FALSE),
 singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE, center = NULL)
 }
 
@@ -36,6 +36,10 @@ singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE, center = NULL)
 \item{id}{If there are more than one spell per individual, it is
   essential to keep spells together by the id argument. This allows for
   time-varying covariates.}
+\item{param}{Which parametrization should be used? The \code{default}
+  uses the parametrization given in the vignette, while the
+  \code{survreg} uses the same as the \code{\link[survival]{survreg}}
+  function in the \code{survival} package.}
     \item{control}{a list with components \code{eps} (convergence
     criterion), \code{maxiter} (maximum number of iterations), and
     \code{trace} (logical, debug output if \code{TRUE}).  You can
@@ -49,14 +53,18 @@ singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE, center = NULL)
 
 \details{
 The parameterization is different
-from the one used by \code{\link[survival]{survreg}}.
-The model is
+from the one used by \code{\link[survival]{survreg}}, when \code{param =
+  "default"}.
+Then the model is
 \deqn{S(t; a, b, \beta, z) = S_0((t / \exp(b -
   z\beta))^{\exp(a)})}{%
   S(t; a, b, beta, z) =  S_0((t/exp(b - z beta))^exp(a))}
 where \eqn{S_0} is some standardized survivor function.
 The base-line parameters \eqn{a} and \eqn{b} are log shape and log
-scale, respectively.  
+scale, respectively. This is for the \code{default}
+parametrization. With the \code{survreg} parametrization, some signs are
+changed: \deqn{b - z beta} is changed to \deqn{b + z beta}, and
+\deqn{exp(a)} to \deqn{exp(-a)}.  
 }
 
 \value{

@@ -5,7 +5,7 @@ aftreg <- function (formula = formula(data),
                     init,
                     shape = 0,
                     id,
-                    ## Means shape is estimated, ie true Weibull; > 0 fixed!
+                    param = c("default", "survreg"),
                     control = list(eps = 1e-8, maxiter = 20, trace = FALSE),
                     singular.ok = TRUE,
                     model = FALSE,
@@ -13,8 +13,11 @@ aftreg <- function (formula = formula(data),
                     y = TRUE,
                     center = NULL)
 {
-
-    ##if (dist == "gompertz") shape <- 1
+    param <- param[1]
+    if (!(param %in% c("default", "survreg"))){
+        stop(paste(param, "is not a valid parametrization."))
+    }
+    ## if (dist == "gompertz") shape <- 1
     pfixed <- any(shape > 0)
     call <- match.call()
     m <- match.call(expand.dots = FALSE)
@@ -261,8 +264,16 @@ aftreg <- function (formula = formula(data),
     fit$call <- call
     fit$dist <- dist
     fit$events <- n.events
-    ##class(fit) <- c("aftreg", "phreg", "weibreg", "coxreg", "coxph")
+
     class(fit) <- c("aftreg", "phreg")
+    fit$param <- param # New in 2.1-1:
+    if (param == "survreg"){
+        if (ncov){
+            fit$coef[1:ncov] <- -fit$coef[1:ncov]
+        }
+        fit$coef[ncov + 2] <- -fit$coef[ncov + 2]
+    }
+    ##
     fit$pfixed <- pfixed
     fit
 }
