@@ -20,12 +20,19 @@ print.aftreg <- function(x, digits=max(options()$digits - 4, 3), ...){
         n.slsh <- 2 * x$n.strata
 
     }
-    coef <- x$coef
-
+    if (x$param == "survreg"){
+        coef <- x$coef.survreg
+        se <- sqrt(diag(x$var.survreg))
+    }else if (x$param == "canonical"){
+        coef <- x$coef.canonical
+        se <- sqrt(diag(x$var.canonical))
+    }else{
+        coef <- x$coefficients
+        se <- sqrt(diag(x$var))
+    }
     ##if (names(x$coef)[1] == "(Intercept)"){
       ##  x$covars <- c("(Intercept)", x$covars)
     ##}
-    se <- sqrt(diag(x$var))
     wald.p <- formatC(1 - pchisq((coef/ se)^2, 1),
                       digits = 3,
                       width = 9, format = "f")
@@ -62,8 +69,8 @@ print.aftreg <- function(x, digits=max(options()$digits - 4, 3), ...){
         }
 
         covar.names <- c(x$covars,
-                         names(x$coef)[(length(x$coef)-n.slsh + 1):
-                                       length(x$coef)])
+                         names(coef)[(length(coef)-n.slsh + 1):
+                                       length(coef)])
         term.names <- colnames(factors)
 
         isF <- x$isF
@@ -182,9 +189,10 @@ print.aftreg <- function(x, digits=max(options()$digits - 4, 3), ...){
         }
         cat("\n")
     }
+    cat("Baseline parameters:\n")
     for (i in 1:n.slsh){
-        jup <- length(x$coef)
-        ss.names <- names(x$coef[(jup - n.slsh + 1):jup])
+        jup <- length(coef)
+        ss.names <- names(coef[(jup - n.slsh + 1):jup])
         index <- index + 1
         ## covar.no <- covar.no + 1
         cat(formatC(ss.names[i], width = 16, flag = "-"),
@@ -202,6 +210,7 @@ print.aftreg <- function(x, digits=max(options()$digits - 4, 3), ...){
             ##signif(1 - pchisq((coef/ se)^2, 1), digits - 1),
             "\n")
     }
+    cat("Baseline mean: ", x$baselineMean, "\n")
 #####################################
     if(FALSE){
         tmp <- cbind(coef, exp(coef), se,

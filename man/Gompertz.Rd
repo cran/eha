@@ -15,12 +15,12 @@
   and \code{scale}.
 }
 \usage{
-dgompertz(x, shape = 1, scale = 1, log = FALSE)
-pgompertz(q, shape = 1, scale = 1, lower.tail = TRUE, log.p = FALSE)
-qgompertz(p, shape = 1, scale = 1, lower.tail = TRUE, log.p = FALSE)
-hgompertz(x, shape = 1, scale = 1, log = FALSE)
-Hgompertz(x, shape = 1, scale = 1, log.p = FALSE)
-rgompertz(n, shape = 1, scale = 1)
+dgompertz(x, shape = 1, scale = 1, log = FALSE, param = c("default", "canonical"))
+pgompertz(q, shape = 1, scale = 1, lower.tail = TRUE, log.p = FALSE, param = c("default", "canonical"))
+qgompertz(p, shape = 1, scale = 1, lower.tail = TRUE, log.p = FALSE, param = c("default", "canonical"))
+hgompertz(x, shape = 1, scale = 1, log = FALSE, param = c("default", "canonical"))
+Hgompertz(x, shape = 1, scale = 1, log.p = FALSE, param = c("default", "canonical"))
+rgompertz(n, shape = 1, scale = 1, param = c("default", "canonical"))
 }
 \arguments{
   \item{x, q}{vector of quantiles.}
@@ -32,6 +32,7 @@ rgompertz(n, shape = 1, scale = 1)
   \item{log, log.p}{logical; if TRUE, probabilities p are given as log(p).}
   \item{lower.tail}{logical; if TRUE (default), probabilities are
     \eqn{P(X \le x)}{P(X <= x)}, otherwise, \eqn{P(X > x)}{P(X > x)}.}
+  \item{param}{See 'details' below.}
 }
 \value{
   \code{dgompertz} gives the density,
@@ -48,6 +49,8 @@ rgompertz(n, shape = 1, scale = 1)
   \code{scale} parameter \eqn{\sigma}{b} has hazard given by
   \deqn{h(x) = a \exp(x/\sigma)}{%
         h(x) = a exp(x/b)}
-  for \eqn{x \ge 0}{x >= 0}.
+      for \eqn{x \ge 0}{x >= 0}.
+      If \code{param = "canonical"}, then then a --> a/b, so that b is a
+      true scale parameter (for any fixed a), and b is an 'AFT parameter'.
 }
 \keyword{distribution}

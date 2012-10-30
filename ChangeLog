@@ -1,12 +1,22 @@
+2.2-0: (October 30, 2012)
+	* ltx is made generic, with methods for coxreg, phreg, and aftreg
+
+2.1-3: (September 6, 2012)
+	* Gompertz distribution: new parameter 'param'; values 'default'
+	(default, nothing changes), and 'canonical', which gives meaning
+	'PH' and 'AFT' to the shape and scale parameters, respectively.
+	* aftreg: New input argument: 'param', with three values, 'default'
+	(which is the default;), 'survreg', and 'canonical'. The value
+	'default' uses 	the standard parametrization, while 'survreg' uses
+	the same parametrization as the survreg function in the survival
+	package. 'canonical' is especially useful in the Gompertz
+	distribution for separating PH and AFT parameters.
+
 2.1-2	(August 30, 2012)
 	* glmmboot, glmmbootFit: Reduced the numbers of iterations in the
 	examples.
 
 2.1-1	(August 29, 2012)
-	* aftreg: New input argument: 'param', with two values, "default"
-	(which is the default;) and "survreg". The value "default" uses
-	the standard parametrization, while "survreg" uses the same
-	parametrization as the survreg function in the survival package.
 	* aftreg: There was a bug when using 'dist="gompertz"' and
 	the 'id' argument with more than one record per id. This is now
 	hopefully solved.
