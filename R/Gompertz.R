@@ -1,7 +1,8 @@
 ### Contains functions for the Gompertz distribution
 
 pgompertz <- function(q, shape = 1, scale = 1,
-                     lower.tail = TRUE, log.p = FALSE){
+                     lower.tail = TRUE, log.p = FALSE,
+                      param = c("default", "canonical")){
 
     n <- length(q)
     if (any(scale == 0)){
@@ -19,6 +20,14 @@ pgompertz <- function(q, shape = 1, scale = 1,
         warning("Negative shape")
         return(NaN)
     }
+
+    ## New in 2.1-3:
+    param <- param[1]
+    if (param == "canonical"){
+        ## Transform to "default"
+        shape <- shape / scale ## ?
+    }else if (param != "default") stop("Illegal 'param'")
+    ##
 
     y <- ifelse(q <= 0, 0, -shape * scale * expm1(q / scale))
 
@@ -51,12 +60,22 @@ pgompertz <- function(q, shape = 1, scale = 1,
     return ( ret )
 }
 
-dgompertz <- function(x, shape = 1, scale = 1, log = FALSE){
+dgompertz <- function(x, shape = 1, scale = 1, log = FALSE,
+                      param = c("default", "canonical")){
 
     if ( any(c(shape, scale) <= 0) ){
         warning("Non-positive shape or scale")
         return(NaN)
     }
+
+    
+    ## New in 2.1-3:
+    param <- param[1]
+    if (param == "canonical"){
+        ## Transform to "default"
+        shape <- shape / scale ## ?
+    }else if (param != "default") stop("Illegal 'param'")
+    ##
 
     y <- ifelse(x < 0, 0, x / scale)
 
@@ -74,7 +93,8 @@ dgompertz <- function(x, shape = 1, scale = 1, log = FALSE){
     return ( ret )
 }
 
-hgompertz <- function(x, shape = 1, scale = 1, log = FALSE){
+hgompertz <- function(x, shape = 1, scale = 1, log = FALSE,
+                      param = c("default", "canonical")){
 
     if (any(scale == 0)) {
         return(rep(Inf, length(x)))
@@ -92,6 +112,15 @@ hgompertz <- function(x, shape = 1, scale = 1, log = FALSE){
         return(NaN)
     }
 
+    ## New in 2.1-3:
+    param <- param[1]
+    if (param == "canonical"){
+        ## Transform to "default"
+        shape <- shape / scale ## ?
+    }else if (param != "default") stop("Illegal 'param'")
+    ##
+
+    
     if (log) {
         ret <- ifelse(x < 0,
                       -Inf,
@@ -108,12 +137,22 @@ hgompertz <- function(x, shape = 1, scale = 1, log = FALSE){
 }
 
 qgompertz <- function(p, shape = 1, scale = 1,
-                     lower.tail = TRUE, log.p = FALSE){
+                     lower.tail = TRUE, log.p = FALSE,
+                      param = c("default", "canonical")){
 
     if ( any(c(shape, scale) <= 0) ){
         warning("Non-positive shape or scale")
         return(NaN)
     }
+
+    ## New in 2.1-3:
+    param <- param[1]
+    if (param == "canonical"){
+        ## Transform to "default"
+        shape <- shape / scale ## ?
+    }else if (param != "default") stop("Illegal 'param'")
+    ##
+    
     if (log.p) p <- exp(p)
 
     ok <- (p >= 0) & (p <= 1)
@@ -128,13 +167,23 @@ qgompertz <- function(p, shape = 1, scale = 1,
     return ( ret )
 }
 
-Hgompertz <- function(x, shape = 1, scale = 1, log.p = FALSE){
+Hgompertz <- function(x, shape = 1, scale = 1, log.p = FALSE,
+                      param = c("default", "canonical")){
 
     if ( any(c(shape, scale) <= 0) ){
         warning("Non-positive shape or scale")
         return(NaN)
     }
 
+    ## New in 2.1-3:
+    param <- param[1]
+    if (param == "canonical"){
+        ## Transform to "default"
+        shape <- shape / scale ## ?
+    }else if (param != "default") stop("Illegal 'param'")
+    ##
+
+    
     y <- x / scale
 
     ret <- ifelse(x <= 0,
@@ -146,13 +195,24 @@ Hgompertz <- function(x, shape = 1, scale = 1, log.p = FALSE){
     return ( ret )
 }
 
-rgompertz <- function(n, shape = 1, scale = 1){
+rgompertz <- function(n, shape = 1, scale = 1,
+                      param = c("default", "canonical")){
 
     if ( any(c(shape, scale) <= 0) ){
         warning("Non-positive shape or scale")
         return(NaN)
     }
+
+    ## New in 2.1-3:
+    param <- param[1]
+    if (param == "canonical"){
+        ## Transform to "default"
+        shape <- shape / scale ## ?
+    }else if (param != "default") stop("Illegal 'param'")
+    ##
+
+    
     y <- runif(n)
 
-    return ( qgompertz(y, shape, scale) )
+    return ( qgompertz(y, shape, scale, param = "default") )# Note!
 }

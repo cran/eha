@@ -22,6 +22,9 @@ export(ghq, glmmboot, glmmbootFit, glmmML, glmmML.fit, print.glmmML,
        summary.phreg, summary.weibreg,
        SurvSplit, table.events, toBinary, toDate, toTime,
        weibreg, weibreg.fit, wfunk)
+S3method(ltx, coxreg)
+S3method(ltx, aftreg)
+S3method(ltx, phreg)
 S3method(plot, Surv)
 S3method(plot, coxreg)
 S3method(plot, weibreg)

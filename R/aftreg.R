@@ -5,7 +5,7 @@ aftreg <- function (formula = formula(data),
                     init,
                     shape = 0,
                     id,
-                    param = c("default", "survreg"),
+                    param = c("default", "survreg", "canonical"),
                     control = list(eps = 1e-8, maxiter = 20, trace = FALSE),
                     singular.ok = TRUE,
                     model = FALSE,
@@ -14,7 +14,7 @@ aftreg <- function (formula = formula(data),
                     center = NULL)
 {
     param <- param[1]
-    if (!(param %in% c("default", "survreg"))){
+    if (!(param %in% c("default", "survreg", "canonical"))){
         stop(paste(param, "is not a valid parametrization."))
     }
     ## if (dist == "gompertz") shape <- 1
@@ -267,11 +267,47 @@ aftreg <- function (formula = formula(data),
 
     class(fit) <- c("aftreg", "phreg")
     fit$param <- param # New in 2.1-1:
-    if (param == "survreg"){
-        if (ncov){
-            fit$coef[1:ncov] <- -fit$coef[1:ncov]
+    if (dist == "gompertz"){
+        baselineMean <- numeric(fit$n.strata)
+        for (j in 1:fit$n.strata){
+            scale <- exp(fit$coef[ncov + 2 * j - 1])
+            shape <- exp(fit$coef[ncov + 2 * j])
+            ## Simulation!
+            baselineMean[j] <- mean(rgompertz(100000,
+                                              scale = scale, shape = shape))
         }
-        fit$coef[ncov + 2] <- -fit$coef[ncov + 2]
+        fit$baselineMean <- baselineMean
+    }else{ # To be filled for other dists!
+        fit$baselineMean <- NULL
+    }
+    ##if ((param == "survreg")){
+    if (pfixed){
+        fit$coef.survreg <- -fit$coef
+        fit$var.survreg <- fit$var
+        fit$coef.canonical <- -fit$coef
+        fit$var.canonical <- fit$var
+    }else{
+        ## survreg
+        vec.names <- names(fit$coef)
+        A <- diag(c(rep(-1, ncov), rep(c(1, -1), fit$n.strata)))
+        fit$coef.survreg <- as.vector(A %*% fit$coefficients)
+        names(fit$coef.survreg) <- vec.names
+        fit$var.survreg <- A %*% fit$var %*% t(A)
+        colnames(fit$var.survreg) <- rownames(fit$var.survreg) <- vec.names
+        fit$A.survreg <- A # Temporary! Remove at publication!
+    
+
+        ## canonical:
+        A <- diag(c(rep(-1, ncov), rep(c(1, 1), fit$n.strata)))
+        for (j in 1:fit$n.strata){
+            A[ncov + 2 * j, ncov + 2 * j - 1] <- 1
+        }
+        fit$coef.canonical <- as.vector(A %*% fit$coefficients)
+        names(fit$coef.canonical) <- vec.names
+        fit$var.canonical <- A %*% fit$var %*% t(A)
+        colnames(fit$var.canonical) <- vec.names
+        rownames(fit$var.canonical) <- vec.names
+        fit$A.canonical <- A # Temporary! Remove at publication!
     }
     ##
     fit$pfixed <- pfixed
