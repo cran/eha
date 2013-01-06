@@ -1,5 +1,5 @@
-e9423e2188f0ee00f7415593075e2ab0 *ChangeLog
-d20ec1d97085be8e6f9c412ea3a269fd *DESCRIPTION
+f8fa48a563f13802c9ea4d359c209741 *ChangeLog
+13cc426ab12f58183fc51298e7106aa5 *DESCRIPTION
 cd78a9c0696b9caa28c5965384502bf1 *NAMESPACE
 07d4b8ccfddd26b518495ec8df997df0 *R/Extreme_Value.R
 f0238bc0d1fb712840f900d14a8a1b5b *R/Gompertz.R
@@ -12,7 +12,7 @@ d4212fcf44666c101b8560c98779cf6c *R/Weibull.R
 ad9097e78390345b09742350226d89e8 *R/aftp0.R
 fce93eb614d99d08c5561805b553bcb8 *R/aftp0g.R
 8a7430c28a2edae8d3b0f492a36d3e22 *R/aftp1.R
-baf72994364f9682888ed9bd416429bc *R/aftreg.R
+3e9c3d8c6ca80b4758952c5a5af8d1dc *R/aftreg.R
 af82a92086f472fe767d2f3a089c6e1e *R/aftreg.fit.R
 d3d294013a4f2e8ad42c6186d9b34591 *R/age.window.R
 1b6ac083dfbd52c6b4ddb6c913570986 *R/cal.window.R
@@ -42,7 +42,7 @@ a146370e6867040f0f5de2fccb0f92d8 *R/ltx.phreg.R
 12dc40e280df666c539f1d66bb6ffa7a *R/pchreg.R
 72d31f96ac4f7274498ad9c9d9ee3735 *R/perstat.R
 433f0c0ba133e5c5d002a5f7fa4eac0f *R/phfunc.R
-b30fbb218e117659be25c3be4216cfea *R/phreg.R
+6b0da4ef10e038c2a21c117d5e3d7d53 *R/phreg.R
 699c606efb85dfe5fbc3173a2130e9f2 *R/phreg.fit.R
 eb9b88e23a1c22503d4159dc231bda3a *R/piecewise.R
 d817178127dc4999babdb3ea16f4954f *R/plot.aftreg.R
@@ -72,7 +72,7 @@ c2b1c5098290e10c7ba9c37c525b0f04 *R/table.events.R
 b72e2b21e573581e605fc603701da355 *R/toBinary.R
 17a21032aff930dfe886374513b074fa *R/toDate.R
 57678eb232636b78f3ddb59498880092 *R/toTime.R
-9428f23dfa2b87886759e47574764c3c *R/weibreg.R
+ef5db48e11048ed53389c5caa3d52599 *R/weibreg.R
 07b34e2104f02e1d07636536044a4f2a *R/weibreg.fit.R
 505a5e0c3f6d2044ccc14035ebbf2b59 *R/wfunk.R
 bb04176f66046cd85026b8a8d8450fcc *ToDo
@@ -86,9 +86,9 @@ f030989bf08cf761913881089fc35baf *data/oldmort.rda
 deafc40d50b5fda64f89a2b71dfa227b *data/swe07.rda
 7f19861a360262ef074a63d7f2a1119e *inst/doc/cluster.bib
 19d6d7e996c1c59fa73b9f72db926e03 *inst/doc/glmmML.Rnw
-b12512f70d33b66cc57eee031e6f1659 *inst/doc/glmmML.pdf
+18c806736c9091d000c3519a3877aed2 *inst/doc/glmmML.pdf
 61f37c51fc7daebe1a27ac5e78393004 *inst/doc/parametric.Rnw
-d187aaf61ca328d05d0609e1b7c899e7 *inst/doc/parametric.pdf
+0fe344e1de8387b50cf9425c9d2d6726 *inst/doc/parametric.pdf
 9fcadd2e16c7a941d863dd302894982b *man/EV.Rd
 4012215035d26bcb03bb27ca5f85968a *man/Gompertz.Rd
 28e4d0980a03c2d80b47dcdb292f9809 *man/Loglogistic.Rd
