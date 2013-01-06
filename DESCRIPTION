@@ -1,7 +1,7 @@
 Encoding: UTF-8
 Package: eha
-Version: 2.2-0
-Date: 2012-10-30
+Version: 2.2-1
+Date: 2013-01-06
 Title: Event History Analysis
 Description: Event history analysis: Sampling of risk sets in Cox
         regression, selections in the Lexis diagram, bootstrapping.
@@ -16,6 +16,6 @@ License: GPL (>= 3)
 Author: Göran Broström
 Depends: R (>= 2.13.0), stats, graphics, utils, survival
 Maintainer: Göran Broström <gb@stat.umu.se>
-Packaged: 2012-10-30 16:07:16 UTC; gb
+Packaged: 2013-01-05 23:30:44 UTC; gb
 Repository: CRAN
-Date/Publication: 2012-10-30 17:26:02
+Date/Publication: 2013-01-06 07:57:32

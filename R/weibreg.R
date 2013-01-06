@@ -105,7 +105,7 @@ weibreg <-
 ##########################################
     type <- attr(Y, "type")
     if (type != "right" && type != "counting") 
-      stop(paste("Cox model doesn't support \"", type, "\" survival data", 
+      stop(paste("This model doesn't support \"", type, "\" survival data", 
                  sep = ""))
     
     if (NCOL(Y) == 2){
