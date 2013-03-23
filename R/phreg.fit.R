@@ -6,7 +6,7 @@ phreg.fit <- function(X,
                       init,
                       shape,
                       control,
-                      center = TRUE){
+                      center = NULL){
 
     if (dist == "weibull"){
         dis <- 0
@@ -112,7 +112,8 @@ phreg.fit <- function(X,
                                   value = fit$beta[fit$fail])
                              )
         ##if (!center){ # Transform to original values
-        if (!center){ # NOPE!!! Transform to original values
+        ##if (!center){ # NOPE!!! Transform to original values
+        if (TRUE){ # 'center' is deprecated' ... (not reported)
             dxy <- diag(2 * ns + ncov)
             for (i in 1:ns){ ## Really a HACK ??!!!!!!!!!!!!!!!
                 row <- ncov + 2 * i - 1
@@ -201,7 +202,7 @@ phreg.fit <- function(X,
         fit$shape.sd <- NULL  ## Not necessary!?!?
         ##fit$beta[bdim] <- -fit$beta[bdim] # To get "1 / lambda"! NO!!
         ##if (!center){# i.e., never...
-        if (!center){# i.e., never...
+        if (TRUE){# always transform back ....
             dxy <- diag(bdim)
             if (ncov){
                 dxy[bdim, 1:ncov] <- means / shape
@@ -220,11 +221,11 @@ phreg.fit <- function(X,
 
     if (!fit$fail){
         ##if (!center){ # Transform back...
-        if (FALSE){ # NOPE...Transform back...
-            var <- dxy %*% matrix(fit$variance, bdim, bdim) %*% t(dxy)
-        }else{
-            var <- matrix(fit$variance, bdim, bdim)
-        }
+        ##if (FALSE){ # NOPE...Transform back...
+        var <- dxy %*% matrix(fit$variance, bdim, bdim) %*% t(dxy)
+        ##}else{
+        ##    var <- matrix(fit$variance, bdim, bdim)
+        ##}
         colnames(var) <- rownames(var) <- coef.names
     }
     else

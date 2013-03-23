@@ -11,7 +11,7 @@ phreg(formula = formula(data), data = parent.frame(),
 na.action = getOption("na.action"), dist = "weibull", cuts = NULL,
 init, shape = 0,
 control = list(eps = 1e-08, maxiter = 20, trace = FALSE),
-singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE, center = TRUE)
+singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE, center = NULL)
 }
 
 \arguments{
@@ -44,9 +44,9 @@ singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE, center = TRUE)
   \item{model}{Not used.}
   \item{x}{Return the design matrix in the model object?}
   \item{y}{Return the response in the model object?}
-  \item{center}{Baseline parameters are
-    calculated at the means of the columns of the design matrix.
-    If \code{center == FALSE}, results are reported as without centering.}
+  \item{center}{Deprecated (not used); results are now reported as is, without
+  centering. You may center your covariates manually, if you want centered
+  results. Centering affects only 'scale' and interaction terms.} 
 }
 
 \details{
