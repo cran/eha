@@ -12,13 +12,14 @@ gompreg <- function(X, Y, strata, offset, init, control, center){
     if (ncov){
         wts <- Y[, 2] - Y[, 1]
         means <- apply(X, 2, weighted.mean, w = wts)
-        means <- apply(X, 2, mean)
+        means <- apply(X, 2, mean) ## ??
 
-        if (center){
-            for (i in 1:ncov){
-                X[, i] <- X[, i] - means[i]
-            }
-        }
+        ## No centering in this case; later an internal one:
+        ##if (center){
+        ##    for (i in 1:ncov){
+        ##        X[, i] <- X[, i] - means[i]
+        ##    }
+        ##}
     }
     if (missing(strata) || is.null(strata)){
         strata <- rep(1, nn)

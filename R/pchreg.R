@@ -11,13 +11,15 @@ pchreg <- function(X, Y, cuts, offset, init, control, center){
     if (NCOL(Y) != 3) stop("Y NCOL error", )
     if (ncov){
         wts <- Y[, 2] - Y[, 1]
-        means <- apply(X, 2, weighted.mean, w = wts)
+        w.means <- apply(X, 2, weighted.mean, w = wts)
         means <- apply(X, 2, mean)
-        if (center){
-            for (i in 1:ncov){
-                X[, i] <- X[, i] - means[i]
-            }
-        }
+        ## Changed in 2.2-1 (23 March, 2013); no centering:
+        ##if (center){
+        ##    for (i in 1:ncov){
+        ##        X[, i] <- X[, i] - means[i]
+        ##    }
+        ##}
+        ## Will be dealt with (internal centering) later.
     }
     strata <- rep(1, nn)
     ns <- 1

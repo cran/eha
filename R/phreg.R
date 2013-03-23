@@ -11,8 +11,8 @@ phreg <- function (formula = formula(data),
                    model = FALSE,
                    x = FALSE,
                    y = TRUE,
-                   center = TRUE) # NOTE: Changed from 'NULL' in 1.4-1
-{
+                   center = NULL) # NOTE: Changed from 'NULL' in 1.4-1
+{                                 # NOTE: Changed back in 2.2-2!
 
     pfixed <- any(shape > 0)
     call <- match.call()

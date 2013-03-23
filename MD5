@@ -1,5 +1,5 @@
-f8fa48a563f13802c9ea4d359c209741 *ChangeLog
-13cc426ab12f58183fc51298e7106aa5 *DESCRIPTION
+b85d708c7593d08d8a1593fd5d8d9607 *ChangeLog
+62f565ac6735625e6e63e1bc94a12acb *DESCRIPTION
 cd78a9c0696b9caa28c5965384502bf1 *NAMESPACE
 07d4b8ccfddd26b518495ec8df997df0 *R/Extreme_Value.R
 f0238bc0d1fb712840f900d14a8a1b5b *R/Gompertz.R
@@ -30,7 +30,7 @@ a228d6c24708837d3ec1c4fce83d8d14 *R/ghq.R
 76f2c1e0d42d6b8e19795cd46c93b349 *R/glmmML.fit.R
 475a3e9d02f924c3578a6b1c4910ac68 *R/glmmMLBoot.R
 8ead8ae3c3b4b274ea7e42060d39431d *R/glmmboot.R
-0dafad459c7bb612659c1cec9e932eb0 *R/gompreg.R
+334df08c57e6c1d28b9e3add3ccef5f7 *R/gompreg.R
 f22362785c7fdf613e0bfb7c29fc776b *R/gompstart.R
 e741c7ba8d97ed577c006a5d96133b8f *R/join.spells.R
 08dfb3094fa1d714caea2d99fe739549 *R/ltx.R
@@ -39,11 +39,11 @@ e741c7ba8d97ed577c006a5d96133b8f *R/join.spells.R
 a146370e6867040f0f5de2fccb0f92d8 *R/ltx.phreg.R
 31913298428186e9b164bf8b7335b9b2 *R/make.communal.R
 7dd27fca2b3d3645607b618d10aed484 *R/mlreg.R
-12dc40e280df666c539f1d66bb6ffa7a *R/pchreg.R
+106d412ce0b9a08978c3c057a0a08b15 *R/pchreg.R
 72d31f96ac4f7274498ad9c9d9ee3735 *R/perstat.R
 433f0c0ba133e5c5d002a5f7fa4eac0f *R/phfunc.R
-6b0da4ef10e038c2a21c117d5e3d7d53 *R/phreg.R
-699c606efb85dfe5fbc3173a2130e9f2 *R/phreg.fit.R
+562765ae9b9cd9100e06f75034489a04 *R/phreg.R
+b34b2b578c44d7288ff4a628220ee13e *R/phreg.fit.R
 eb9b88e23a1c22503d4159dc231bda3a *R/piecewise.R
 d817178127dc4999babdb3ea16f4954f *R/plot.aftreg.R
 a131bf77cf5ba1d1d80cfb5ecf190fd2 *R/plot.coxreg.R
@@ -86,9 +86,9 @@ f030989bf08cf761913881089fc35baf *data/oldmort.rda
 deafc40d50b5fda64f89a2b71dfa227b *data/swe07.rda
 7f19861a360262ef074a63d7f2a1119e *inst/doc/cluster.bib
 19d6d7e996c1c59fa73b9f72db926e03 *inst/doc/glmmML.Rnw
-18c806736c9091d000c3519a3877aed2 *inst/doc/glmmML.pdf
+85914d3f8fc0f347c84860a26f196e7b *inst/doc/glmmML.pdf
 61f37c51fc7daebe1a27ac5e78393004 *inst/doc/parametric.Rnw
-0fe344e1de8387b50cf9425c9d2d6726 *inst/doc/parametric.pdf
+f0265ee057bca31cf560b2add3473eb2 *inst/doc/parametric.pdf
 9fcadd2e16c7a941d863dd302894982b *man/EV.Rd
 4012215035d26bcb03bb27ca5f85968a *man/Gompertz.Rd
 28e4d0980a03c2d80b47dcdb292f9809 *man/Loglogistic.Rd
@@ -124,8 +124,8 @@ f9b5134c70ca218edaafaaa2d4e04771 *man/mlreg.Rd
 e65baa27ba03ef00b82059109f18fced *man/oldmort.Rd
 70b6e3fa5d45c317f5b1a65d3ac8e45b *man/perstat.Rd
 580d94516ecb91cff3b9c0ea97ffe986 *man/phfunc.Rd
-51224ebde7c069a8393f61fa98ed1342 *man/phreg.Rd
-9830e1f6d43b6913f7141cde9f162d09 *man/phreg.fit.Rd
+1c6dfec5d0252f85e9ecda771c786b47 *man/phreg.Rd
+f97dfd57c30ef95667bc2b38dd9d5773 *man/phreg.fit.Rd
 d60e0c94dedb3f133e28b8ce0ce9f293 *man/piecewise.Rd
 f175e24e03979f9dae54897ee5c3baa4 *man/plot.Surv.Rd
 21fe8010af66295a61aacad30c2cf24a *man/plot.aftreg.Rd

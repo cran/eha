@@ -1,3 +1,8 @@
+2.2-2:	(March 23, 2013)
+	* phreg: argument 'center' deprecated; centering of covariates is
+	done internally, but uncentered results reported. If you want
+	centered results, center covariates yourself!
+
 2.2-1:	(November 6, 2013)
 	* weibreg, phreg, aftreg: Error messages refreshed.
 
