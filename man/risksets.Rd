@@ -6,7 +6,7 @@
   Focus is on the risk set composition just prior to a failure.
 }
 \usage{
-risksets(x, strata, max.survs)
+risksets(x, strata, max.survs, members = TRUE)
 }
 %- maybe also `usage' for other objects documented here.
 \arguments{
@@ -15,6 +15,8 @@ risksets(x, strata, max.survs)
   \item{max.survs}{Maximum number of survivors in each risk set. If
     smaller than the 'natural number', survivors are sampled from the
     present ones.}
+  \item{members}{If TRUE, all members of all risk sets are listed in the
+  resulting list, see below.}
 }
 \details{
   If the input argument max.survs is left alone, all survivors are
@@ -25,10 +27,11 @@ risksets(x, strata, max.survs)
   \item{antrs}{No. of risk sets in each stratum. The number of strata is
     given by \code{length(antrs)}.}
   \item{risktimes}{Ordered distinct failure time points.}
-  \item{eventset}{vector of pointers to events in each risk set.} 
-  \item{riskset}{vector of pointers to 
+  \item{eventset}{If 'members' is TRUE, a vector of pointers to events
+    in each risk set, else NULL.}  
+  \item{riskset}{If 'members' is TRUE, a vector of pointers to 
     the members of the risk sets, in order. The 'n.events' 
-    first are the events.}
+    first are the events. If 'members' is FALSE, 'riskset' is NULL.}
   \item{size}{The sizes of the risk sets.}
   \item{n.events}{The number of events in each risk set.}
 }

@@ -157,16 +157,16 @@ coxreg <- function (formula = formula(data),
         ## get hazards
         rs <- risksets(Y, strats)
         hazard <- .Fortran("gethaz",
-                           as.integer(NROW(Y)),
-                           as.integer(length(rs$antrs)),
-                           as.integer(rs$antrs),
-                           as.integer(rs$size),
-                           as.integer(rs$n.events),
-                           as.integer(length(rs$riskset)),
-                           as.integer(rs$riskset),
-                           as.double(exp(fit$linear.predictors)),
-                           as.integer(sum(rs$antrs)),
-                           hazard = double(sum(rs$antrs)),
+                           as.integer(NROW(Y)),  # 'nn'
+                           as.integer(length(rs$antrs)), # 'ns' 
+                           as.integer(rs$antrs), # 'antrs'
+                           as.integer(rs$size), # 'size'
+                           as.integer(rs$n.events), # 'nevents'
+                           as.integer(length(rs$riskset)), # 'totsize'
+                           as.integer(rs$riskset), # 'riskset'
+                           as.double(exp(fit$linear.predictors)), # 'score'
+                           as.integer(sum(rs$antrs)), # 'totrs'
+                           hazard = double(sum(rs$antrs)), # 'hazard' (return)
                            DUP = FALSE,
                            PACKAGE = "eha")$hazard
         ## Put it on:

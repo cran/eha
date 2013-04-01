@@ -27,18 +27,32 @@ void strat_sizes(int *nn, double *enter, double *exit, int *event,
     start = 0;
 
     while (start < *nn){
-	for (nextstart = start; (event[nextstart] == 0) & (nextstart < *nn); 
-	     nextstart++);
+/* Reordered conditions in 2.2-3: */ 
+	/* for (nextstart = start; (nextstart < *nn) & (event[nextstart] == 0); 
+	   nextstart++); */
+	nextstart = start;
+	while (nextstart < *nn){
+	    if (event[nextstart] == 1) break;
+	    nextstart++;
+	}
 	if (nextstart >= *nn) return; /* Done in this stratum! */
 
 	if (*antrs >= *nn) Rprintf("Error antrs in [sizes]\n");
 	th = exit[nextstart];
 	risktimes[*antrs] = th;
     
-	for (start = nextstart; (exit[start] == th) & 
-		 (event[start] == 1) & (start < *nn); start++){
-	    n_events[*antrs]++;
-	    size[*antrs]++;
+/* Reordered conditions in 2.2-3: */ 
+	/* for (start = nextstart; (start < *nn) & (exit[start] == th) & 
+	   (event[start] == 1); start++){ */
+	start = nextstart;
+	while (start < *nn){
+	    if ((exit[start] == th) & (event[start] == 1)){
+		n_events[*antrs]++;
+		size[*antrs]++;
+	    }else{
+		break;
+	    }
+	    start++;
 	}    
     
 	for (i = start; i < *nn; i++){

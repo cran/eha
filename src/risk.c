@@ -47,21 +47,33 @@ static void riskset_fill(int p_start,
     sindx = 0;
     j = -1;
     while (start < *nn){
-	for (nextstart = start; (event[nextstart] == 0) & (nextstart < *nn); 
-	     nextstart++);
+	/* Changed order of conditions in 2.2-3: */
+	/* for (nextstart = start; (nextstart < *nn) & (event[nextstart] == 0); 
+	   nextstart++); */
+	nextstart = start;
+	while (nextstart < *nn){
+	    if (event[nextstart] == 1) break;
+	    nextstart++;
+	}
 	if (nextstart >= *nn) return; /* Done in this stratum! */
-    
-	j++;
+    	j++;
 	th = exit[nextstart];
-    
-	for (start = nextstart; (exit[start] == th) & 
-		 (event[start] == 1) & (start < *nn); start++){
-
-	    eventset[eindx] = start + p_start + 1; /* +1 because C vs. R... */
-	    riskset[sindx] = start + p_start + 1;
-	    eindx++;
-	    sindx++;
-	}    
+    /* Changed order of conditions in 2.2-3: */
+	/* for (start = nextstart; (start < *nn) & (exit[start] == th) & 
+	   (event[start] == 1); start++){ */
+	start = nextstart;
+	while (start < *nn){
+	    if ((exit[start] == th) & (event[start] == 1)){
+		eventset[eindx] = start + p_start + 1; 
+                /* +1 because C vs. R... */
+		riskset[sindx] = start + p_start + 1;
+		eindx++;
+		sindx++;
+	    }else{
+		break;
+	    }
+	    start++;
+	}
     
 	for (i = start; i < *nn; i++){
 	    if (enter[i] < th){

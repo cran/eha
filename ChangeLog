@@ -1,3 +1,10 @@
+2.2-3:	(April 17, 2013)
+	* risksets: Added an argument, 'members', a logical with default
+	value 'TRUE'. If TRUE, the members of all risk sets are returned.
+	With huge data sets, this may be too much, and not wanted. In such
+	cases, set 'members = FALSE'.
+	* coxreg: Memory leaks fixed in getHaz.f, sizes.c and risk.c.
+
 2.2-2:	(March 23, 2013)
 	* phreg: argument 'center' deprecated; centering of covariates is
 	done internally, but uncentered results reported. If you want

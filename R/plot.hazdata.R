@@ -26,11 +26,12 @@ plot.hazdata <- function(x,
             if (is.null(x)) stop("No 'hazards' component present")
         }
     }
+    fn <- fn[1]
+
     if (!(fn %in% c("cum", "surv", "log", "loglog")))
         stop(paste(fn, "is an illegal value of 'fn'"))
 
     n.strata <- length(x)
-    fn <- fn[1]
 
     yVal <- function(x){
         if (fn == "cum") return(cumsum(x))
