@@ -13,7 +13,8 @@ C     &     score, hazard)
       implicit none
 
       integer nn, ns, totrs, totsize
-      integer antrs(ns), size(ns), nevents(ns)
+C      integer antrs(ns), size(ns), nevents(ns)
+      integer antrs(ns), size(totrs), nevents(totrs)
       integer riskset(totsize)
       double precision score(nn)
       double precision hazard(totrs) 

@@ -1,5 +1,5 @@
-risksets <- function (x, strata = NULL, max.survs = NULL){
-  ## x is a Surv (survival) object.
+risksets <- function (x, strata = NULL, max.survs = NULL, members = TRUE){
+    ## x is a Surv (survival) object.
 
   nn <- NROW(x)
   if (is.null(strata)){
@@ -56,35 +56,42 @@ risksets <- function (x, strata = NULL, max.survs = NULL){
   totsize <- sum(counts$size)
   totevents <- sum(counts$n.events)
 
-  res <- .C("risk_get",
-            as.integer(max.survs),
-            as.integer(nn),
-            as.integer(ns),
-            ##
-            as.double(enter),
-            as.double(exit),
-            as.integer(event),
-            ##
-            as.integer(nstra),
-            as.integer(length(nstra)),
-            ##
-            new.totrs = integer(1),  ## If sampling...
-            ##
-            as.integer(counts$antrs),
-            as.integer(counts$n.events),
-            size = as.integer(counts$size), ## If sampling...
-            as.double(counts$risktimes),
-            eventset = integer(totevents),
-            riskset = integer(totsize),
-            DUP = FALSE,
-            PACKAGE = "eha"
-            )
-            
+  Eventset <- NULL
+  Riskset <- NULL
+  if (members){
+      res <- .C("risk_get",
+                as.integer(max.survs),
+                as.integer(nn),
+                as.integer(ns),
+                ##
+                as.double(enter),
+                as.double(exit),
+                as.integer(event),
+                ##
+                as.integer(nstra),
+                as.integer(length(nstra)),
+                ##
+                new.totrs = integer(1),  ## If sampling...
+                ##
+                as.integer(counts$antrs),
+                as.integer(counts$n.events),
+                size = as.integer(counts$size), ## If sampling...
+                as.double(counts$risktimes),
+                eventset = integer(totevents),
+                riskset = integer(totsize),
+                DUP = FALSE,
+                PACKAGE = "eha"
+                )
+      ##Size <- res$size
+      Eventset <- ord[res$eventset]
+      Riskset <- ord[res$riskset[1:res$new.totrs]]
+  }
+
   list(ns = ns,
-       antrs = counts$antrs,
-       risktimes = counts$risktimes,
-       n.events = counts$n.events,
-       size = res$size,
-       eventset = ord[res$eventset],
-       riskset = ord[res$riskset[1:res$new.totrs]])
+           antrs = counts$antrs,
+           risktimes = counts$risktimes,
+           n.events = counts$n.events,
+           size = counts$size,
+           eventset = Eventset,
+           riskset = Riskset)
 }

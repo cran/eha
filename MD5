@@ -1,5 +1,5 @@
-b85d708c7593d08d8a1593fd5d8d9607 *ChangeLog
-62f565ac6735625e6e63e1bc94a12acb *DESCRIPTION
+008b218f4b235e1449673c0a2a5095c5 *ChangeLog
+2c0ce1f8d149a7e3d6f5eca6789b2953 *DESCRIPTION
 cd78a9c0696b9caa28c5965384502bf1 *NAMESPACE
 07d4b8ccfddd26b518495ec8df997df0 *R/Extreme_Value.R
 f0238bc0d1fb712840f900d14a8a1b5b *R/Gompertz.R
@@ -18,7 +18,7 @@ d3d294013a4f2e8ad42c6186d9b34591 *R/age.window.R
 1b6ac083dfbd52c6b4ddb6c913570986 *R/cal.window.R
 a8a86360d02cc164a9059d183621b50e *R/check.dist.R
 f55eec15444d7fb6679192a0c23e49c2 *R/check.surv.R
-a94930c346ff026dabf474ee876ed307 *R/coxreg.R
+5605663f3315f76a81c45ae0569bf9ec *R/coxreg.R
 c99eca6e09a94c564179074caaea88f8 *R/coxreg.fit.R
 7da682fc2b528a92c622af997bca5eca *R/cro.R
 ed25d9fe3c95bacf1f432f0717db5607 *R/cumhweibull.R
@@ -47,11 +47,11 @@ b34b2b578c44d7288ff4a628220ee13e *R/phreg.fit.R
 eb9b88e23a1c22503d4159dc231bda3a *R/piecewise.R
 d817178127dc4999babdb3ea16f4954f *R/plot.aftreg.R
 a131bf77cf5ba1d1d80cfb5ecf190fd2 *R/plot.coxreg.R
-66404c009af6f927eba0ae94b88b1bd6 *R/plot.hazdata.R
+a61960cd286b465219cbfae17cf3a555 *R/plot.hazdata.R
 46d717ea8dacd53595f9a6f63f84bc17 *R/plot.pchreg.R
 620a950026f7a48fc8ce47e796214ce8 *R/plot.phreg.R
 6e8aee58d1f31f706a64970493902ec4 *R/plot.surv.R
-69321efccbd5992874d54bb4a4f01d27 *R/plot.weibreg.R
+00c18874152760f4e1cf9b9acf4d8649 *R/plot.weibreg.R
 512e1abfda61925b0a18c343f94bff6b *R/poisgam.R
 295faedb4e88c3349b5f3f1e79bac5d5 *R/print.aftreg.R
 4ffc16f056bcbb281136a0cd44ca3ac3 *R/print.coxreg.R
@@ -60,7 +60,7 @@ ea641b4fbcceca18fc2b3ef55cb86854 *R/print.glmmboot.R
 1b6f468bb57b1a7e1b1343f89d039b09 *R/print.pchreg.R
 431aa122544a675b77c63cc54976c6bb *R/print.phreg.R
 3ae0d07483a757023e82f098676e4306 *R/print.weibreg.R
-7d0af8904c982adc7a6c4edd4fb8e4f5 *R/risksets.R
+3f221c99d90023e455843336a245c675 *R/risksets.R
 ea19579caeb35311b784cc99eb610017 *R/snut.R
 db0e809a706f0802ad8f549a6437a4dc *R/summary.aftreg.R
 92e356e681ce6846eea032e5d6616c96 *R/summary.coxreg.R
@@ -85,10 +85,12 @@ f030989bf08cf761913881089fc35baf *data/oldmort.rda
 9704eb70e799f94e33579671af755faf *data/scania.rda
 deafc40d50b5fda64f89a2b71dfa227b *data/swe07.rda
 7f19861a360262ef074a63d7f2a1119e *inst/doc/cluster.bib
+e9e522c6fcf2b496c61aa2dae5971e8a *inst/doc/glmmML.R
 19d6d7e996c1c59fa73b9f72db926e03 *inst/doc/glmmML.Rnw
-85914d3f8fc0f347c84860a26f196e7b *inst/doc/glmmML.pdf
+2492ad3d4895238188570a183fdea19e *inst/doc/glmmML.pdf
+dbe422103397ef32b659134749c19ea8 *inst/doc/parametric.R
 61f37c51fc7daebe1a27ac5e78393004 *inst/doc/parametric.Rnw
-f0265ee057bca31cf560b2add3473eb2 *inst/doc/parametric.pdf
+0ce1e8bef3533faf15748bd8eb3bb767 *inst/doc/parametric.pdf
 9fcadd2e16c7a941d863dd302894982b *man/EV.Rd
 4012215035d26bcb03bb27ca5f85968a *man/Gompertz.Rd
 28e4d0980a03c2d80b47dcdb292f9809 *man/Loglogistic.Rd
@@ -139,7 +141,7 @@ a4f2bc8ef96e92ee89e6f2bc0a0a998b *man/print.glmmML.Rd
 848baae42ffeeeb46e9e13b6b767d008 *man/print.glmmboot.Rd
 386292e1f892bb7f7ff4899240723d9a *man/print.phreg.Rd
 155a0a27775447d16527b32bcd3d17f5 *man/print.weibreg.Rd
-2149a90f365e7aed7349c6a75fa93003 *man/risksets.Rd
+fa8dc5c5b7d9a263998b72119db9231a *man/risksets.Rd
 05f015cf67b54ee575b5e7fe4b777673 *man/scania.Rd
 92fed62caa8502c57742d29b8a9438cf *man/summary.aftreg.Rd
 a9982e39534bb719c0f82a74e08c12b4 *man/summary.coxreg.Rd
@@ -157,7 +159,7 @@ de1d1067dfdeb060b96e536d2d5a60e2 *man/toDate.Rd
 8cae980ef8bf37c51588ff32d08ccd5e *man/wfunk.Rd
 0be32faf70f015899b002697e6c2487d *src/GB_zeroin.c
 092cfb1bdd329def3d065e8cc705be03 *src/GB_zeroin.h
-9ea0a4d2ae2e78e3adfb57eeb2ec82b6 *src/Makevars
+285047585c9b03e22458edcd07444f2a *src/Makevars
 28e534384d5534e5d37cb89db98386f2 *src/aftexpreg.c
 bd623cde8d6fec21077227188e493755 *src/aftreg.c
 2774c16324a21b69a6b1f17376b5cbb0 *src/aftreg.h
@@ -181,7 +183,7 @@ e4c9e67f2b60cd2ba61f1dbfcdeab4cd *src/frail_ml.h
 a68baf712e01e5171a02d740a51e3d6c *src/fun.c
 2318140e8e8aa4b0edf995abc35c35b9 *src/fun.h
 76512a1cacfd1ae4caa0bf3385fe5080 *src/geomsup.f
-d6aa29c8c4026ca7e928d7b56a9fddfe *src/getHaz.f
+bf31aba19bdf09feff8a60e98a569850 *src/getHaz.f
 a04fec70359e60744be90694e56f2c02 *src/getsums.f
 22d9ea47682c3a44ecd1a2da7039d668 *src/getsums.null.f
 b38e99c1c88245c8cc414bb310d7b378 *src/ghq.f
@@ -203,8 +205,8 @@ b641f3dbbcc59b1b21220cbb510a3e22 *src/loglik_ph.c
 506505c7f3221ddf57b0c1ea67b3684b *src/phfun.h
 909e63053566e92182fea8f859f2a57d *src/phreg.c
 1e6f1eb9800307daf798a962a18e2af9 *src/phreg.h
-54ad35d05262bc2b8ffe850ecc2a8afd *src/risk.c
-7e81d60596d3c77c5d568f4b7eaee95e *src/sizes.c
+fdd6f5d0409cf55918dd1969dc2f129f *src/risk.c
+996d3369e2ed3f74d9da8968974de342 *src/sizes.c
 d0a6ecf861d0e9909948e3071e8d4f8f *src/split.f
 1c86d8f61b7ec2c5f042a3ca63c00b04 *src/sup.c
 68b0edd18e044b0361a386cd8c8151dc *src/sup.h

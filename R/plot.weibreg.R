@@ -9,7 +9,7 @@ plot.weibreg <- function(x,
                          ...){
     if (!inherits(x, "weibreg")) stop("Works only with 'weibreg' objects.")
     ##if (x$pfixed) stop("True exponential hazards are not plotted")
-    if (!(fn %in% c("haz", "cum", "den", "sur")))
+    if (!(all(fn %in% c("haz", "cum", "den", "sur"))))
         stop(paste(fn, "is an illegal value of 'fn'"))
 
     if (length(fn) == 4){
