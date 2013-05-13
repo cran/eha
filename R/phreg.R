@@ -6,6 +6,7 @@ phreg <- function (formula = formula(data),
                    init,
                    shape = 0,
                    ## Means shape is estimated, ie true Weibull; > 0 fixed!
+                   param = c("canonical", "rate"),
                    control = list(eps = 1e-8, maxiter = 20, trace = FALSE),
                    singular.ok = TRUE,
                    model = FALSE,
@@ -13,7 +14,7 @@ phreg <- function (formula = formula(data),
                    y = TRUE,
                    center = NULL) # NOTE: Changed from 'NULL' in 1.4-1
 {                                 # NOTE: Changed back in 2.2-2!
-
+    param <- param[1]
     pfixed <- any(shape > 0)
     call <- match.call()
     m <- match.call(expand.dots = FALSE)
@@ -128,9 +129,9 @@ phreg <- function (formula = formula(data),
 
     n.events <- sum(Y[, 3] != 0)
     if (n.events == 0) stop("No events; no sense in continuing!")
-    if (missing(init))
-      init <- NULL
-
+    if (missing(init)){
+        init <- coxreg(formula, data = data)$coefficients
+    }
     if (is.list(control)){
         if (is.null(control$eps)) control$eps <- 1e-8
         if (is.null(control$maxiter)) control$maxiter <- 10
@@ -140,14 +141,28 @@ phreg <- function (formula = formula(data),
     }
 
     if (dist == "gompertz"){
-        fit <- gompreg(X,
-                       Y,
-                       strats,
-                       offset,
-                       init,
-                       control,
-                       center)
-    }else if(dist == "pch"){
+        if (param == "canonical"){
+            
+            fit <- gompreg(X,
+                           Y,
+                           strats,
+                           offset,
+                           init,
+                           control,
+                           center)
+        }else if (param == "rate"){
+            fit <- gompregRate(X,
+                               Y,
+                               strats,
+                               offset,
+                               init,
+                               control,
+                               center)
+        }else{
+            stop(paste(param, " is not a known parametrization."))
+        }
+        
+        }else if(dist == "pch"){
         fit <- pchreg(X,
                       Y,
                       cuts,

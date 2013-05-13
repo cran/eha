@@ -16,8 +16,10 @@
 }
 \usage{
 dgompertz(x, shape = 1, scale = 1, log = FALSE, param = c("default", "canonical"))
-pgompertz(q, shape = 1, scale = 1, lower.tail = TRUE, log.p = FALSE, param = c("default", "canonical"))
-qgompertz(p, shape = 1, scale = 1, lower.tail = TRUE, log.p = FALSE, param = c("default", "canonical"))
+pgompertz(q, shape = 1, scale = 1, lower.tail = TRUE, log.p = FALSE,
+param = c("default", "canonical"))
+qgompertz(p, shape = 1, scale = 1, lower.tail = TRUE, log.p = FALSE,
+param = c("default", "canonical"))
 hgompertz(x, shape = 1, scale = 1, log = FALSE, param = c("default", "canonical"))
 Hgompertz(x, shape = 1, scale = 1, log.p = FALSE, param = c("default", "canonical"))
 rgompertz(n, shape = 1, scale = 1, param = c("default", "canonical"))

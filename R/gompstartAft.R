@@ -1,6 +1,6 @@
-gompstart <- function(enter, exit, event, width = 20){
+gompstartAft <- function(enter, exit, event){
     ## Gives start values for Gompertz parameters
-    ## To be used in both aftreg and phreg.
+    ## To be used in aftreg.
     ##
     ## This is for ONE stratum only! So input is from only one!
 
@@ -21,10 +21,10 @@ gompstart <- function(enter, exit, event, width = 20){
     }
 
     alpha <- log(max(exit)) # start value
-    from <- alpha - width / 2
-    to <- alpha + width / 2
-    fit <- optimize(funk, interval = c(from, to), maximum = TRUE)
-    alpha <- fit$maximum
+    ##from <- alpha - width / 2
+    ##to <- alpha + width / 2
+    fit <- optim(alpha, funk, control = list(fnscale = -1), method = "BFGS")
+    alpha <- fit$par
     S <- sum(exp(exit * exp(-alpha)) - exp(enter * exp(-alpha)))
     gamma <- log(D) - alpha - log(S)
     ret <- c(alpha, gamma)

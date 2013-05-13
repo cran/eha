@@ -4,26 +4,28 @@
 LaTeX printing of coxreg results.
 }
 \description{
-This function prints the LaTeX code of the results of a fit from
-\code{\link{coxreg}}, similar to what \code{xtable} does for fits from
+This (generic) function prints the LaTeX code of the results of a fit from
+\code{\link{coxreg}}, \code{\link{phreg}}, or \code{\link{aftreg}},
+similar to what \code{xtable} does for fits from
 other functions.
 }
 \usage{
-ltx(x, caption = NULL, label = NULL, dr = NULL, digits = max(options()$digits - 4, 3), ...)
+ltx(x, caption = NULL, label = NULL, dr = NULL,
+digits = max(options()$digits - 4, 3), ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{
-The output from a call to \code{coxreg}
+The output from a call to \code{coxreg}, \code{coxreg}, or \code{aftreg}
 }
   \item{caption}{
-A suitable caption for tha table.
+A suitable caption for the table.
 }
   \item{label}{
 A label used in the LaTeX code.
 }
   \item{dr}{
-Output from a \code{drop1} call with input the fit from a call to \code{coxreg}.
+Output from a \code{drop1} call.
 }
   \item{digits}{
 Number of digits to be printed.
@@ -37,7 +39,8 @@ The result is a printout which is (much) nicer than the standard printed
 output from \code{glm} and friends,
 }
 \value{
-LaTeX code version of the results from a run with \code{\link{coxreg}}.
+LaTeX code version of the results from a run with \code{\link{coxreg}},
+\code{\link{phreg}}, or \code{\link{aftreg}}.
 }
 %\references{
 %% ~put references to the literature/web site here ~

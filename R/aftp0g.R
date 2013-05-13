@@ -45,7 +45,7 @@ aftp0g <- function(printlevel, ns, nn, id,
         event <-  Y[strata == 1, 3]
         
         alpha <- log(max(exit))
-        beta[(2 * i - 1):(2 * i)] <- gompstart(enter, exit, event, width = 20)
+        beta[(2 * i - 1):(2 * i)] <- gompstartAft(enter, exit, event)
         ##beta[2 * i - 1] <- log(sum(Y[, 2] - Y[, 1]) / sum(Y[, 3]))
         ##beta[2*i] <- 0
     }

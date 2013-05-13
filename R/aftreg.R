@@ -294,7 +294,7 @@ aftreg <- function (formula = formula(data),
         names(fit$coef.survreg) <- vec.names
         fit$var.survreg <- A %*% fit$var %*% t(A)
         colnames(fit$var.survreg) <- rownames(fit$var.survreg) <- vec.names
-        fit$A.survreg <- A # Temporary! Remove at publication!
+        ## fit$A.survreg <- A # Temporary! Remove at publication!
     
 
         ## canonical:
@@ -307,7 +307,7 @@ aftreg <- function (formula = formula(data),
         fit$var.canonical <- A %*% fit$var %*% t(A)
         colnames(fit$var.canonical) <- vec.names
         rownames(fit$var.canonical) <- vec.names
-        fit$A.canonical <- A # Temporary! Remove at publication!
+        ## fit$A.canonical <- A # Temporary! Remove at publication!
     }
     ##
     fit$pfixed <- pfixed
