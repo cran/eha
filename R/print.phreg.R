@@ -25,18 +25,29 @@ print.phreg <- function(x, digits=max(options()$digits - 4, 3), ...){
     ##if (names(x$coef)[1] == "(Intercept)"){
       ##  x$covars <- c("(Intercept)", x$covars)
     ##}
-    se <- sqrt(diag(x$var))
-    wald.p <- formatC(1 - pchisq((coef/ se)^2, 1),
-                      digits = 3,
-                      width = 9, format = "f")
+    if (is.numeric(x$var)){
+        se <- sqrt(diag(x$var))
+    }else{
+        se <- "X" # Not available
+    }
+    if (is.numeric(se)){
+        wald.p <- formatC(1 - pchisq((coef/ se)^2, 1),
+                          digits = 3,
+                          width = 9, format = "f")
+    }else{
+        wald.p <- rep("NA       ", length(coef))
+    }
     if (is.null(coef) || is.null(se))
         stop("Input is not valid")
 #####################################
     cat("Covariate          W.mean      Coef Exp(Coef)  se(Coef)    Wald p\n")
     e.coef <- formatC(exp(coef), width = 9, digits = 3, format = "f")
     coef <- formatC(coef, width = 9, digits = 3, format = "f")
-    se <- formatC(se, width = 9, digits = 3, format = "f")
-
+    if (is.numeric(se)){
+        se <- formatC(se, width = 9, digits = 3, format = "f")
+    }else{
+        se <- rep("NA       ", length(coef))
+    }
     ett <-  formatC(1, width = 9, digits = 0, format = "f")
     noll <-  formatC(0, width = 5, digits = 0, format = "f")
 

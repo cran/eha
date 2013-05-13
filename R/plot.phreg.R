@@ -26,15 +26,16 @@ plot.phreg <- function(x,
     ncov <- length(x$means)
     ns <- x$n.strata
     if (x$pfixed){
-        p <- rep(x$shape, ns)
-        lambda <- exp(x$coefficients[ncov + (1:ns)])
+        shape <- rep(x$shape, ns)
+        scale <- exp(x$coefficients[ncov + (1:ns)])
     }else{
-        p <- exp(x$coefficients[ncov + (1:ns) * 2])
-        lambda <- exp(x$coefficients[ncov + (1:ns) * 2 - 1])
+        shape <- exp(x$coefficients[ncov + (1:ns) * 2])
+        scale <- exp(x$coefficients[ncov + (1:ns) * 2 - 1])
     }
 
     if (ncov){
-        score <- exp(sum((new.data - x$means) * x$coefficients[1:ncov]))
+        ##score <- exp(sum((new.data - x$means) * x$coefficients[1:ncov]))
+        score <- exp(sum(new.data * x$coefficients[1:ncov]))
     }else{
         score <- 1
     }
@@ -43,62 +44,94 @@ plot.phreg <- function(x,
     ##    uppe <- exp(-sum(new.data[1:ncov] * x$coefficients[1:ncov]) / p)
     ##    lambda <- lambda * uppe
     ##}
-    if (is.null(xlim))
+    if (is.null(xlim)){
         xlim <- c(min(x$y[, 1]), max(x$y[, 2]))
-
+        if (xlim[1] <= 0) xlim[1] <- 0.001 * xlim[2] ## Avoid Inf at 0! (hack!?)
+    }
     npts <- 4999
     xx <- seq(xlim[1], xlim[2], length = npts)
-    ##if (xx[1] <= 0) xx[1] <- 0.001
-
-    skal <- NULL
+    haz <- matrix(0, ncol = npts, nrow = ns)
+    sur <- haz
+    Haz <- haz
     ## hazard
     if (x$dist == "weibull"){
+        for (i in 1:ns){
+            scal <- scale[i] / (score)^(1/shape[i])
+            haz[i, ] <- hweibull(xx, shape = shape[i],
+                                 scale = scal)
+            sur[i, ] <- pweibull(xx, shape = shape[i],
+                                 scale = scal, lower.tail = FALSE)
+            Haz[i, ] <- Hweibull(xx, shape = shape[i],
+                                 scale = scal)
+        }
         dist <- "Weibull"
-        haza <- hweibull
-        Haza <- Hweibull
-        Surviv <- pweibull
-        Dens <- dweibull
     }else if (x$dist == "loglogistic"){
+        for (i in 1:ns){
+            haz[i, ] <- hllogis(xx, shape = shape[i],
+                                 scale = scale[i]) * score
+            sur[i, ] <- pllogis(xx, shape = shape[i],
+                                 scale = scale[i], lower.tail = FALSE)^score
+            Haz[i, ] <- Hllogis(xx, shape = shape[i],
+                                 scale = scale[i]) * score
+        }
         dist <- "Loglogistic"
-        haza <- hllogis
-        Haza <- Hllogis
-        Surviv <- pllogis
-        Dens <- dllogis
+
     }else if (x$dist == "lognormal"){
+        sdlog <- 1 / shape
+        meanlog <- log(scale)
+        for (i in 1:ns){
+            haz[i, ] <- hlnorm(xx, meanlog = meanlog[i],
+                               sdlog = sdlog[i]) * score
+            sur[i, ] <- plnorm(xx, meanlog = meanlog[i],
+                               sdlog = sdlog[i], lower.tail = FALSE)^score
+            Haz[i, ] <- Hlnorm(xx, meanlog = meanlog[i],
+                               sdlog = sdlog[i]) * score
+        }
         dist = "Lognormal"
-        haza <- hlnorm
-        Haza <- Hlnorm
-        Surviv <- plnorm
-        Dens <- dlnorm
     }else if (x$dist == "ev"){
+        for (i in 1:ns){
+            haz[i, ] <- hEV(xx, shape = shape[i],
+                                 scale = scale[i]) * score
+            sur[i, ] <- pEV(xx, shape = shape[i],
+                                 scale = scale[i], lower.tail = FALSE)^score
+            Haz[i, ] <- HEV(xx, shape = shape[i],
+                                 scale = scale[i]) * score
+        }
+
         dist = "Extreme value"
-        haza <- hEV
-        Haza <- HEV
-        Surviv <- pEV
-        Dens <- dEV
     }else if (x$dist == "gompertz"){
+        if (x$param == "canonical"){
+            for (i in 1:ns){
+                haz[i, ] <- hgompertz(xx, shape = score * shape[i],
+                                      scale = scale[i],
+                                      param = "canonical")## * score
+                sur[i, ] <- pgompertz(xx, shape = score * shape[i],
+                                      scale = scale[i],
+                                      lower.tail = FALSE,
+                                      param = "canonical") ##^score
+                Haz[i, ] <- Hgompertz(xx, shape = score * shape[i],
+                                      scale = scale[i],
+                                      param = "canonical") ##* score
+            }
+        }else if (x$param == "rate"){
+            for (i in 1:ns){
+                haz[i, ] <- exp(shape + xx * scale) * score
+                Haz[i, ] <- exp(shape) * score * expm1(xx * scale) / scale
+                sur[i, ] <- exp(-Haz[, i])
+            }
+        }
+
         dist = "Gompertz"
-        haza <- hgompertz
-        Haza <- Hgompertz
-        Surviv <- pgompertz
-        Dens <- dgompertz
-        ##skal <- exp(x$coef[1]) / lambda # Kolla detta!!!!!!!!!!
-        ##for (i in 1:ns) p[i] <- skal
-        ##for (i in 1:ns) p[i] <- exp(x$coef[1])
     }
 
     if ("haz" %in% fn){
-        haz <- matrix(ncol = npts, nrow = ns)
-        for (i in 1:ns){
-            haz[i, ] <- haza(xx, scale = lambda[i], shape = p[i]) * score
-        }
 
         if (is.null(ylim)) {
             ylim0 <- c(0, max(haz))
         }else{
             ylim0 <- ylim
         }
-        if (min(p) < 1) ylim0[2] <- min(ylim0[2], max(haz[, -1]))
+        ##if (min(p) < 1) ylim0[2] <- min(ylim0[2], max(haz[, -1]))
 
         if (is.null(xlab)) xlab <- "Duration"
         if (is.null(ylab)) ylab <- "Hazard"
@@ -120,12 +153,6 @@ plot.phreg <- function(x,
     ## Cumulative hazard
     if ("cum" %in% fn){
 
-        Haz <- matrix(ncol = npts, nrow = ns)
-
-    ##if (is.null(ylim))
-        for (i in 1:ns){
-            Haz[i, ] <- Haza(xx, scale = lambda[i], shape = p[i]) * score
-        }
         if (is.null(ylim)){
             ylim0 <- c(0, max(Haz))
         }else{
@@ -154,24 +181,11 @@ plot.phreg <- function(x,
     ## density
     if ("den" %in% fn){
 
-        den <- matrix(ncol = npts, nrow = ns)
-        for (i in 1:ns){
-            if (dist == "Lognormal"){
-                sdlog <- 1 / p[i]
-                meanlog <- log(lambda[i])
-                den[i, ] <- dlnorm(xx, meanlog, sdlog) * score *
-                    plnorm(xx, meanlog, sdlog)^(score - 1)
-            }else{
-                den[i, ] <- Dens(xx, scale = lambda[i], shape = p[i]) *
-                    score * Surviv(xx, scale = lambda[i], shape = p[i],
-                                   lower.tail = FALSE)
-            }
-        }
-
+        den <- haz * sur
         ##if (is.null(ylim))
         ylim <- c(0, max(den))
 
-        if (min(p) < 1) ylim[2] <- min(max(den[, -1]))
+        ##if (min(p) < 1) ylim[2] <- min(max(den[, -1]))
 
         ##if (is.null(xlab))
         xlab <- "Duration"
@@ -194,22 +208,7 @@ plot.phreg <- function(x,
     }
     ## Survivor function
     if ("sur" %in% fn){
-
-
-        sur <- matrix(ncol = npts, nrow = ns)
-        for (i in 1:ns){
-            if (dist == "Lognormal"){
-                sdlog <- 1 / p[i]
-                meanlog <- log(lambda[i])
-                sur[i, ] <- plnorm(xx, meanlog, sdlog,
-                                   lower.tail = FALSE)^score
-            }else{
-                sur[i, ] <- Surviv(xx, scale = lambda[i],
-                                   shape = p[i],
-                                   lower.tail = FALSE)^score
-            }
-        }
-
+        
         ##if (is.null(ylim))
         ylim <- c(0, 1)
 

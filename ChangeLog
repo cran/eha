@@ -1,3 +1,16 @@
+2.2-5:	(May 13, 2013)
+	* Gompertz, ltx: Too long lines in the documentation fixed.
+
+2.2-4:	(May 13, 2013)
+	* phreg: The gompertz 'scale' parameter is now a real scale
+	parameter through a reparametrization of the baseline gomperz
+	distribution. It follows now the 'canonical' parametrization.
+	There is also a new argument, 'param', which can take the values
+	"canonical" (default) and "rate". Better start values
+	for the Gompertz regressions.
+	* check.dist : Has failed due to different scaling in coxreg and
+	phreg since 2.2-2. Now fixed.
+
 2.2-3:	(April 17, 2013)
 	* risksets: Added an argument, 'members', a logical with default
 	value 'TRUE'. If TRUE, the members of all risk sets are returned.

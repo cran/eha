@@ -19,7 +19,7 @@ check.dist <- function(sp, pp, main = NULL, col = NULL){
     }else{
         if (length(col) != 2) stop("Length of 'col' must be 0 or 2.")
     }
-    plot(pp, fn = "cum", fig = TRUE,
+    plot(pp, fn = "cum", fig = TRUE, new.data = pp$means,
          ylim = c(0, y.max), main = main, col = col[1])
     for (rr in 1:length(x)){
         xx <- x[[rr]]

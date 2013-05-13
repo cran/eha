@@ -9,7 +9,7 @@
 \usage{
 phreg(formula = formula(data), data = parent.frame(),
 na.action = getOption("na.action"), dist = "weibull", cuts = NULL,
-init, shape = 0,
+init, shape = 0, param = c("canonical", "rate"),
 control = list(eps = 1e-08, maxiter = 20, trace = FALSE),
 singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE, center = NULL)
 }
@@ -36,6 +36,13 @@ singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE, center = NULL)
     (in each stratum).  If zero or negative, the shape parameter is
     estimated.  If more than one stratum is present in data, each stratum
     gets its own estimate.}
+  \item{param}{Applies only to the Gompertz distribution: "canonical" is
+  defined in the description of the \code{\link{Gompertz}} distribution;
+  "rate" transforms \code{scale} to 1/log(scale), giving the same
+  parametrization as in Stata and SAS. The latter thus allows for a
+  negative rate, or a "cure" (Gompertz) model. The default is
+  "canonical"; if this results in extremely large scale and/or shape
+  estimates, consider trying "rate".}
     \item{control}{a list with components \code{eps} (convergence
     criterion), \code{maxiter} (maximum number of iterations), and
     \code{silent} (logical, controlling amount of output).  You can
