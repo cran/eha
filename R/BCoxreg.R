@@ -1,34 +1,20 @@
-coxreg <- function (formula = formula(data),
+Coxreg <- function (formula = formula(data),
                     data = parent.frame(),
                     weights,
                     subset,
-                    t.offset,
                     na.action = getOption("na.action"),
                     init = NULL,
-                    method = c("efron", "breslow", "mppl", "ml"),
+                    method = c("efron", "breslow"),
+                    baseline = FALSE,
                     control = list(eps = 1e-8, maxiter = 25, trace = FALSE),
                     singular.ok = TRUE,
                     model = FALSE,
-                    center = TRUE,
                     x = FALSE,
-                    y = TRUE,
-                    boot = FALSE,
-                    efrac = 0,
-                    geometric = FALSE,
-                    rs = NULL,
-                    frailty = NULL,
-                    max.survs = NULL)
+                    y = TRUE)
 {
     
-    cox.ph <- (missing(t.offset) &&
-               (method %in% c("breslow", "efron")) &&
-               is.null(rs) &&
-               is.null(max.survs) &&
-               (!boot)
-               )
+    cox.ph <- TRUE
     
-    if (!is.null(frailty))
-        stop("Frailty not implemented (yet). Try 'coxme' in 'survival'")
     method <- match.arg(method)
     call <- match.call()
     m <- match.call(expand.dots = FALSE)
@@ -48,12 +34,9 @@ coxreg <- function (formula = formula(data),
     if (!inherits(Y, "Surv"))
         stop("Response must be a survival object")
 
-    if (is.null(max.survs)) max.survs <- NROW(Y)
     if (missing(weights)) weights <- rep(1, NROW(Y))
     else weights <- model.extract(m, "weights")
-    cox.ph <- cox.ph && (length(weights) == NROW(Y))
     
-    if (missing(t.offset)) t.offset <- NULL
     ##
     offset <- attr(Terms, "offset")
     tt <- length(offset)
@@ -154,107 +137,94 @@ coxreg <- function (formula = formula(data),
                                         control, weights = weights,
                                         method = method, row.names(m))
         }
-        ## get hazards
-        rs <- risksets(Y, strats)
-        hazard <- .Fortran("gethaz",
-                           as.integer(NROW(Y)),  # 'nn'
-                           as.integer(length(rs$antrs)), # 'ns' 
-                           as.integer(rs$antrs), # 'antrs'
-                           as.integer(rs$size), # 'size'
-                           as.integer(rs$n.events), # 'nevents'
-                           as.integer(length(rs$riskset)), # 'totsize'
-                           as.integer(rs$riskset), # 'riskset'
-                           as.double(exp(fit$linear.predictors)), # 'score'
-                           as.integer(sum(rs$antrs)), # 'totrs'
-                           hazard = double(sum(rs$antrs)), # 'hazard' (return)
-                           DUP = FALSE,
-                           PACKAGE = "eha")$hazard
-        ## Put it on:
-        ##haz.mean <- fit$hazard::: At means of covariates:
-        ##if (!is.null(fit$coefficients))
-          ##  hazard <- 1 - (1 - hazard)^exp(fit$means * fit$coefficients)
-        hazards <- list()
-        stopp <- cumsum(rs$antrs)
-        startt <- c(1, 1 + stopp[-length(rs$antrs)])
-        for (i in 1:length(rs$antrs)){
-            hazards[[i]] <- cbind(rs$risktimes[startt[i]:stopp[i]],
-                                  hazard[startt[i]:stopp[i]])
+        if (baseline){
+            if (FALSE){
+                gethaz <- function(y, score){
+                    if (NCOL(y) == 3){
+                        enter <- y[, 1]
+                        exit <- y[, 2]
+                        event <- y[, 3] != 0
+                    }else{
+                        enter <- rep(0, NROW(y))
+                        exit <- y[, 1]
+                        event <- y[, 2] != 0 
+                    }
+                    tid <- sort(unique(exit[event == 1]))
+                    nr <- length(tid)
+                    haz <- numeric(nr)
+                    for (i in 1:nr){
+                        tal <- sum((exit == tid[i]) & event)
+                        nam <- sum(score[(enter < tid[i]) & (exit >= tid[i])])
+                        haz[i] <- tal / nam
+                    }
+                    res <- cbind(tid, haz)
+                    colnames(res) <- c("time", "hazard")
+                    res
+                }
+                if (length(strats)){
+                    ns <- max(strats)
+                }else{
+                    ns <- 1
+                }
+                
+                hazards <- vector("list", ns)
+                if (ns == 1){
+                    hazards[[1]] <- gethaz(Y, exp(fit$linear.predictors))
+                }else{
+                    for (s in (1:ns)){
+                        hazards[[s]] <- gethaz(Y[strats == s],
+                                               exp(fit$linear.predictors[strats == s]))
+                    }
+                }
+            }
+            ##fit$hazards <- survival:::basehaz(fit)
+            ## get hazards
+            if (FALSE){
+                rs <- risksets(Y, strats)
+                hazard <- .Fortran("gethaz",
+                                   as.integer(NROW(Y)),  # 'nn'
+                                   as.integer(length(rs$antrs)), # 'ns' 
+                                   as.integer(rs$antrs), # 'antrs'
+                                   as.integer(rs$size), # 'size'
+                                   as.integer(rs$n.events), # 'nevents'
+                                   as.integer(length(rs$riskset)), # 'totsize'
+                                   as.integer(rs$riskset), # 'riskset'
+                                   as.double(exp(fit$linear.predictors)), # 'score'
+                                   as.integer(sum(rs$antrs)), # 'totrs'
+                                   hazard = double(sum(rs$antrs)), # 'hazard' (return)
+                                   DUP = FALSE,
+                                   PACKAGE = "eha")$hazard
+            }
+                ## Put it on:
+                ##haz.mean <- fit$hazard::: At means of covariates:
+                ##if (!is.null(fit$coefficients))
+            ##  hazard <- 1 - (1 - hazard)^exp(fit$means * fit$coefficients)
+            ##hazards <- list()
+            ##stopp <- cumsum(rs$antrs)
+            ##startt <- c(1, 1 + stopp[-length(rs$antrs)])
+            ##for (i in 1:length(rs$antrs)){
+            ##    hazards[[i]] <- cbind(rs$risktimes[startt[i]:stopp[i]],
+            ##                          hazard[startt[i]:stopp[i]])
+            ##}
         }
-        class(hazards) <- "hazdata"
-        fit$hazards <- hazards
         ##fit$hazards <- hazard
-    }else{ # if (!cox.ph)
-        if (NCOL(Y) == 2){
-            Y <- cbind(numeric(NROW(Y)), Y)
-            attr(Y, "type") <- "counting"
-        }
-        
-        ##return(Y)
-        type <- attr(Y, "type")
-        if (type != "right" && type != "counting")
-            stop(paste("Cox model doesn't support \"", type, "\" survival data",
-                       sep = ""))
-        
-        if ((!is.null(init)) && (length(init) != NCOL(X)))
-            stop("Wrong length of 'init'")
+    
         
         
-        if (is.list(control)){
-            if (is.null(control$eps)) control$eps <- 1e-8
-            if (is.null(control$maxiter)) control$maxiter <- 10
-            if (is.null(control$trace)) control$trace <- FALSE
-        }else{
-            stop("control must be a list")
-        }
-        
-### New start for cox.ph (not any more!) ##################################
-        if (geometric){
-            method <- "ml"
-            fit <- geome.fit(X,
-                             Y,
-                             rs,
-                             strats,
-                             offset,
-                             init,
-                             max.survs,
-                             method,
-                             boot,
-                             control)
-        }else{
-            fit <- coxreg.fit(X,
-                              Y,
-                              rs,
-                              weights,
-                              t.offset,
-                              strats,
-                              offset,
-                              init,
-                              max.survs,
-                              method,
-                              center,
-                              boot,
-                              efrac,
-                              calc.hazards = TRUE,
-                              calc.martres = TRUE,
-                              control,
-                              verbose = TRUE)
-        }
-     # End 'if (!cox.ph)'
-
-    ##    if (!length(fit$coefficients)){
-    ##        class(fit) <- c("coxreg", "coxph")
-    ##        return(fit)
-    ##    }
-    ##if (is.null(fit)) return(NULL) ## Removed 19 Feb 2007
-    ##if (!fit$fail) fit$fail <- NULL
-    ##else
-    ##    fit$fail <- TRUE
-
+        ##    if (!length(fit$coefficients)){
+        ##        class(fit) <- c("coxreg", "coxph")
+        ##        return(fit)
+        ##    }
+        ##if (is.null(fit)) return(NULL) ## Removed 19 Feb 2007
+        ##if (!fit$fail) fit$fail <- NULL
+        ##else
+        ##    fit$fail <- TRUE
+    
         fit$convergence <- as.logical(fit$conver)
         fit$conver <- NULL ## Ugly!
         fit$f.convergence <- as.logical(fit$f.conver)
         fit$f.conver <- NULL
-    }
+    }## End 'if (!cox.ph)'
 ###########################################################################
 ## Crap dealt with ......
 
@@ -296,7 +266,7 @@ coxreg <- function (formula = formula(data),
                 fit$strata <- strata.keep
         }
     }
-    fit$stratum <- strats
+    ##fit$stratum <- strata.keep
     if (y)
         fit$y <- Y
     if (x)
@@ -308,7 +278,8 @@ coxreg <- function (formula = formula(data),
 
     fit$isF <- isF
     fit$covars <- covars
-    if (NCOL(Y) == 3){
+
+    if (NCOL(Y) == 3) {
         s.wght <- (Y[, 2] - Y[, 1])## * weights
     }else{
         s.wght <- Y[, 1]
@@ -342,13 +313,14 @@ coxreg <- function (formula = formula(data),
         names(fit$coefficients) <- colnames(X)
         fit$means <- apply(X, 2, mean)
     }
-    if (length(strats)){
-        fit$strata <- levels(as.factor(strata.keep)) ## New 2.2-6
-    }
     fit$method <- method
     fit$n <- NROW(Y)
     fit$df <- length(fit$coefficients)
     class(fit) <- c("coxreg", "coxph") # Not Removed "coxph"; cox.zph!
     ##class(fit) <- "coxreg"
+    if (baseline){
+        fit$hazards <- basehaz(fit)
+        ##class(fit$hazards) <- "hazdata" # Error; makes 'hazards' no data frame!
+    }
     fit
 }

@@ -20,13 +20,21 @@ plot.coxreg <- function(x,
 
     if ((!is.null(new.data)) && (!is.null(x$coefficients))){
         score <- exp(sum((new.data - x$means) * x$coefficients))
-        for (i in 1:length(x$hazards))
-            x$hazards[[i]][, 2] <- 1 - (1 - x$hazards[[i]][, 2])^score
+        if (is.data.frame(x$hazards)){
+            x$hazards$hazard <- x$hazards$hazard * score
+        }else{
+            for (i in 1:length(x$hazards))
+                x$hazards[[i]][, 2] <- 1 - (1 - x$hazards[[i]][, 2])^score
             ## Depends on 'hazards.f' K&p, II, p. 116. This must be
             ## reconsidered in the future!!
             ##x$hazards[[i]][, 2] <- score * x$hazards[[i]][, 2]
+        }
     }
-    plot.hazdata(x$hazards, fn, fig, xlim, ylim, main, xlab, ylab, ...)
-
+    if (is.data.frame(x$hazards)){
+        plot.hazards(x$hazards, fn, fig, xlim, ylim, main, xlab, ylab, ...)
+    }else{
+        plot.hazdata(x$hazards, x$strata,
+                     fn, fig, xlim, ylim, main, xlab, ylab, ...)
+    }
 }
 

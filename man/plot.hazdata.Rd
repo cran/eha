@@ -6,12 +6,14 @@
   Baseline hazards estimates.
 }
 \usage{
-\method{plot}{hazdata}(x, fn = c("cum", "surv", "log", "loglog"), fig = TRUE,
+\method{plot}{hazdata}(x, strata = NULL,
+fn = c("cum", "surv", "log", "loglog"), fig = TRUE,
 xlim=NULL, ylim=NULL, main=NULL, xlab=NULL, ylab=NULL, \ldots)
 }
 \arguments{
   \item{x}{A \code{hazdata} object, typically the 'hazards' element in
 the output from \code{link{coxreg}}.}
+  \item{strata}{Stratum names if there are strata present.}
   \item{fn}{Which type of plot?}
   \item{fig}{Should a plot actually be produced? Default is TRUE.}
   \item{xlim}{Horizontal plot limits. If NULL, calculated by the function.}
