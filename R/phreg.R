@@ -51,6 +51,8 @@ phreg <- function (formula = formula(data),
     dropx <- NULL
 
     if (length(strats)) {
+        if (dist == "pch")
+            stop("No strata allowed in the pch model") 
         temp <- untangle.specials(Terms, "strata", 1)
         dropx <- c(dropx, temp$terms)
         if (length(temp$vars) == 1)
@@ -58,6 +60,7 @@ phreg <- function (formula = formula(data),
         else strata.keep <- strata(m[, temp$vars], shortlabel = TRUE)
         strats <- as.numeric(strata.keep)
     }
+    
     if (length(dropx))
       newTerms <- Terms[-dropx]
     else newTerms <- Terms
@@ -300,5 +303,10 @@ phreg <- function (formula = formula(data),
         class(fit) <- "phreg"
     }
     fit$pfixed <- pfixed
+    if (length(strats))
+        fit$strata <- names(strats)
+    if (length(strats)){
+        fit$strata <- levels(as.factor(strata.keep))
+    }
     fit
 }

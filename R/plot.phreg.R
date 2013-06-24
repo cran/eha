@@ -140,15 +140,20 @@ plot.phreg <- function(x,
         }else{
             hmain <- main
         }
-        plot(xx, haz[1, ], type = "l", xlim = xlim, ylim = ylim0,
+        plot(xx, haz[1, ], type = "l", xlim = xlim, ylim = ylim0, col = 1,
              xlab = xlab, ylab = ylab, main = hmain, ...)
         if (ns > 1){
             for (i in 2:ns){
-                lines(xx, haz[i, ], type = "l", lty = i)
+                lines(xx, haz[i, ], type = "l", lty = i, col = i)
             }
         }
-        abline(h = 0)
-        abline(v = 0)
+        ##abline(h = 0)
+        ##abline(v = 0)
+        if (ns > 1){
+            legend(x = "bottomright",  legend = x$strata, lty = 1:ns,
+                   inset = 0.001,
+                   col = 1:ns)
+        }
     }
     ## Cumulative hazard
     if ("cum" %in% fn){
@@ -175,8 +180,11 @@ plot.phreg <- function(x,
                 lines(xx, Haz[i, ], type = "l", lty = i)
             }
         }
-        abline(h = 0)
-        abline(v = 0)
+        ##abline(h = 0)
+        ##abline(v = 0)
+        if (ns > 1){
+            legend(x = "topleft",  legend = x$strata, lty = 1:ns)
+        }
     }
     ## density
     if ("den" %in% fn){
@@ -205,6 +213,13 @@ plot.phreg <- function(x,
         }
         abline(h = 0)
         abline(v = 0)
+
+        if (ns > 1){
+            legend(x = "topright",  legend = x$strata, lty = 1:ns,
+                   inset = 0.001,
+                   col = 1:ns)
+        }
+        
     }
     ## Survivor function
     if ("sur" %in% fn){
@@ -230,6 +245,14 @@ plot.phreg <- function(x,
         }
         abline(h = 0)
         abline(v = 0)
+
+        if (ns > 1){
+            legend(x = "bottomleft",  legend = x$strata, lty = 1:ns,
+                   inset = 0.001,
+                   col = 1:ns)
+        }
+        
+
     }
     ##par(oldpar)
 }

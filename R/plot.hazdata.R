@@ -1,4 +1,4 @@
-plot.hazdata <- function(x,
+plot.hazdata <- function(x, strata = NULL,
                          fn = c("cum", "surv", "log", "loglog"),
                          fig = TRUE,
                          xlim = NULL,
@@ -52,7 +52,11 @@ plot.hazdata <- function(x,
 
     if (fn == "loglog"){
         max.x <- log(max.x)
-        min.x <- log(min.x)
+        if (min.x > 0){
+            min.x <- log(min.x)
+        }else{
+            lin.x <- log(min.x + 0.001)
+        }
     }
 
     max.y <- -1000 # What else :-)
@@ -68,7 +72,7 @@ plot.hazdata <- function(x,
 
     if (is.null(xlim)) {
         xlim <- c(min.x, max.x)
-        if (fn != "loglog") xlim[1] <- 0.0
+        ## if (fn != "loglog") xlim[1] <- 0.0 # Why? 2.2-6
     }
     if (length(xlim) != 2) stop("'xlim' must be a vector of length two")
 
@@ -96,8 +100,17 @@ plot.hazdata <- function(x,
             for (i in 2:n.strata){
                 lines(x[[i]][, 1], x[[i]][, 2], type = "s", lty = i)
             }
+            if (is.null(strata)) strata <- 1:n.strata
+            if (fn == "cum"){
+                legend(x = "bottomright", legend = strata, lty = 1:n.strata)
+            }else if (fn == "surv"){
+                legend(x = "bottomleft", legend = strata, lty = 1:n.strata)
+            }else{
+                legend(x = "bottomright", legend = strata, lty = 1:n.strata)
+            }
+        }else{
+            abline(h = 0)
         }
-        abline(h = 0)
     }
     invisible(list(x = x, fn = fn))
 }

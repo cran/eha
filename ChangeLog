@@ -1,3 +1,13 @@
+2.2-6:	(June 23, 2013)
+	* plot.phreg, plot.coxreg: legend added for stratified fits.
+	* Coxreg: New function designed to handle huge data sets. coxreg
+	chokes on 'integer overflow', and memory overflow,  when the
+	collection of risk sets is created and saved. Coxreg is
+	essentially a wrapper for 'coxph' in the 'survival' package, but
+	with methods for nice(r) printing.
+	* coxreg: Error in the calculation of 'total time at risk' fixed
+	(gave negative values when no left truncation!).
+
 2.2-5:	(May 13, 2013)
 	* Gompertz, ltx: Too long lines in the documentation fixed.
 

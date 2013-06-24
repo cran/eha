@@ -4,6 +4,8 @@ check.dist <- function(sp, pp, main = NULL, col = NULL){
     if (!inherits(pp, "phreg"))
         stop ("Second argument must be of type 'phreg' or 'pchreg'")
 
+    if ((!is.null(sp$strata)) || (!is.null(pp$strata)))
+        stop("Not for stratified fits; try a comparison stratum by stratum.") 
     x.max <- max(pp$y[, 2])
     x <- plot.coxreg(sp, fn = "cum", fig = FALSE)$x
     if (is.null(x)){
@@ -26,5 +28,7 @@ check.dist <- function(sp, pp, main = NULL, col = NULL){
         xx <- rbind(xx, c(x.max, xx[NROW(xx), 2])) # Added 2011-08-10 (2.0-3)
         lines(xx[, 1], xx[, 2], type = "s", lty = 2, col = col[2])
     }
+    legend(x = "topleft", legend = c("Parametric", "Non-parametric"),
+           lty = 1:2, col = col)
 }
 
