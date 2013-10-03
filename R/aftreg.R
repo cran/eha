@@ -5,17 +5,25 @@ aftreg <- function (formula = formula(data),
                     init,
                     shape = 0,
                     id,
-                    param = c("default", "survreg", "canonical"),
+                    ##param = c("default", "survreg", "canonical"),
+                    param = c("lifeAcc", "lifeExp"),
                     control = list(eps = 1e-8, maxiter = 20, trace = FALSE),
                     singular.ok = TRUE,
                     model = FALSE,
                     x = FALSE,
-                    y = TRUE,
-                    center = NULL)
+                    y = TRUE)
 {
     param <- param[1]
-    if (!(param %in% c("default", "survreg", "canonical"))){
-        stop(paste(param, "is not a valid parametrization."))
+    if (param == "survreg"){
+        param <- "lifeExp" # backwards compability
+        warning("'survreg' is a deprecated argument value")
+    }else if (param == "canonical"){
+        param <- "lifeExp"
+        warning("'canonical' is a deprecated argument value")
+    }else{
+        if (!(param %in% c("lifeAcc", "lifeExp"))){
+            stop(paste(param, "is not a valid parametrization."))
+        }
     }
     ## if (dist == "gompertz") shape <- 1
     pfixed <- any(shape > 0)
@@ -27,27 +35,27 @@ aftreg <- function (formula = formula(data),
 
     special <- "strata"
     Terms <- if (missing(data))
-      terms(formula, special)
+        terms(formula, special)
     else terms(formula, special, data = data) # Terms is a 'terms' 'formula'
 
     m$formula <- Terms
     m[[1]] <- as.name("model.frame")
     m <- eval(m, parent.frame())
     ##return(m)
-    Y <- model.extract(m, "response")
+        Y <- model.extract(m, "response")
     if (!inherits(Y, "Surv"))
-      stop("Response must be a survival object")
+        stop("Response must be a survival object")
     if (missing(id)) id <- 1:nrow(Y)
     else id <- model.extract(m, "id")
     ##else id <- m$"(id)" # This does not work; leave it for the time being...
-
+    
     ##weights <- model.extract(m, "weights") # No weights (as yet...)
     offset <- attr(Terms, "offset")
     tt <- length(offset)
     offset <- if (tt == 0)
-      rep(0, nrow(Y))
+        rep(0, nrow(Y))
     else if (tt == 1)
-      m[[offset]]
+        m[[offset]]
     else {
         ff <- m[[offset[1]]]
         for (i in 2:tt) ff <- ff + m[[offset[i]]]
@@ -56,35 +64,35 @@ aftreg <- function (formula = formula(data),
     attr(Terms, "intercept") <- 1
     strats <- attr(Terms, "specials")$strata
     dropx <- NULL
-
+    
     if (length(strats)) {
         temp <- untangle.specials(Terms, "strata", 1)
         dropx <- c(dropx, temp$terms)
         if (length(temp$vars) == 1)
-          strata.keep <- m[[temp$vars]]
+            strata.keep <- m[[temp$vars]]
         else strata.keep <- strata(m[, temp$vars], shortlabel = TRUE)
         strats <- as.numeric(strata.keep)
     }
     if (length(dropx))
-      newTerms <- Terms[-dropx]
+        newTerms <- Terms[-dropx]
     else newTerms <- Terms
     X <- model.matrix(newTerms, m)
     ##return(X)
     assign <- lapply(attrassign(X, newTerms)[-1], function(x) x - 1)
-
+    
     X <- X[, -1, drop = FALSE]  ##OBS!!!! No Intercept!
     
     ncov <- NCOL(X)
-
-    #########################################
-
+    
+#########################################
+    
     if (ncov){
         if (length(dropx)){
             covars <- names(m)[-c(1, (dropx + 1))]
-         }else{
-             covars <- names(m)[-1]
+        }else{
+            covars <- names(m)[-1]
         }
-
+        
         isF <- logical(length(covars))
         for (i in 1:length(covars)){
             if (length(dropx)){
@@ -93,16 +101,16 @@ aftreg <- function (formula = formula(data),
                         as.factor(m[, -(dropx + 1)][, (i + 1)])
                 }
                 isF[i] <- is.factor(m[, -(dropx + 1)][, (i + 1)])## ||
-                           ##is.logical(m[, -(dropx + 1)][, (i + 1)]) )
+                ##is.logical(m[, -(dropx + 1)][, (i + 1)]) )
             }else{
                 if (is.logical(m[, (i + 1)])){
                     m[, (i + 1)] <- as.factor(m[, (i + 1)])
                 }
                 isF[i] <- is.factor(m[, (i + 1)]) ##||
-                           ##is.logical(m[, (i + 1)]) )
+                ##is.logical(m[, (i + 1)]) )
             }
         }
-
+        
         if (ant.fak <- sum(isF)){
             levels <- list()
             index <- 0
@@ -122,22 +130,22 @@ aftreg <- function (formula = formula(data),
             levels <- NULL
         }
     }
-
+    
 ##########################################
     type <- attr(Y, "type")
     if (type != "right" && type != "counting")
-      stop(paste("This model doesn't support \"", type, "\" survival data",
-                 sep = ""))
-
+        stop(paste("This model doesn't support \"", type, "\" survival data",
+                   sep = ""))
+    
     if (NCOL(Y) == 2){
         Y <- cbind(numeric(NROW(Y)), Y)
     }
-
+    
     n.events <- sum(Y[, 3] != 0)
     if (n.events == 0) stop("No events; no sense in continuing!")
     if (missing(init))
-      init <- NULL
-
+        init <- NULL
+    
     if (is.list(control)){
         if (is.null(control$eps)) control$eps <- 1e-8
         if (is.null(control$maxiter)) control$maxiter <- 10
@@ -145,17 +153,20 @@ aftreg <- function (formula = formula(data),
     }else{
         stop("control must be a list")
     }
-
+    
+    ##cat("\nEntering aftreg.fit ...")
     fit <- aftreg.fit(X,
                       Y,
                       dist,
+                      param,
                       strats,
                       offset,
                       init,
                       shape,
                       id,
                       control,
-                      center)  # Remove center? DONE!! NO!!! (1.2-17)
+                      pfixed)
+    ##cat("and back!\n\n")
     if (!is.null(fit$overlap)) return(fit$overlap)
     
     if (ncov){
@@ -209,23 +220,23 @@ aftreg <- function (formula = formula(data),
                 if (is.null(init))
                   temp <- fit$coef[nabeta]
                 else temp <- (fit$coef - init)[nabeta]
-                fit$wald.test <-
-                  survival:::coxph.wtest(fit$var[nabeta, nabeta],
-                                         temp, control$toler.chol)$test
+                ##fit$wald.test <-
+                  ##survival:::coxph.wtest(fit$var[nabeta, nabeta],
+                    ##                     temp, control$toler.chol)$test
             }
         }
         na.action <- attr(m, "na.action")
         if (length(na.action))
-          fit$na.action <- na.action
+            fit$na.action <- na.action
         if (model)
-          fit$model <- m
+            fit$model <- m
         if (x) {
             fit$x <- X
             if (length(strats))
               fit$strata <- strata.keep
         }
         if (y)
-          fit$y <- Y
+            fit$y <- Y
     }
     ##if (!is.null(weights) && any(weights != 1))
     ##    fit$weights <- weights
@@ -255,7 +266,7 @@ aftreg <- function (formula = formula(data),
         fit$means <- colMeans(X)
 
     }
-
+    ##cat("\nHere we go !!!!!!!!!!!!!!\n\n")
 ##########################################
     fit$ttr <- sum(s.wght)
     ##names(fit$coefficients) <- coef.names
@@ -273,42 +284,14 @@ aftreg <- function (formula = formula(data),
             scale <- exp(fit$coef[ncov + 2 * j - 1])
             shape <- exp(fit$coef[ncov + 2 * j])
             ## Simulation!
-            baselineMean[j] <- mean(rgompertz(100000,
+            baselineMean[j] <- mean(rgompertz(100000, param = "canonical",
                                               scale = scale, shape = shape))
         }
         fit$baselineMean <- baselineMean
     }else{ # To be filled for other dists!
         fit$baselineMean <- NULL
     }
-    ##if ((param == "survreg")){
-    if (pfixed){
-        fit$coef.survreg <- -fit$coef
-        fit$var.survreg <- fit$var
-        fit$coef.canonical <- -fit$coef
-        fit$var.canonical <- fit$var
-    }else{
-        ## survreg
-        vec.names <- names(fit$coef)
-        A <- diag(c(rep(-1, ncov), rep(c(1, -1), fit$n.strata)))
-        fit$coef.survreg <- as.vector(A %*% fit$coefficients)
-        names(fit$coef.survreg) <- vec.names
-        fit$var.survreg <- A %*% fit$var %*% t(A)
-        colnames(fit$var.survreg) <- rownames(fit$var.survreg) <- vec.names
-        ## fit$A.survreg <- A # Temporary! Remove at publication!
-    
 
-        ## canonical:
-        A <- diag(c(rep(-1, ncov), rep(c(1, 1), fit$n.strata)))
-        for (j in 1:fit$n.strata){
-            A[ncov + 2 * j, ncov + 2 * j - 1] <- 1
-        }
-        fit$coef.canonical <- as.vector(A %*% fit$coefficients)
-        names(fit$coef.canonical) <- vec.names
-        fit$var.canonical <- A %*% fit$var %*% t(A)
-        colnames(fit$var.canonical) <- vec.names
-        rownames(fit$var.canonical) <- vec.names
-        ## fit$A.canonical <- A # Temporary! Remove at publication!
-    }
     ##
     fit$pfixed <- pfixed
     fit

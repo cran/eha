@@ -1,4 +1,4 @@
-gompregRate <- function(X, Y, strata, offset, init, control, center){
+gompregRate <- function(X, Y, strata, offset, init, control){
     ## Gompertz proportional hazards:
     ## Stratum i: h_i(t; beta) = a_i * exp(t * b_i) * exp(x*beta),
     ## or: h_i(t) = exp(shape_i + t * rate_i + x * beta)
@@ -39,7 +39,6 @@ gompregRate <- function(X, Y, strata, offset, init, control, center){
     printlevel <- control$trace
     iter <- control$maxiter
 
-
     ## nstra <- c(0, cumsum(table(strata)))
 
     bdim <- ncov + 2 * ns
@@ -75,8 +74,10 @@ gompregRate <- function(X, Y, strata, offset, init, control, center){
             
             grad[ncov + 2 * i] <- sum(D) -  sum(ezbH) * exp(shape) / rate
             
-            grad[ncov + 2 * i - 1] <- sum(D * T) + sum(ezbH) * exp(shape) / rate^2 -
-                sum(ezb * (T * exp(rate * T) - T0 * exp(rate * T0))) * exp(shape) / rate
+            grad[ncov + 2 * i - 1] <- sum(D * T) +
+                sum(ezbH) * exp(shape) / rate^2 -
+                sum(ezb * (T * exp(rate * T) -
+                           T0 * exp(rate * T0))) * exp(shape) / rate
             
             if (ncov){
                 for (j in 1:ncov){
@@ -211,7 +212,7 @@ gompregRate <- function(X, Y, strata, offset, init, control, center){
             row <- ncov + 2 * i
             shape.corr <- sum(means * fit$coefficients[1:ncov]) #/
             fit$coefficients[row] <- fit$coefficients[row] - shape.corr
-            dxy[row, 1:ncov] <- means
+            dxy[row, 1:ncov] <- -means
         }
         if (is.numeric(fit$var)) fit$var <- dxy %*% fit$var %*% t(dxy)
         fit$dxy <- dxy

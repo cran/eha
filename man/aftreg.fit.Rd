@@ -7,14 +7,15 @@ This function is called by \code{\link{aftreg}}, but it can also be
 directly called by a user.
 }
 \usage{
-aftreg.fit(X, Y, dist, strata, offset, init, shape, id, control,
-center = NULL)
+aftreg.fit(X, Y, dist, param, strata, offset, init, shape,
+id, control, pfixed)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{X}{The design (covariate) matrix.}
   \item{Y}{A survival object, the response.}
   \item{dist}{Which baseline distribution?}
+  \item{param}{Which parametrization?}
   \item{strata}{A stratum variable.}
   \item{offset}{Offset.}
   \item{init}{Initial regression parameter values.}
@@ -22,8 +23,7 @@ center = NULL)
     distribution. Otherwise, the shape is estimated.}
   \item{id}{See corresponding argument to \code{\link{aftreg}}.}
   \item{control}{Controls convergence and output.}
-  \item{center}{Is now deprecated. Centering is done internally, but
-    results reported as if not.}
+  \item{pfixed}{A logical indicating fixed shape parameter(s).}
 }
 \details{
 See \code{\link{aftreg}} for more detail.

@@ -20,26 +20,16 @@ print.aftreg <- function(x, digits=max(options()$digits - 4, 3), ...){
         n.slsh <- 2 * x$n.strata
 
     }
-    if (x$param == "survreg"){
-        coef <- x$coef.survreg
-        se <- sqrt(diag(x$var.survreg))
-    }else if (x$param == "canonical"){
-        coef <- x$coef.canonical
-        se <- sqrt(diag(x$var.canonical))
-    }else{
-        coef <- x$coefficients
-        se <- sqrt(diag(x$var))
-    }
-    ##if (names(x$coef)[1] == "(Intercept)"){
-      ##  x$covars <- c("(Intercept)", x$covars)
-    ##}
+    coef <- x$coefficients
+    se <- sqrt(diag(x$var))
+
     wald.p <- formatC(1 - pchisq((coef/ se)^2, 1),
                       digits = 3,
                       width = 9, format = "f")
     if (is.null(coef) || is.null(se))
         stop("Input is not valid")
 #####################################
-    if (x$param == "default"){
+    if (x$param == "lifeAcc"){
         cat("Covariate          W.mean      Coef Time-Accn  se(Coef)    Wald p\n")
     }else{
         cat("Covariate          W.mean      Coef Life-Expn  se(Coef)    Wald p\n")
@@ -80,23 +70,6 @@ print.aftreg <- function(x, digits=max(options()$digits - 4, 3), ...){
 
     index <- 0
 
-    ##if(x$intercept){
-    ##    index <- index + 1
-    ##    cat(formatC("(Intercept)", width = 25, flag = "-"),
-            ##formatC(x$w.means[[1]],
-              ##      width = 8, digits = 3, format = "f"),
-    ##        coef[index],
-    ##        e.coef[index],
-                                        #exp(coef[index]),
-    ##        se[index],
-                                        #formatC(" ", width = 1),
-    ##        formatC(wald.p[index],
-    ##                digits = 3,
-    ##                width = digits + 2,
-    ##                format = "f"),
-            ##signif(1 - pchisq((coef/ se)^2, 1), digits - 1),
-    ##        "\n")
-    ##}
     if (!is.null(x$covars)){
         n.rows <- length(term.names)
         for (term.no in 1:n.rows){
@@ -210,7 +183,7 @@ print.aftreg <- function(x, digits=max(options()$digits - 4, 3), ...){
             ##signif(1 - pchisq((coef/ se)^2, 1), digits - 1),
             "\n")
     }
-    cat("Baseline mean: ", x$baselineMean, "\n")
+    cat("Baseline life expectancy: ", x$baselineMean, "\n")
 #####################################
     if(FALSE){
         tmp <- cbind(coef, exp(coef), se,

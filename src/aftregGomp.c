@@ -70,6 +70,7 @@ static double aft_funGomp(int n, double *beta, void *vex){
 
     rec = 0;
 
+    /* Now use the 'canonical' as default ("P" --> p/lambda). 2.2-10 */
     for (i = 0; i < indiv; i++){
 	stratum = ex->strata[rec];
 	alpha = beta[mb + 2 * stratum];          /*     Log scale!! */
@@ -81,7 +82,7 @@ static double aft_funGomp(int n, double *beta, void *vex){
 	a_time = ex->time0[rec] * exp(bzmalpha); /* Without */
 	b_time = ex->time[rec] * exp(bzmalpha); /* shape!  */
 	if (ex->ind[rec]){
-	    res1 += gamma + bz[rec] + b_time;
+	    res1 += gamma - alpha + bz[rec] + b_time; /* Change here */
 /*	    Rprintf("res1 = %f\n", res1); */
 /*
 	    res1 += log(gamma) - alphambz + 
@@ -89,7 +90,8 @@ static double aft_funGomp(int n, double *beta, void *vex){
 		log(h0(R_pow(b_time, gamma)));
 */
 	}
-	res2 += p * lambda * (exp(a_time) - exp(b_time));
+	res2 += p * (exp(a_time) - exp(b_time)); /* AND here! */
+	/* res2 += p * lambda * (exp(a_time) - exp(b_time)); */
 /*
   res2 += S0(R_pow(a_time, gamma), log_p) - 
   S0(R_pow(b_time, gamma), log_p);
@@ -107,14 +109,14 @@ static double aft_funGomp(int n, double *beta, void *vex){
 		b_time = a_time + 
 		    (ex->time[rec] - ex->time0[rec]) * exp(bzmalpha);
 		if (ex->ind[rec]){ 
-		    res1 += gamma + bz[rec] + b_time;
+		    res1 += gamma - alpha + bz[rec] + b_time; /* Here */
 /*
 		    res1 += log(gamma) - alphambz + 
 			(gamma - 1) * (log(ex->time[rec]) - alphambz) +
 			log(h0(R_pow(b_time, gamma)));
 */
 		}
-		res2 += p * lambda * (exp(a_time) - exp(b_time));
+		res2 += p * (exp(a_time) - exp(b_time)); /* Here! */
 /*		
 		res2 += S0(R_pow(a_time, gamma), log_p) - 
 		    S0(R_pow(b_time, gamma), log_p);

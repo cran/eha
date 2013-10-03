@@ -9,9 +9,9 @@
 \usage{
 aftreg(formula = formula(data), data = parent.frame(),
 na.action = getOption("na.action"), dist = "weibull", init, shape = 0,
-id, param = c("default", "survreg", "canonical"),
+id, param = c("lifeAcc", "lifeExp"),
 control = list(eps = 1e-08, maxiter = 20, trace = FALSE),
-singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE, center = NULL)
+singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE)
 }
 
 
@@ -32,17 +32,15 @@ singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE, center = NULL)
   \item{init}{vector of initial values of the iteration.
     Default initial value is zero for all variables.}
   \item{shape}{If positive, the shape parameter is fixed at that value.
-    If zero or negative, the shape parameter is estimated. Stratitfication
-    is not meaningful if shape is fixed.}
+    If zero or negative, the shape parameter is estimated. Stratification
+    is now regarded as a meaningful option even if \code{shape} is fixed.}
   \item{id}{If there are more than one spell per individual, it is
     essential to keep spells together by the id argument. This allows for
     time-varying covariates.}
-  \item{param}{Which parametrization should be used? The \code{default}
+  \item{param}{Which parametrization should be used? The \code{lifeAcc}
     uses the parametrization given in the vignette, while the
-    \code{survreg} uses the same as in the \code{\link[survival]{survreg}}
-      function. The \code{canonical} separates the
-      parameters according to AFT or PH. Only(?) useful for the
-      \code{Gompertz} distribution.}
+    \code{lifeExp} uses the same as in the \code{\link[survival]{survreg}}
+      function.}
     \item{control}{a list with components \code{eps} (convergence
       criterion), \code{maxiter} (maximum number of iterations), and
       \code{trace} (logical, debug output if \code{TRUE}).  You can
@@ -51,27 +49,24 @@ singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE, center = NULL)
     \item{model}{Not used.}
     \item{x}{Return the design matrix in the model object?}
     \item{y}{Return the response in the model object?}
-    \item{center}{Deprecated. No centering results are reported.}
   }
 
 \details{
 The parameterization is different
 from the one used by \code{\link[survival]{survreg}}, when \code{param =
-  "default"}.
+  "lifeAcc"}. The result is then true acceleration of time.
 Then the model is
 \deqn{S(t; a, b, \beta, z) = S_0((t / \exp(b -
   z\beta))^{\exp(a)})}{%
   S(t; a, b, beta, z) =  S_0((t/exp(b - z beta))^exp(a))}
 where \eqn{S_0} is some standardized survivor function.
-The base-line parameters \eqn{a} and \eqn{b} are log shape and log
+The baseline parameters \eqn{a} and \eqn{b} are log shape and log
 scale, respectively. This is for the \code{default}
-parametrization. With the \code{survreg} parametrization, some signs are
-changed: \deqn{b - z beta} is changed to \deqn{b + z beta}, and
-\deqn{exp(a)} to \deqn{exp(-a)}. For \code{canonical}, in addition,
-shape is divided by scale, which implies that the new scale indexes an
-AFT family for each fixed shape, while the new shape (like the old)
-indexes a PH family for each fixed scale, but only for the Gompertz
-distribution.    
+parametrization. With the \code{lifeExp} parametrization, some signs are
+changed: \deqn{b - z beta} is changed to \deqn{b + z beta}.
+For the 
+Gompertz distribution, the base parametrization is \code{canonical}, a
+necessity for consistency with the shape/scale paradigm (this is new in 2.3).
 }
 
 \value{
@@ -109,17 +104,12 @@ A list of class \code{c("aftreg", "coxreg")} with components
 \author{\enc{Göran Broström}{George Bridgewater}}
 
 
-%\section{Warning}{The print method \code{\link{print.aftreg}} doesn't work if
-%threeway or higher order interactions are present. Use
-%\code{\link[survival]{print.coxph}} in that case.
-%}
-
 \seealso{\code{\link{coxreg}}, \code{\link{phreg}}, \code{link[survival]{survreg}}
   }
 
 \examples{
 data(mort)
-aftreg(Surv(enter, exit, event) ~ ses, data = mort)
+aftreg(Surv(enter, exit, event) ~ ses, param = "lifeExp", data = mort)
 }
 \keyword{survival}% at least one, from doc/KEYWORDS
 \keyword{regression}% __ONLY ONE__ keyword per line

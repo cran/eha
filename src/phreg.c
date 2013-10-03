@@ -429,8 +429,10 @@ void phsup(int *iter, double *eps, int *printlevel,
 /* 'Mask out' the regression coefficients: */
     for (i = 0; i < *ncov; i++){
 	mask[i] = 0;
+	beta[i] = 0.0;
     }
 
+    if ((dist == 1) || (dist == 2)) mask[0] = 1; /* Intercept */
     for (i = *ncov; i < *bdim; i++){
 	mask[i] = 1;
     }

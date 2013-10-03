@@ -185,9 +185,9 @@ weibreg <-
                 if (is.null(init)) 
                   temp <- fit$coef[nabeta]
                 else temp <- (fit$coef - init)[nabeta]
-                fit$wald.test <-
-                  survival:::coxph.wtest(fit$var[nabeta, nabeta],   
-                                         temp, control$toler.chol)$test
+                ##fit$wald.test <-
+                  ##survival:::coxph.wtest(fit$var[nabeta, nabeta],   
+                    ##                     temp, control$toler.chol)$test
             }
         }
         na.action <- attr(m, "na.action")

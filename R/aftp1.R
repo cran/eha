@@ -46,47 +46,29 @@ aftp1 <- function(printlevel, ns, nn, id,
     for (i in 1:ns){
         beta[i] <- log(sum(Y[, 2] - Y[, 1]) / sum(Y[, 3]))
     }
-    
+
     res <- optim(beta, Fexpmin, method = "BFGS",
                  control = list(trace = as.integer(printlevel)),
-                 hessian = FALSE)
+                 hessian = TRUE)
+
     ncov <- ncov.save
     bdim <- ncov + ns
     beta <- c(rep(0, ncov), res$par)
     loglik.start <- -res$value
-    
-    fit <- optim(beta, Fexpmin, method = "BFGS",
+
+    res1 <- optim(beta, Fexpmin, method = "BFGS",
                  control = list(trace = as.integer(printlevel)),
                  hessian = TRUE)
-    fit$fail <- (fit$convergence > 0.5)
-    fit$beta <- fit$par
-    fit$loglik <- c(loglik.start, -fit$value)
-    fit$variance <- try(solve(fit$hessian))
+
+    fit <- list(beta = res$par, loglik = c(loglik.start, -res$value))
+    fit$fail <- res$convergence != 0
+    fit$var <- try(solve(res$hessian))
     fit$shape.fixed <- TRUE
     fit$shape <- shape
     fit$shape.sd <- NULL  ## Not necessary!?!?
     ##fit$beta[bdim] <- -fit$beta[bdim] # To get "1 / lambda"! NO!!
     ##if (ncov & !center){
-    if (ncov){
-        dxy <- diag(bdim)
-        dxy[bdim, 1:ncov] <- means# / shape
-        scale.corr <- sum(means * fit$beta[1:ncov])# / shape
-        fit$beta[bdim] <- fit$beta[bdim] + scale.corr
-        dxy[bdim, bdim] <- -1
-    }
-    fit$coef.names <- c(colnames(X), "log(scale)")
-
-    if (!fit$fail){
-        if (ncov && is.numeric(fit$variance)){
-            fit$var <- dxy %*% matrix(fit$variance, bdim, bdim) %*% t(dxy)
-            colnames(fit$var) <- rownames(fit$var) <- fit$coef.names
-        }else{
-            fit$var <- fit$variance
-        }
-    }
-    else
-        fit$var <- NULL
-
+    
     fit$ncov <- ncov
     fit
 }
