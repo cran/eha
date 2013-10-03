@@ -10,12 +10,28 @@ phreg.fit <- function(X,
 
     if (dist == "weibull"){
         dis <- 0
+        center <- TRUE
+        intercept <- FALSE
     }else if(dist == "loglogistic"){
         dis <- 1
+        center <- FALSE
+        intercept <- TRUE
+        ##namn <- colnames(X)
+        ##X <- cbind(rep(1, NROW(X)), X)
+        ##colnames(X) <- c("(Intercept)", namn)
+        if (!missing(init)) init <- c(0, init)
     }else if (dist == "lognormal"){
         dis <- 2
+        center <- FALSE
+        intercept <- TRUE
+        ##namn <- colnames(X)
+        ##X <- cbind(rep(1, NROW(X)), X)
+        ##colnames(X) <- c("(Intercept)", namn) 
+        if (!missing(init)) init <- c(0, init)
     }else if (dist == "ev"){
         dis <- 3
+        center <- TRUE
+        intercept <- FALSE
     }else if (dist == "gompertz"){
         stop("phreg.fit cannot be used with 'gompertz', try 'gompreg'")
     }else if (dist == "pch"){
@@ -27,8 +43,9 @@ phreg.fit <- function(X,
     nn <- NROW(X)
     ncov <- NCOL(X)
 
+    
     ## Should we really have _weighted_ means? Yes! (Cf. coxreg.fit)
-    if (ncov){
+    if (ncov && center){
         wts <- Y[, 2] - Y[, 1]
         w.means <- apply(X, 2, weighted.mean, w = wts)
         means <- colMeans(X)
@@ -113,7 +130,7 @@ phreg.fit <- function(X,
                              )
         ##if (!center){ # Transform to original values
         ##if (!center){ # NOPE!!! Transform to original values
-        if (TRUE){ # 'center' is deprecated' ... (not reported)
+        if (ncov && center){ # 'center' is deprecated' ... (not reported)
             dxy <- diag(2 * ns + ncov)
             for (i in 1:ns){ ## Really a HACK ??!!!!!!!!!!!!!!!
                 row <- ncov + 2 * i - 1
@@ -202,7 +219,7 @@ phreg.fit <- function(X,
         fit$shape.sd <- NULL  ## Not necessary!?!?
         ##fit$beta[bdim] <- -fit$beta[bdim] # To get "1 / lambda"! NO!!
         ##if (!center){# i.e., never...
-        if (TRUE){# always transform back ....
+        if (center && ncov){# always transform back ....
             dxy <- diag(bdim)
             if (ncov){
                 dxy[bdim, 1:ncov] <- means / shape
@@ -210,7 +227,7 @@ phreg.fit <- function(X,
                 fit$beta[bdim] <-
                     fit$beta[bdim] + scale.corr
             }
-            dxy[bdim, bdim] <- -1
+            ##dxy[bdim, bdim] <- -1
         }
         coef.names <- c(colnames(X), "log(scale)")
 
@@ -220,12 +237,11 @@ phreg.fit <- function(X,
     ##cat("done!\n")
 
     if (!fit$fail){
-        ##if (!center){ # Transform back...
-        ##if (FALSE){ # NOPE...Transform back...
-        var <- dxy %*% matrix(fit$variance, bdim, bdim) %*% t(dxy)
-        ##}else{
-        ##    var <- matrix(fit$variance, bdim, bdim)
-        ##}
+        if (center && ncov){ # Transform back...
+            var <- dxy %*% matrix(fit$variance, bdim, bdim) %*% t(dxy)
+        }else{
+            var <- matrix(fit$variance, bdim, bdim)
+       }
         colnames(var) <- rownames(var) <- coef.names
     }
     else
@@ -233,9 +249,9 @@ phreg.fit <- function(X,
 
     coefficients <- fit$beta
     names(coefficients) <- coef.names
-
+    if (intercept) df <- ncov - 1 else df <- ncov
     list(coefficients = coefficients,
-         df = ncov,
+         df = df,
          var = var,
          loglik = fit$loglik,
          score = fit$sctest,

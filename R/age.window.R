@@ -16,10 +16,15 @@ age.window <- function(dat, window,
     
     who <- (exit > window[1]) & (enter < window[2])
     if (sum(who) > 0.5){ # Not empty selection!
-        event <- ifelse( (exit > window[2]), 0, event)
+        enter <- enter[who]
+        exit <- exit[who]
         event <- event[who]
-        exit <- pmin(exit[who], window[2])
-        enter <- pmax(enter[who], window[1])
+        ##event <- ifelse(exit > window[2], 0, event)
+        event[exit > window[2]] <- 0
+        ##exit <- pmin(exit, window[2])
+        exit[exit > window[2]] <- window[2]
+        ##enter <- pmax(enter[who], window[1])
+        enter[enter < window[1]] <- window[1]
         
         dat <- dat[who, ]
         dat[, surv.indices[1]] <- enter

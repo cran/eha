@@ -22,9 +22,12 @@ print.phreg <- function(x, digits=max(options()$digits - 4, 3), ...){
     }
     coef <- x$coef
 
-    ##if (names(x$coef)[1] == "(Intercept)"){
-      ##  x$covars <- c("(Intercept)", x$covars)
-    ##}
+    if (names(x$coef)[1] == "(Intercept)"){
+        ##x$covars <- c("(Intercept)", x$covars)
+        intercept <- TRUE
+    }else{
+        intercept <- FALSE
+    }
     if (is.numeric(x$var)){
         se <- sqrt(diag(x$var))
     }else{
@@ -80,8 +83,8 @@ print.phreg <- function(x, digits=max(options()$digits - 4, 3), ...){
 
     index <- 0
 
-    ##if(x$intercept){
-    if (FALSE){
+    if(intercept){
+    ##if (FALSE){
         index <- index + 1
         cat(formatC("(Intercept)", width = 25, flag = "-"),
             ##formatC(x$w.means[[1]],

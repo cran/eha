@@ -54,16 +54,18 @@ dllogis <- function(x, shape = 1, scale = 1, log = FALSE){
     return (ret)
 }
 
-hllogis <- function(x, shape = 1, scale = 1, log = FALSE){
-    if ( any(c(shape, scale) <= 0) ){
-        warning("Non-positive shape or scale")
+hllogis <- function(x, shape = 1, scale = 1, prop = 1, log = FALSE){
+    ## New argument 'prop', a proportionality parameter in
+    ## an extended loglogistic distribution, added in version 2.3-0.
+    if ( any(c(shape, scale, prop) <= 0) ){
+        warning("Non-positive shape, scale, or prop")
         return(NaN)
     }
     y <- x / scale
-    ret <- ifelse(x < 0,
-                    0,
-                    (shape / scale) * y^(shape - 1) / (1 + y^shape)
-                    )
+    ret <- prop * ifelse(x < 0,
+                         0,
+                         (shape / scale) * y^(shape - 1) / (1 + y^shape)
+                         )
     if (log) ret <- ifelse(ret <= 0, -Inf, log(ret))
 
     return(ret)
@@ -89,13 +91,15 @@ qllogis <- function(p, shape = 1, scale = 1, lower.tail = TRUE, log.p = FALSE) {
 
 
 
-Hllogis <- function(x, shape = 1, scale = 1, log.p = FALSE){
-    if ( any(c(shape, scale) <= 0) ){
-        warning("Non-positive shape or scale")
+Hllogis <- function(x, shape = 1, scale = 1, prop = 1, log.p = FALSE){
+    ## New argument 'prop', a proportionality parameter in
+    ## an extended loglogistic distribution, added in version 2.3-0.
+    if ( any(c(shape, scale, prop) <= 0) ){
+        warning("Non-positive shape, scale, or prop")
         return(NaN)
     }
 
-    ret = -pllogis(x, shape, scale, lower.tail = FALSE, log.p = TRUE)
+    ret = -prop * pllogis(x, shape, scale, lower.tail = FALSE, log.p = TRUE)
     if (log.p) ret <- log(ret)
 
     return (ret)

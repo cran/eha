@@ -139,21 +139,22 @@ coxreg <- function (formula = formula(data),
         
     ##########################################
 
-    if (cox.ph){
+    if (FALSE){      ## This has to be fixed in the future!!
+    ##if (cox.ph){
         type <- attr(Y, "type")
         control$iter.max <- control$maxiter
         control$toler.chol = .Machine$double.eps^0.75
         control$toler.inf = sqrt(control$eps)
         control$outer.max <- 10
-        if (type == "counting"){
-            fit <- survival:::agreg.fit(X, Y, strats, offset, init,
-                                        control, weights = weights,
-                                        method = method, row.names(m))
-        }else{
-            fit <- survival:::coxph.fit(X, Y, strats, offset, init,
-                                        control, weights = weights,
-                                        method = method, row.names(m))
-        }
+        ##if (type == "counting"){
+        ##    fit <- survival:::agreg.fit(X, Y, strats, offset, init,
+        ##                                control, weights = weights,
+        ##                                method = method, row.names(m))
+        ##}else{
+        ##    fit <- survival::coxph.fit(X, Y, strats, offset, init,
+        ##                                control, weights = weights,
+        ##                                method = method, row.names(m))
+        ##}
         ## get hazards
         rs <- risksets(Y, strats)
         hazard <- .Fortran("gethaz",
@@ -280,9 +281,9 @@ coxreg <- function (formula = formula(data),
                 if (is.null(init))
                     temp <- fit$coef[nabeta]
                 else temp <- (fit$coef - init)[nabeta]
-                fit$wald.test <-
-                    survival:::coxph.wtest(fit$var[nabeta, nabeta],
-                                           temp, control$toler.chol)$test
+                ##fit$wald.test <-
+                  ##  survival:::coxph.wtest(fit$var[nabeta, nabeta],
+                    ##                       temp, control$toler.chol)$test
             }
         }
         na.action <- attr(m, "na.action")

@@ -1,5 +1,6 @@
 aftp0g <- function(printlevel, ns, nn, id,
-                   strata, Y, X, offset, means){
+                   strata, Y, X, offset, means, param){
+    pfixed <- FALSE # Never fix 'shape' with Gompertz (why?)
     ## Gompertz aft-reg!
     Fmin <- function(beta){
 
@@ -55,57 +56,15 @@ aftp0g <- function(printlevel, ns, nn, id,
     ncov <- ncov.save
     bdim <- ncov + 2 * ns
     beta <- c(rep(0, ncov), beta)
-    fit <- optim(beta, Fmin, method = "BFGS",
+    res <- optim(beta, Fmin, method = "BFGS",
                  control = list(trace = as.integer(printlevel)),
                  hessian = TRUE)
-    fit$beta <- fit$par
-    fit$loglik <- c(loglik.start, -fit$value)
-    fit$variance <- try(solve(fit$hessian))
-    fit$fail <- FALSE
-    if (ncov){
-        dxy <- diag(2 * ns + ncov)
-        for (i in 1:ns){ ## Really a HACK ??!!!!!!!!!!!!!!!
-            row <- ncov + 2 * i - 1
-            col <- row + 1
-            ## fit$beta[row] <- -fit$beta[row] NOT ANY MORE!
-            if (ncov){
-                ##pi.hat <- exp(fit$beta[col])
-                scale.corr <- sum(means * fit$beta[1:ncov]) #/
-                ##pi.hat
-                fit$beta[row] <- fit$beta[row] + scale.corr
-                dxy[row, 1:ncov] <- means # / pi.hat
-                dxy[row, col] <- -scale.corr
-            }
-            ##dxy[row, row] <- -1
-        }
-    }
-    
-    coef.names <- colnames(X)
-    if (ns > 1){
-        for (i in 1:ns){
-            coef.names <- c(coef.names,
-                            paste("log(scale)", as.character(i), sep =":"),
-                            paste("log(shape)", as.character(i), sep =":"))
-        }
-        
-    }else{
-        coef.names <- c(coef.names,
-                        "log(scale)", "log(shape)")
-    }
-    
-    fit$coef.names <- coef.names
-    fit$shape.fixed <- FALSE
+    fit <- list(beta = res$par, loglik = c(loglik.start, -res$value))
 
-    if (!fit$fail){
-        if (ncov && is.numeric(fit$variance)){
-            fit$var <- dxy %*% matrix(fit$variance, bdim, bdim) %*% t(dxy)
-            colnames(fit$var) <- rownames(fit$var) <- fit$coef.names
-        }else{
-            fit$var <- fit$variance
-        }
-    }
-    else
-        fit$var <- NULL
+    fit$var <- try(solve(res$hessian))
+    fit$fail <- res$convergence != 0 # Optimistic?
+        
+    fit$coef.names <- names(fit$beta)
 
     fit$ncov <- ncov
     fit

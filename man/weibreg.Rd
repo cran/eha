@@ -45,8 +45,8 @@ The parameterization is the same as in \code{\link{coxreg}}
 and \code{\link[survival]{coxph}}, but different
 from the one used by \code{\link[survival]{survreg}}.
 The model is
-\deqn{h(t; a, b, \beta, z) = (a/b) (t/b)^{a-1}\exp(z\beta)}{%
-      h(t; a, b, beta, z) =  (a/b) (t/b)^(a-1)\exp(z beta)}
+\deqn{h(t; a, b, \beta, z) = (a/b) (t/b)^{a-1} exp(z\beta)}{%
+      h(t; a, b, beta, z) =  (a/b) (t/b)^(a-1) exp(z beta)}
 This is in correspondence with \code{\link{Weibull}}. To compare
 regression coefficients 
 with those from \code{survreg} you need to divide by estimated shape

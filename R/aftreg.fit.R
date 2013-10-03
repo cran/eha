@@ -1,7 +1,7 @@
-aftreg.fit <- function(X, Y, dist,
+aftreg.fit <- function(X, Y, dist, param,
                        strata, offset,
                        init, shape, id,
-                       control, center = NULL){
+                       control, pfixed){
 
     ## New in Version 1.2-9; wrong before!
     ## Note that we MUST keep individuals together here;
@@ -96,38 +96,67 @@ aftreg.fit <- function(X, Y, dist,
 
     ## Not needed?? nstra <- c(0, cumsum(table(strata)))
 
-    if (all(shape <= 0) || (dist == "gompertz")){
-        ## Then shape is estimated in all strata
-        if (dist == "gompertz"){
-            fit <- aftp0g(printlevel, ns, nn, id,
-                         strata, Y, X, offset, means)
-        }else{
-            fit <- aftp0(printlevel, ns, nn, id,
-                         strata, Y, X, offset, dis, means)
-        }
+
+    if (dist == "gompertz"){ # Special treatment
+        pfixed <- FALSE # No fix for Gompertz (yet).
+        fit <- aftp0g(printlevel, ns, nn, id,
+                      strata, Y, X, offset, means, param)
+    }else if (!pfixed){
+        fit <- aftp0(printlevel, ns, nn, id,
+                     strata, Y, X, offset, dis, means)
     }else{
-        ## Then shape is fixed in all strata:
-        ## Note: We must allow stratification even here (091006)!!
         fit <- aftp1(printlevel, ns, nn, id,
                      strata, Y, X, offset, shape, dis, means)
     }            
-    
 
+    ## Add back means:
+    if (ncov){
+        rew <- addMeans(means = means,
+                        par = fit$beta,
+                        var = fit$var,
+                        ns = ns,
+                        pfixed = pfixed,
+                        coef.names = colnames(X))
+        fit$beta <- rew$par
+        fit$var <- rew$var
+    }else{
+        ## Just add names
+        if (ns > 1){
+            coef.names <- c("log(scale):1", "log(shape):1")
+            for (i in 2:ns){
+                coef.names <- c(coef.names,
+                            paste("log(scale)", as.character(i), sep =":"),
+                            paste("log(shape)", as.character(i), sep =":"))
+            }
+            
+        }else{
+            coef.names <- c("log(scale)", "log(shape)")
+        }
+        names(fit$beta) <- coef.names
+        colnames(fit$var) <- rownames(fit$var) <- coef.names
+    }
+
+    ## Reparametrisation (if asked for):
+
+    if ((param == "lifeExp") && ncov){
+        new.par <- translifeExp(fit$beta, fit$var, ns, pfixed)
+        coefficients <- new.par$coefficients
+        var <- new.par$var
+    }else{
+        coefficients <- fit$beta
+        var <- fit$var
+    }
     ##cat("done!\n")
 
-    coefficients <- fit$beta
-    names(coefficients) <- fit$coef.names
+    ##coefficients <- fit$beta
 
     list(coefficients = coefficients,
          df = fit$ncov,
-         var = fit$var,
+         var = var,
          loglik = fit$loglik,
-         ##score = fit$sctest,
-         convergence = (fit$conver == 0),
+         convergence = !fit$fail,
          fail = fit$fail,
-         ##iter = fit$iter,
-         n.strata = ns#,
-         ##shape = fit$shape
+         n.strata = ns,
+         pfixed = pfixed
          )
-
 }

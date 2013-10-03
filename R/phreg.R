@@ -66,12 +66,23 @@ phreg <- function (formula = formula(data),
     else newTerms <- Terms
     X <- model.matrix(newTerms, m)
     ##return(X)
-    assign <- lapply(attrassign(X, newTerms)[-1], function(x) x - 1)
+    if (!(dist %in% c("lognormal", "loglogistic"))){
+        assign <- lapply(attrassign(X, newTerms)[-1], function(x) x - 1)
+    }else{
+        assign <- lapply(attrassign(X, newTerms), function(x) x - 1)
+    }
+    ## Lognormal & loglogistic need an intercept:
 
-    X <- X[, -1, drop = FALSE]
-    ncov <- NCOL(X)
+    if (!(dist %in% c("lognormal", "loglogistic"))){
+        X <- X[, -1, drop = FALSE]
+        intercept <- FALSE
+        ncov <- NCOL(X)
+    }else{
+        intercept <- TRUE
+        ncov <- ncol(X) - 1
+    }
 
-    #########################################
+#########################################
 
     if (ncov){
         if (length(dropx)){
@@ -151,16 +162,14 @@ phreg <- function (formula = formula(data),
                            strats,
                            offset,
                            init,
-                           control,
-                           center)
+                           control)
         }else if (param == "rate"){
             fit <- gompregRate(X,
                                Y,
                                strats,
                                offset,
                                init,
-                               control,
-                               center)
+                               control)
         }else{
             stop(paste(param, " is not a known parametrization."))
         }
@@ -191,7 +200,8 @@ phreg <- function (formula = formula(data),
     }
 
     if (ncov){
-        fit$linear.predictors <- offset + X %*% fit$coefficients[1:ncov]
+        fit$linear.predictors <- offset + X %*%
+            fit$coefficients[1:(ncov + intercept)]
         fit$means <- apply(X, 2, mean)
     }else{
         fit$linear.predictors <- NULL
@@ -241,9 +251,9 @@ phreg <- function (formula = formula(data),
                 if (is.null(init))
                   temp <- fit$coef[nabeta]
                 else temp <- (fit$coef - init)[nabeta]
-                fit$wald.test <-
-                  survival:::coxph.wtest(fit$var[nabeta, nabeta],
-                                         temp, control$toler.chol)$test
+                ##fit$wald.test <-
+                  ##survival:::coxph.wtest(fit$var[nabeta, nabeta],
+                    ##                     temp, control$toler.chol)$test
             }
         }
         na.action <- attr(m, "na.action")

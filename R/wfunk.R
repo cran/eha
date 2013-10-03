@@ -84,5 +84,5 @@ wfunk <- function(beta = NULL, lambda, p, X = NULL, Y,
             ret$fpp <- xx %*% matrix(fit$fpp, ncol = bdim) %*% t(xx)
         }
     }    
-    return(ret)
+    ret
 }
