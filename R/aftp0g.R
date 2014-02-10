@@ -40,18 +40,22 @@ aftp0g <- function(printlevel, ns, nn, id,
     ncov.save <- ncov
     ncov <- 0
     beta <- numeric(bdim)
-    for (i in 1:ns){
-        enter <- Y[strata == 1, 1]
-        exit <-  Y[strata == 1, 2]
-        event <-  Y[strata == 1, 3]
+    for (i in seq_len(ns)){
+        enter <- Y[strata == i, 1]
+        exit <-  Y[strata == i, 2]
+        event <-  Y[strata == i, 3]
         
-        alpha <- log(max(exit))
+        #alpha <- log(max(exit))
         beta[(2 * i - 1):(2 * i)] <- gompstartAft(enter, exit, event)
         ##beta[2 * i - 1] <- log(sum(Y[, 2] - Y[, 1]) / sum(Y[, 3]))
         ##beta[2*i] <- 0
     }
-    
-    loglik.start <- -optim(beta, Fmin, method = "BFGS", hessian = FALSE)$value
+    ## This is not strictly becessary, but:
+    res0 <- optim(beta, Fmin, method = "BFGS", hessian = FALSE)
+    loglik.start <- -res0$value
+    ##cat("\nloglik.start = ", loglik.start, "\n")
+    ##cat("beta = ", res0$par, "\n\n")
+    ##cat("convergence = ", res0$convergence, "\n\n")
     ## And now the real thing:
     ncov <- ncov.save
     bdim <- ncov + 2 * ns
@@ -59,6 +63,7 @@ aftp0g <- function(printlevel, ns, nn, id,
     res <- optim(beta, Fmin, method = "BFGS",
                  control = list(trace = as.integer(printlevel)),
                  hessian = TRUE)
+    ##cat("\nloglik = ", -res$value, "\n")
     fit <- list(beta = res$par, loglik = c(loglik.start, -res$value))
 
     fit$var <- try(solve(res$hessian))

@@ -14,8 +14,9 @@ print.coxreg <-
         }
     }
 
-    if (!length(x$coefficients)){
-        cat("Null log likelihood = ", x$loglik[2], "\n")
+    if (x$nullModel){
+        ##cat("Null log likelihood = ", x$loglik[2], "\n")
+        cat("Null model\n")
         return()
     }
 
@@ -182,7 +183,7 @@ print.coxreg <-
     cat(formatC("Max. log. likelihood", width = 25, flag = "-"),
         formatC(x$loglik[2], digits = 5, format = "fg"), "\n")
     cat(formatC("LR test statistic", width = 25, flag = "-"),
-        format(round(logtest, 2)), "\n")
+        format(round(logtest, 2), nsmall = 2), "\n")
     cat(formatC("Degrees of freedom", width = 25, flag = "-"),
         formatC(df, digits = 0, format = "f"), "\n")
     cat(formatC("Overall p-value", width = 25, flag = "-"),

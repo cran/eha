@@ -6,8 +6,12 @@ plot.hazdata <- function(x, strata = NULL,
                          main = NULL,
                          xlab = NULL,
                          ylab = NULL,
+                         col = "black",
+                         lty = 1,      # Jan 17, 2014.
+                         printLegend = TRUE, # Jan 17, 2014.
                          ...
                          ){
+    ## Added 7 dec 2013: col.
     ## x is of type 'hazdata', which is a list with two-column matrices
     ## as components, one component per stratum. The first column contains
     ## risktimes, and the second column the corresponding 'hazard atoms'.
@@ -33,6 +37,9 @@ plot.hazdata <- function(x, strata = NULL,
 
     n.strata <- length(x)
 
+    if (length(col) < n.strata) col <- rep(col, n.strata)
+    if (length(lty) < n.strata) lty <- rep(lty, n.strata)
+    
     yVal <- function(x){
         if (fn == "cum") return(cumsum(x))
         if (fn %in% c("log", "loglog")) return(log(cumsum(x)))
@@ -94,19 +101,25 @@ plot.hazdata <- function(x, strata = NULL,
     }
     if (fig){
         plot(x[[1]][, 1], x[[1]][, 2], type = "s",
-             xlim = xlim, ylim = ylim,
-             xlab = xlab, ylab = ylab, main = main, lty = 1, ...)
+             xlim = xlim, ylim = ylim, col = col[1],
+             xlab = xlab, ylab = ylab, main = main, lty = lty[1], ...)
         if (n.strata > 1){
             for (i in 2:n.strata){
-                lines(x[[i]][, 1], x[[i]][, 2], type = "s", lty = i)
+                lines(x[[i]][, 1], x[[i]][, 2], type = "s", lty = lty[i],
+                      col = col[i], ...)
             }
             if (is.null(strata)) strata <- 1:n.strata
-            if (fn == "cum"){
-                legend(x = "bottomright", legend = strata, lty = 1:n.strata)
-            }else if (fn == "surv"){
-                legend(x = "bottomleft", legend = strata, lty = 1:n.strata)
-            }else{
-                legend(x = "bottomright", legend = strata, lty = 1:n.strata)
+            if (printLegend){
+                if (fn == "cum"){
+                    legend(x = "bottomright", legend = strata, lty = lty,
+                           col = col, inset = 0.02)
+                }else if (fn == "surv"){
+                    legend(x = "bottomleft", legend = strata, lty = lty,
+                           col = col, inset = 0.02)
+                }else{
+                    legend(x = "bottomright", legend = strata, lty = lty,
+                           col = col, inset = 0.02)
+                }
             }
         }else{
             abline(h = 0)

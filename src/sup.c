@@ -532,7 +532,7 @@ C +++
 }
 
 /* Bootstrapping? */
-/* Needs fixing incase of time-varying offset! */
+/* Needs fixing in case of time-varying offset! */
     if (*boot){
 	
 	prob = (double *)R_alloc((long)(*totsize), sizeof(double));
@@ -611,4 +611,3 @@ C     Note the consequences in calling function!!
     for (j = 0; j < *totsize; j++) riskset[j]++;
 
 }
-    

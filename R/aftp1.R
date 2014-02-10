@@ -43,7 +43,7 @@ aftp1 <- function(printlevel, ns, nn, id,
     ncov.save <- ncov
     ncov <- 0
     beta <- numeric(bdim)
-    for (i in 1:ns){
+    for (i in seq_len(ns)){
         beta[i] <- log(sum(Y[, 2] - Y[, 1]) / sum(Y[, 3]))
     }
 

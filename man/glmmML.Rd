@@ -109,7 +109,7 @@ possibility to fix the value of sigma at several values and study the
 profile likelihood.}
 
 \seealso{\code{\link{glmmboot}}, \code{\link{glm}}, \code{\link{optim}},
-  \code{\link[lme4]{lmer}} in \code{Matrix}and
+  \code{\link[lme4]{lmer}} in \code{lme4} and
 \code{\link[MASS]{glmmPQL}} in \code{MASS}.} 
 
 \examples{

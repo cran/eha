@@ -5,13 +5,20 @@ plot.phreg <- function(x,
                        ylim = NULL,
                        xlab = "Duration",
                        ylab = "",
+                       col,   ## New 6 Feb 2013
+                       lty,   ## New 6 Feb 2013
+                       printLegend = TRUE,
                        new.data = NULL,
                          ...){
 
-    if (is.null(new.data)) new.data <- x$means
-    
     if (!inherits(x, "phreg")) stop("Works only with 'phreg' objects.")
-    ##if (x$pfixed) stop("True exponential hazards are not plotted")
+    if (!is.null(new.data)) warning("argument 'newdata' is not used any more")
+    if (missing(col)) col <- rep(1, x$n.strata) ## New 2013-12-05
+    if (missing(lty)) lty <- 1:x$n.strata # No. of strata
+
+    if (length(col) < x$n.strata) col <- rep(col, x$n.strata)
+    if (length(lty) < x$n.strata) lty <- rep(lty, x$n.strata)
+
     if (!(all(fn %in% c("haz", "cum", "den", "sur"))))
         stop(paste(fn, "is an illegal value of 'fn'"))
 
@@ -33,9 +40,8 @@ plot.phreg <- function(x,
         scale <- exp(x$coefficients[ncov + (1:ns) * 2 - 1])
     }
 
-    if (ncov){
-        ##score <- exp(sum((new.data - x$means) * x$coefficients[1:ncov]))
-        score <- exp(sum(new.data * x$coefficients[1:ncov]))
+    if (ncov && x$center){# New in 2.4-0:
+        score <- exp(sum(x$means * x$coefficients[1:ncov]))
     }else{
         score <- 1
     }
@@ -57,14 +63,27 @@ plot.phreg <- function(x,
     if (x$dist == "weibull"){
         for (i in 1:ns){
             scal <- scale[i] / (score)^(1/shape[i])
+            cat("[weibull] score = ", score, "\n")
+            cat("[weibull] shape = ", shape[i], "\n")
+            cat("[weibull] scal = ", scal, "\n")
+            cat("[weibull] scale = ", scale[i], "\n")
             haz[i, ] <- hweibull(xx, shape = shape[i],
                                  scale = scal)
+            cat("[weibull] max(haz) = ", max(haz[, i]), "\n")
             sur[i, ] <- pweibull(xx, shape = shape[i],
                                  scale = scal, lower.tail = FALSE)
             Haz[i, ] <- Hweibull(xx, shape = shape[i],
                                  scale = scal)
         }
         dist <- "Weibull"
+    }else if (x$dist == "pch"){
+        for (i in 1:ns){
+            haz[i, ] <- hpch(xx, x$cuts, score * x$hazards[i, ])
+            sur[i, ] <- ppch(xx, x$cuts, score * x$hazards[i, ],
+                             lower.tail = FALSE)
+            Haz[i, ] <- Hpch(xx, x$cuts, score * x$hazards[i, ])
+        }
+        dist <- "Pcwise const"
     }else if (x$dist == "loglogistic"){
         for (i in 1:ns){
             haz[i, ] <- hllogis(xx, shape = shape[i],
@@ -140,19 +159,20 @@ plot.phreg <- function(x,
         }else{
             hmain <- main
         }
-        plot(xx, haz[1, ], type = "l", xlim = xlim, ylim = ylim0, col = 1,
+        plot(xx, haz[1, ], type = "l", xlim = xlim, ylim = ylim0,
+             col = col[1], lty = lty[1],
              xlab = xlab, ylab = ylab, main = hmain, ...)
         if (ns > 1){
             for (i in 2:ns){
-                lines(xx, haz[i, ], type = "l", lty = i, col = i)
+                lines(xx, haz[i, ], type = "l", lty = lty[i], col = col[i])
             }
         }
         ##abline(h = 0)
         ##abline(v = 0)
-        if (ns > 1){
-            legend(x = "bottomright",  legend = x$strata, lty = 1:ns,
+        if ((ns > 1) && printLegend){
+            legend(x = "bottomright",  legend = x$strata, lty = lty,
                    inset = 0.001,
-                   col = 1:ns)
+                   col = col)
         }
     }
     ## Cumulative hazard
@@ -174,16 +194,18 @@ plot.phreg <- function(x,
             Hmain <- main
         }
         plot(xx, Haz[1, ], type = "l", xlim = xlim, ylim = ylim0,
-             xlab = xlab, ylab = ylab, main = Hmain, ...)
+             xlab = xlab, ylab = ylab, main = Hmain, col = col[1],
+             lty = lty[1], ...)
         if (ns > 1){
             for (i in 2:ns){
-                lines(xx, Haz[i, ], type = "l", lty = i)
+                lines(xx, Haz[i, ], type = "l", lty = lty[i], col = col[i])
             }
         }
         ##abline(h = 0)
         ##abline(v = 0)
-        if (ns > 1){
-            legend(x = "topleft",  legend = x$strata, lty = 1:ns)
+        if ((ns > 1) && printLegend){
+            legend(x = "topleft",  legend = x$strata, lty = lty,
+                   col = col, inset = 0.001)
         }
     }
     ## density
@@ -205,19 +227,20 @@ plot.phreg <- function(x,
             dmain <- main
         }
         plot(xx, den[1, ], type = "l", xlim = xlim, ylim = ylim,
-             xlab = xlab, ylab = ylab, main = dmain, ...)
+             xlab = xlab, ylab = ylab, main = dmain, lty = lty[1],
+             col = col[1], ...)
         if (ns > 1){
             for (i in 2:ns){
-                lines(xx, den[i, ], type = "l", lty = i)
+                lines(xx, den[i, ], type = "l", lty = lty[i], col = col[i])
             }
         }
         abline(h = 0)
         abline(v = 0)
 
-        if (ns > 1){
-            legend(x = "topright",  legend = x$strata, lty = 1:ns,
+        if ((ns > 1) && printLegend){
+            legend(x = "topright",  legend = x$strata, lty = lty,
                    inset = 0.001,
-                   col = 1:ns)
+                   col = col)
         }
         
     }
@@ -237,19 +260,21 @@ plot.phreg <- function(x,
             smain <- main
         }
         plot(xx, sur[1, ], type = "l", xlim = xlim, ylim = ylim,
-             xlab = xlab, ylab = ylab, main = smain, ...)
+             xlab = xlab, ylab = ylab, main = smain, lty = lty[1],
+             col = col[1], ...)
         if (ns > 1){
             for (i in 2:ns){
-                lines(xx, sur[i, ], type = "l", lty = i)
+                lines(xx, sur[i, ], type = "l", lty = lty[i],
+                      col = col[i])
             }
         }
         abline(h = 0)
         abline(v = 0)
 
-        if (ns > 1){
-            legend(x = "bottomleft",  legend = x$strata, lty = 1:ns,
+        if ((ns > 1) && printLegend){
+            legend(x = "bottomleft",  legend = x$strata, lty = lty,
                    inset = 0.001,
-                   col = 1:ns)
+                   col = col)
         }
         
 

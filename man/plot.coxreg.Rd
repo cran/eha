@@ -8,7 +8,7 @@
 \usage{
 \method{plot}{coxreg}(x, fn = c("cum", "surv", "log", "loglog"), fig = TRUE,
 xlim=NULL, ylim=NULL, main=NULL, xlab="Duration", ylab="",
-new.data = NULL, \ldots)
+col, lty, printLegend, new.data = NULL, \ldots)
 }
 \arguments{
   \item{x}{A \code{coxreg} object, typically the output from
@@ -21,6 +21,9 @@ new.data = NULL, \ldots)
   \item{main}{A heading for the plot.}
   \item{xlab}{Label on the x axis.}
   \item{ylab}{Label on the y-axis.}
+  \item{col}{Line color(s). Black if left out.}
+  \item{lty}{Line type(s). Solid if left out.}
+  \item{printLegend}{Logical; should a legend be produced? Default is TRUE.}
   \item{new.data}{At what covariate values should the calculations be
     done? Default is the mean values of the covariates.}
   \item{...}{Anything that \code{\link[graphics]{plot.default}} likes...}

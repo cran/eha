@@ -71,6 +71,7 @@ static double aft_funGomp(int n, double *beta, void *vex){
     rec = 0;
 
     /* Now use the 'canonical' as default ("P" --> p/lambda). 2.2-10 */
+    /* gamma --> gamma - alpha */
     for (i = 0; i < indiv; i++){
 	stratum = ex->strata[rec];
 	alpha = beta[mb + 2 * stratum];          /*     Log scale!! */

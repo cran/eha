@@ -6,14 +6,16 @@ addMeans <- function(means, par, var, ns, pfixed, coef.names){
     if (pfixed){
         ncov <- length(par) - ns
         dxy <- diag(ns + ncov)
-        for (i in 1:ns){
+##        for (i in 1:ns){
+        for (i in seq_len(ns)){
             row <- ncov + i
             dxy[row, 1:ncov] <- means
         }
     }else{ # Not pfixed
         ncov <- length(par) - 2 * ns
         dxy <- diag(2 * ns + ncov)
-        for (i in 1:ns){
+##        for (i in 1:ns){
+        for (i in seq_len(ns)){
             row <- ncov + 2 * i - 1
             dxy[row, 1:ncov] <- means
         }
@@ -23,7 +25,8 @@ addMeans <- function(means, par, var, ns, pfixed, coef.names){
     var <- dxy %*% var %*% t(dxy)
 
     if (ns > 1){
-        for (i in 1:ns){
+##        for (i in 1:ns){
+        for (i in seq_len(ns)){
             coef.names <- c(coef.names,
                             paste("log(scale)", as.character(i), sep =":"),
                             paste("log(shape)", as.character(i), sep =":"))

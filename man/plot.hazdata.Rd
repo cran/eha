@@ -8,7 +8,8 @@
 \usage{
 \method{plot}{hazdata}(x, strata = NULL,
 fn = c("cum", "surv", "log", "loglog"), fig = TRUE,
-xlim=NULL, ylim=NULL, main=NULL, xlab=NULL, ylab=NULL, \ldots)
+xlim=NULL, ylim=NULL, main=NULL, xlab=NULL, ylab=NULL, col = "black",
+lty = 1, printLegend = TRUE, \ldots)
 }
 \arguments{
   \item{x}{A \code{hazdata} object, typically the 'hazards' element in
@@ -21,6 +22,12 @@ the output from \code{link{coxreg}}.}
   \item{main}{A heading for the plot.}
   \item{xlab}{Label on the x axis.}
   \item{ylab}{Label on the y-axis.}
+  \item{col}{Color of the lines. May be a vector of length equal to
+    No. of strata.}
+  \item{lty}{Line type(s). May be a vector of length equal to
+    No. of strata.}
+  \item{printLegend}{Logical; should a legend be produced?
+    Defaults to TRUE.}
   \item{...}{Anything that \code{\link[graphics]{plot.default}} likes...}
 }
 \details{
