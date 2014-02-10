@@ -1,9 +1,23 @@
 check.dist <- function(sp, pp, main = NULL, col = NULL){
-    if (!inherits(sp, "coxreg"))
-        stop ("First argument must be of type 'coxreg'")
+    if (!inherits(sp, "coxreg")){
+        if (inherits(pp, "coxreg")){ # swap:
+            tmp <- pp
+            pp <- sp
+            sp <- tmp
+            rm(tmp)
+        }else{
+            stop ("Some argument must be of type 'coxreg'")
+        }
+    }
     if (!inherits(pp, "phreg"))
-        stop ("Second argument must be of type 'phreg' or 'pchreg'")
+        stop ("Some argument must be of type 'phreg' or 'pchreg'")
 
+    if (!sp$nullModel){
+        if ((!sp$center) && pp$center)
+            warning("The non-parametric fit is not centered.") 
+        if ((!pp$center) && sp$center)
+            warning("The parametric fit is not centered.")
+    }
     if ((!is.null(sp$strata)) || (!is.null(pp$strata)))
         stop("Not for stratified fits; try a comparison stratum by stratum.") 
     x.max <- max(pp$y[, 2])
@@ -21,7 +35,7 @@ check.dist <- function(sp, pp, main = NULL, col = NULL){
     }else{
         if (length(col) != 2) stop("Length of 'col' must be 0 or 2.")
     }
-    plot(pp, fn = "cum", fig = TRUE, new.data = pp$means,
+    plot(pp, fn = "cum", fig = TRUE, ## Removed 2.4-0: new.data = pp$means,
          ylim = c(0, y.max), main = main, col = col[1])
     for (rr in 1:length(x)){
         xx <- x[[rr]]

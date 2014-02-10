@@ -19,17 +19,22 @@ coxreg <- function (formula = formula(data),
                     frailty = NULL,
                     max.survs = NULL)
 {
-    
+
+    meth <- method[1]
     cox.ph <- (missing(t.offset) &&
-               (method %in% c("breslow", "efron")) &&
+               (meth %in% c("breslow", "efron")) &&
                is.null(rs) &&
                is.null(max.survs) &&
-               (!boot)
+               (!boot) &&
+               (efrac == 0) &&
+               is.null(frailty) &&
+               (!geometric)
                )
     
     if (!is.null(frailty))
-        stop("Frailty not implemented (yet). Try 'coxme' in 'survival'")
+        stop("Frailty not implemented (yet). Try the 'coxme' package")
     method <- match.arg(method)
+    
     call <- match.call()
     m <- match.call(expand.dots = FALSE)
     temp <- c("", "formula", "data", "weights", "subset", "na.action")
@@ -93,7 +98,8 @@ coxreg <- function (formula = formula(data),
     }else{
         covars <- names(m)[-1]
     }
-    
+
+    isI <- logical(NCOL(X)) # Added Jan 2014; 2.4-0.
     isF <- logical(length(covars))
     if (length(covars)){
         for (i in 1:length(covars)){
@@ -133,56 +139,104 @@ coxreg <- function (formula = formula(data),
         levels <- NULL
     }
 
-    
+   if (any(isF)){ ## New; get isI: (Jan 2014; 2.4-0)
+        indx <- 0
+        for (i in 1:length(covars)){
+            indx <- indx + 1
+            if (isF[i]){
+                isI[indx] <- TRUE
+                if (length(levels[[i]]) >= 3){
+                    for (j in 3:length(levels[[i]])){
+                        indx <- indx + 1
+                        isI[indx] <- TRUE
+                    }
+                }
+            }
+        }
+    }
+
     n.events <- sum(Y[, NCOL(Y)] != 0)
     if (n.events == 0) stop("No events; no sense in continuing!")
         
     ##########################################
 
-    if (FALSE){      ## This has to be fixed in the future!!
-    ##if (cox.ph){
+    ## Fixed now? if (FALSE){      ## This has to be fixed in the future!!
+    if (NCOL(X) == 0){ # No covariates; special treatment!
+        if (is.null(strats)) stratum <- rep(1, NROW(Y))
+        else stratum <- strats
+        scores <- exp(offset)
+        hazards <- getHaz(Y, stratum, scores)
+        class(hazards) <- "hazdata"
+        fit <- list(call = call,
+                    n.events = n.events,
+                    hazards = hazards,
+                    nullModel = TRUE)
+        class(fit) <- "coxreg"
+        fit$means <- 0
+        return(fit)
+    
+    }else if (cox.ph){
         type <- attr(Y, "type")
         control$iter.max <- control$maxiter
         control$toler.chol = .Machine$double.eps^0.75
         control$toler.inf = sqrt(control$eps)
         control$outer.max <- 10
-        ##if (type == "counting"){
-        ##    fit <- survival:::agreg.fit(X, Y, strats, offset, init,
-        ##                                control, weights = weights,
-        ##                                method = method, row.names(m))
-        ##}else{
-        ##    fit <- survival::coxph.fit(X, Y, strats, offset, init,
-        ##                                control, weights = weights,
-        ##                                method = method, row.names(m))
-        ##}
+        if (is.null(strats)) stratum <- rep(1, NROW(Y))
+        else stratum <- strats
+        if (type == "counting"){
+            fit <- survival::agreg.fit(X, Y, stratum, offset, init,
+                                        control, weights = weights,
+                                        method = method, row.names(m))
+        }else{
+            fit <- survival::coxph.fit(X, Y, stratum, offset, init,
+                                        control, weights = weights,
+                                        method = method, row.names(m))
+        }
         ## get hazards
-        rs <- risksets(Y, strats)
-        hazard <- .Fortran("gethaz",
-                           as.integer(NROW(Y)),  # 'nn'
-                           as.integer(length(rs$antrs)), # 'ns' 
-                           as.integer(rs$antrs), # 'antrs'
-                           as.integer(rs$size), # 'size'
-                           as.integer(rs$n.events), # 'nevents'
-                           as.integer(length(rs$riskset)), # 'totsize'
-                           as.integer(rs$riskset), # 'riskset'
-                           as.double(exp(fit$linear.predictors)), # 'score'
-                           as.integer(sum(rs$antrs)), # 'totrs'
-                           hazard = double(sum(rs$antrs)), # 'hazard' (return)
-                           DUP = FALSE,
-                           PACKAGE = "eha")$hazard
+        ## New in 2.4-0: covariates are centered; indicators not!
+        ## If center == FALSE, X.means are "added back" before call to
+        ## getHaz!!
+
+        if (center){
+            X.means <- colMeans(X)
+            for (i in seq_len(NCOL(X))){
+                if (isI[i]) X.means[i] <- 0
+            }
+            scores <- exp(offset + X %*% fit$coefficients -
+                          sum(X.means * fit$coefficients))
+        }else{
+            X.means <- numeric(NCOL(X))
+            scores <- exp(offset + X %*% fit$coefficients)
+        }
+        
+        hazards <- getHaz(Y, stratum, scores)
+        class(hazards) <- "hazdata"
+        fit$hazards <- hazards
+        ##rs <- risksets(Y, strats)
+        ##hazard <- .Fortran("gethaz",
+        ##                   as.integer(NROW(Y)),  # 'nn'
+        ##                   as.integer(length(rs$antrs)), # 'ns' 
+        ##                   as.integer(rs$antrs), # 'antrs'
+        ##                   as.integer(rs$size), # 'size'
+        ##                   as.integer(rs$n.events), # 'nevents'
+        ##                   as.integer(length(rs$riskset)), # 'totsize'
+        ##                   as.integer(rs$riskset), # 'riskset'
+        ##                   as.double(exp(fit$linear.predictors)), # 'score'
+        ##                   as.integer(sum(rs$antrs)), # 'totrs'
+        ##                   hazard = double(sum(rs$antrs)), # 'hazard' (return)
+        ##                   DUP = FALSE,
+        ##                   PACKAGE = "eha")$hazard
         ## Put it on:
         ##haz.mean <- fit$hazard::: At means of covariates:
         ##if (!is.null(fit$coefficients))
           ##  hazard <- 1 - (1 - hazard)^exp(fit$means * fit$coefficients)
-        hazards <- list()
-        stopp <- cumsum(rs$antrs)
-        startt <- c(1, 1 + stopp[-length(rs$antrs)])
-        for (i in 1:length(rs$antrs)){
-            hazards[[i]] <- cbind(rs$risktimes[startt[i]:stopp[i]],
-                                  hazard[startt[i]:stopp[i]])
-        }
-        class(hazards) <- "hazdata"
-        fit$hazards <- hazards
+        ##hazards <- list()
+        ##stopp <- cumsum(rs$antrs)
+        ##startt <- c(1, 1 + stopp[-length(rs$antrs)])
+        ##for (i in 1:length(rs$antrs)){
+          ##  hazards[[i]] <- cbind(rs$risktimes[startt[i]:stopp[i]],
+            ##                      hazard[startt[i]:stopp[i]])
+        ##}
         ##fit$hazards <- hazard
     }else{ # if (!cox.ph)
         if (NCOL(Y) == 2){
@@ -235,21 +289,32 @@ coxreg <- function (formula = formula(data),
                               center,
                               boot,
                               efrac,
-                              calc.hazards = TRUE,
+                              calc.hazards = FALSE, ## Changed 2.4-0
                               calc.martres = TRUE,
                               control,
                               verbose = TRUE)
-        }
-     # End 'if (!cox.ph)'
+            ## get hazards
+            
+            if (center){
+                X.means <- colMeans(X)
+                for (i in seq_len(NCOL(X))){
+                    if (isI[i]) X.means[i] <- 0
+                }
+                scores <- exp(offset + X %*% fit$coefficients -
+                              sum(X.means * fit$coefficients))
+            }else{
+                X.means <- numeric(NCOL(X))
+                scores <- exp(offset + X %*% fit$coefficients)
+            }
 
-    ##    if (!length(fit$coefficients)){
-    ##        class(fit) <- c("coxreg", "coxph")
-    ##        return(fit)
-    ##    }
-    ##if (is.null(fit)) return(NULL) ## Removed 19 Feb 2007
-    ##if (!fit$fail) fit$fail <- NULL
-    ##else
-    ##    fit$fail <- TRUE
+            if (is.null(strats)) stratum <- rep(1, NROW(Y))
+            else
+                stratum <- strats
+            
+            hazards <- getHaz(Y, stratum, scores)
+            class(hazards) <- "hazdata"
+            fit$hazards <- hazards
+        }
 
         fit$convergence <- as.logical(fit$conver)
         fit$conver <- NULL ## Ugly!
@@ -307,6 +372,7 @@ coxreg <- function (formula = formula(data),
 
     ##########################################
 
+    fit$isI <- isI
     fit$isF <- isF
     fit$covars <- covars
     if (NCOL(Y) == 3){
@@ -334,14 +400,18 @@ coxreg <- function (formula = formula(data),
         }
     }
     ##########################################
+    fit$nullModel <- FALSE
     fit$levels <- levels
     fit$formula <- formula(Terms)
     fit$terms <- Terms
     fit$call <- call
     fit$events <- n.events
+    fit$center <- center
     if (length(fit$coefficients)){
         names(fit$coefficients) <- colnames(X)
-        fit$means <- apply(X, 2, mean)
+        fit$means <- X.means
+    }else{
+        fit$means <- numeric(0)
     }
     if (length(strats)){
         fit$strata <- levels(as.factor(strata.keep)) ## New 2.2-6

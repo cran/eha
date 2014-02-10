@@ -202,7 +202,8 @@ print.phreg <- function(x, digits=max(options()$digits - 4, 3), ...){
             formatC(" ",
                     width = 8, digits = 3, format = "c"),
             coef[index],
-            e.coef[index],
+            formatC(" ", width = 8), # Changed 2.4-0
+            #e.coef[index],
                                         #exp(coef[index]),
             se[index],
             #formatC(" ", width = 1),
@@ -237,7 +238,7 @@ print.phreg <- function(x, digits=max(options()$digits - 4, 3), ...){
         formatC(x$loglik[2], digits = 5, format = "fg"), "\n")
     if (df > 0.5){
         cat(formatC("LR test statistic", width = 25, flag = "-"),
-            format(round(logtest, 2)), "\n")
+            format(round(logtest, 2), nsmall = 2), "\n")
         cat(formatC("Degrees of freedom", width = 25, flag = "-"),
             formatC(df, digits = 0, format = "f"), "\n")
 

@@ -1,3 +1,33 @@
+2.4-0:	(Feb 10, 2014)
+	* coxreg: Call to survival::[agreg,coxph].fit in "standard" cases
+	reintroduced; Thanks to Terry Therneau, who exports these
+	functions from survival_2.37-6. So this version of 'eha' requires
+	survival (>= 2.37-6). Argument 'center' reintroduced, with slightly
+	different meaning.
+	* plot.coxreg: argument 'newdata' not used.
+	* phreg: Stratified analysis in the piecewise constant hazards
+	model introduced. Argument 'center' reintroduced, with slightly
+	different meaning.
+	* plot.phreg: Argument 'newdata' not used.
+
+2.3-5:  (Jan 17, 2014)
+	* plot.coxreg: Added the argument lty, for line type, and the
+	logical parameter legend (default: TRUE). Setting it to FALSE
+	skips the legend in the figure.
+
+2.3-4:	(Dec 5, 2013)
+	* plot.coxreg: added the argument col, for color line(s).
+	* plot.hazdata: Ditto.
+
+
+2.3-3: (Oct 10, 2013)
+	* coxreg: Restoring equity.
+	* glmmML: Removed spurious printing in 'glmmml.c'.
+
+2.3-2: (Oct 10, 2013)
+	* aftreg: Updated start values for the Gompertz distribution,
+	matching the (now mandatory) 'canonical' parametrisation.
+
 2.3-1: (Oct 03, 2013)
 	* coxreg: Downgraded due to limitations in using
 	non-exported function (agreg) from 'survival'. This will be taken

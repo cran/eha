@@ -7,8 +7,8 @@ Just a simple plot of the hazard functions for each stratum.
 }
 \usage{
 \method{plot}{phreg}(x, fn = c("haz", "cum", "den", "sur"), main = NULL,
-xlim = NULL, ylim = NULL, xlab = "Duration", ylab = "",
-new.data = NULL, \ldots)
+xlim = NULL, ylim = NULL, xlab = "Duration", ylab = "", col, lty,
+printLegend = TRUE, new.data = NULL, \ldots)
 }
 
 \arguments{
@@ -21,14 +21,20 @@ new.data = NULL, \ldots)
   \item{ylim}{y limits}
   \item{xlab}{x label}
   \item{ylab}{y label}
-  \item{new.data}{At which covariate values? Default is at the means.}
+  \item{col}{Color(s) for the curves. Defaults to black.}
+  \item{lty}{Line type for the curve(s). Defaults to 1:(No. of strata).}
+  \item{printLegend}{Logical; if \code{TRUE}, a legend is added to the
+  plot if the number of strata is two or more.}
+  \item{new.data}{Now deprecated; reference hazard is given by the fit;
+  either zero or the means all covariates, and (always) the
+  reference category for factors.}
   
   \item{\dots}{Extra parameters passed to 'plot'}
 }
 
-\details{
-The plot is drawn at the mean values of the covariates, by default.
-}
+%\details{
+%The plot is drawn at the mean values of the covariates, by default.
+%}
 \value{
 No return value.
 }

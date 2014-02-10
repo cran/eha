@@ -6,7 +6,7 @@ phreg.fit <- function(X,
                       init,
                       shape,
                       control,
-                      center = NULL){
+                      center = NULL){# This 'center' not used.
 
     if (dist == "weibull"){
         dis <- 0

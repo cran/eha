@@ -11,7 +11,7 @@ phreg(formula = formula(data), data = parent.frame(),
 na.action = getOption("na.action"), dist = "weibull", cuts = NULL,
 init, shape = 0, param = c("canonical", "rate"),
 control = list(eps = 1e-08, maxiter = 20, trace = FALSE),
-singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE, center = NULL)
+singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE, center = TRUE)
 }
 
 \arguments{
@@ -51,9 +51,9 @@ singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE, center = NULL)
   \item{model}{Not used.}
   \item{x}{Return the design matrix in the model object?}
   \item{y}{Return the response in the model object?}
-  \item{center}{Deprecated (not used); results are now reported as is, without
-  centering. You may center your covariates manually, if you want centered
-  results. Centering affects only 'scale' and interaction terms.} 
+  \item{center}{Logical, only affects plotting. Results are reported
+    as is, without centering. See Details.}
+    
 }
 
 \details{
@@ -65,6 +65,16 @@ The model is
 \deqn{S(t; a, b, \beta, z) = S_0((t/b)^a)^{\exp((z-mean(z))\beta)}}{%
   S(t; a, b, beta, z) =  S0((t/b)^a)^exp((z - mean(z)) beta)}
 where S0 is some standardized survivor function.
+
+If \code{center = TRUE} (default), graphs show the "baseline"
+distribution at the
+means of (continuous) covariates, and for the reference category in case
+of factors (avoiding representing "flying pigs"). If \code{center = FALSE}
+the baseline distribution is at the value zero of all covariates. It is
+usually a good idea to use \code{center = FALSE} in combination with
+"precentering" of covariates, that is, subtracting a reference value,
+ideally close to the center of the covariate distribution. In that way,
+the "reference" will be the same for all subsets of the data.
 }
 
 \value{
@@ -79,7 +89,9 @@ A list of class \code{c("phreg", "coxreg")} with components
     the initial parameter values, the second componet is the maximized value.}
   \item{score}{The score test statistic (at the initial value).}
   \item{linear.predictors}{The estimated linear predictors.}
-  \item{means}{Means of the columns of the design matrix.}
+  \item{means}{Means of the columns of the design matrix, except those
+    columns corresponding to a factor level, if \code{center =
+      TRUE}. Otherwise all zero.}
   \item{w.means}{Weighted (against exposure time) means of covariates;
     weighted relative frequencies of levels of factors.}
   \item{n}{Number of spells in indata (possibly after removal of cases

@@ -33,16 +33,8 @@ ltx.aftreg <- function(x, caption = NULL, label = NULL, dr = NULL,
     savedig <- options(digits = digits)
     on.exit(options(savedig))
 
-    if (x$param == "survreg"){
-        coef <- x$coef.survreg
-        se <- sqrt(diag(x$var.survreg))
-    }else if (x$param == "canonical"){
-        coef <- x$coef.canonical
-        se <- sqrt(diag(x$var.canonical))
-    }else{
-        coef <- x$coefficients
-        se <- sqrt(diag(x$var))
-    }
+    coef <- x$coefficients
+    se <- sqrt(diag(x$var))
     
     wald.p <- formatC(1 - pchisq((coef/ se)^2, 1),
                       digits = digits,
@@ -64,7 +56,7 @@ ltx.aftreg <- function(x, caption = NULL, label = NULL, dr = NULL,
     }else{
         ptxt <- "Wald $p$"
     }
-    if((x$param == "survreg") || (x$param == "canonical")){
+    if(x$param == "lifeExp"){
         etxt <- "Ext'd life"
     }else{
         etxt <- "Acc'd time"
@@ -242,13 +234,7 @@ ltx.aftreg <- function(x, caption = NULL, label = NULL, dr = NULL,
         }
     }## if (!is.null(x$covars)
     cat("\\hline \n")
-    if (x$param == "default"){
-        cat("Baseline parameters \\\\\n")
-    }else if (x$param == "survreg"){
-        cat("Baseline (survreg) parameters \\\\\n")
-    }else{ 
-        cat("Baseline (canonical) parameters \\\\\n")
-    }
+    cat("Baseline parameters \\\\\n")
     for (i in 1:n.slsh){
         jup <- length(coef)
         ss.names <- names(coef[(jup - n.slsh + 1):jup])
@@ -270,10 +256,10 @@ ltx.aftreg <- function(x, caption = NULL, label = NULL, dr = NULL,
             "\n")
     }
     if (x$n.strata == 1){
-        cat("Baseline mean: & ", x$baselineMean, "\\\\", "\\hline", "\n")
+        cat("Baseline expected life: & ", x$baselineMean, "\\\\", "\\hline", "\n")
     }else{
         for (j in 1:x$n.strata){
-            cat("baseline mean", j, ": &", x$baselineMean[j], "\\\\", "\n")
+            cat("Baseline expected life", j, ": &", x$baselineMean[j], "\\\\", "\n")
         }
         cat("\\hline \n")
     }

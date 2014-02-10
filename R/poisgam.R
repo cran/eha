@@ -80,17 +80,19 @@ poisgam <- function(X, y, start.coef,
     cat("res0: \n")
     res0 <- optim(par, Pfun, gr = NULL,
                   X = X, y = y, cluster = cluster, offset = offset,
-                  method = "L-BFGS-B",
-                  lower = rep(-50, p + 1),
-                  upper = rep(50, p + 1),
-                  control = list(fnscale = -1), hessian = TRUE)
+                  ##method = "L-BFGS-B",
+                  ##method = "BFGS",
+                  ##lower = rep(-50, p + 1),
+                  ##upper = rep(50, p + 1),
+                  control = list(fnscale = -1, trace = 5), hessian = TRUE)
     cat("res1: \n")
     res1 <- optim(par, Pfun, gr = Pgrad,
                   X = X, y = y, cluster = cluster, offset = offset,
-                  method = "L-BFGS-B",
-                  lower = rep(-50, p + 1),
-                  upper = rep(50, p + 1),
-                  control = list(fnscale = -1), hessian = TRUE)
+                  ##method = "L-BFGS-B",
+                  method = "BFGS",
+                  ##lower = rep(-50, p + 1),
+                  ##upper = rep(50, p + 1),
+                  control = list(fnscale = -1, trace = 5), hessian = TRUE)
     
     vari <- solve(-res1$hessian)
     alpha <- res1$par[p + 1]

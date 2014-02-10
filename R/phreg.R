@@ -12,8 +12,10 @@ phreg <- function (formula = formula(data),
                    model = FALSE,
                    x = FALSE,
                    y = TRUE,
-                   center = NULL) # NOTE: Changed from 'NULL' in 1.4-1
+                   center = TRUE) # NOTE: Changed from 'NULL' in 1.4-1
 {                                 # NOTE: Changed back in 2.2-2!
+                                 ## NOTE: Changed again in 2.4-0; affects only plot
+                                 ## and log(scale)
     param <- param[1]
     pfixed <- any(shape > 0)
     call <- match.call()
@@ -51,8 +53,8 @@ phreg <- function (formula = formula(data),
     dropx <- NULL
 
     if (length(strats)) {
-        if (dist == "pch")
-            stop("No strata allowed in the pch model") 
+        ##if (dist == "pch") # Changed 2.4-0
+          ##  stop("No strata allowed in the pch model (yet)") 
         temp <- untangle.specials(Terms, "strata", 1)
         dropx <- c(dropx, temp$terms)
         if (length(temp$vars) == 1)
@@ -79,7 +81,7 @@ phreg <- function (formula = formula(data),
         ncov <- NCOL(X)
     }else{
         intercept <- TRUE
-        ncov <- ncol(X) - 1
+        ncov <- NCOL(X) - 1
     }
 
 #########################################
@@ -110,27 +112,57 @@ phreg <- function (formula = formula(data),
                            ##is.logical(m[, (i + 1)]) )
             }
         }
-
-        if (ant.fak <- sum(isF)){
-            levels <- list()
-            index <- 0
-            for ( i in 1:length(covars) ){
-                if (isF[i]){
-                    index <- index + 1
-                    if (length(dropx)){
-                        levels[[i]] <- levels(m[, -(dropx + 1)][, (i + 1)])
-                    }else{
-                        levels[[i]] <- levels(m[, (i + 1)])
-                    }
+         
+        ant.fak <- sum(isF)
+    }else{ #!ncov
+        isF <- logical(0)
+        ant.fak <- 0
+    }
+    
+    if (ant.fak){
+        levels <- list()
+        index <- 0
+        for ( i in 1:length(covars) ){
+            if (isF[i]){
+                index <- index + 1
+                if (length(dropx)){
+                    levels[[i]] <- levels(m[, -(dropx + 1)][, (i + 1)])
                 }else{
-                    levels[[i]] <- NULL
+                    levels[[i]] <- levels(m[, (i + 1)])
+                }
+            }else{
+                levels[[i]] <- NULL
+            }
+        }
+    }else{
+        levels <- NULL
+    }
+
+    isI <- logical(NCOL(X))
+    if (ant.fak){
+        indx <- 0
+        for (i in seq_len(length(covars))){
+            indx <- indx + 1
+            if (isF[i]){
+                isI[indx] <- TRUE
+                isI[indx] <- TRUE
+                if (length(levels[[i]]) >= 3){
+                    for (j in 3:length(levels[[i]])){
+                        indx <- indx + 1
+                        isI[indx] <- TRUE
+                    }
                 }
             }
-        }else{
-            levels <- NULL
         }
     }
 
+    if (center){
+        X.means <- colMeans(X)
+        X.means[isI] <- 0
+    }else{
+        X.means <- 0
+    }
+    
 ##########################################
     type <- attr(Y, "type")
     if (type != "right" && type != "counting")
@@ -153,7 +185,6 @@ phreg <- function (formula = formula(data),
     }else{
         stop("control must be a list")
     }
-
     if (dist == "gompertz"){
         if (param == "canonical"){
             
@@ -175,13 +206,25 @@ phreg <- function (formula = formula(data),
         }
         
         }else if(dist == "pch"){
-        fit <- pchreg(X,
-                      Y,
-                      cuts,
-                      offset,
-                      init,
-                      control,
-                      center)
+            if (missing(cuts)){
+                ##stop("'dist = pch' needs 'cuts' to be set")
+                cuts <- numeric(0) # Exponential distribution(s)
+            }
+##        fit <- pchreg(X,
+  ##                    Y,
+    ##                  cuts,
+      ##                offset,
+        ##              init,
+          ##            control,
+            ##          center)
+            fit <- pchreg2(X,
+                           Y,
+                           cuts,
+                           offset,
+                           strats,
+                           init,
+                           control,
+                           center)
     }else{
         fit <- phreg.fit(X,
                          Y,
@@ -202,14 +245,14 @@ phreg <- function (formula = formula(data),
     if (ncov){
         fit$linear.predictors <- offset + X %*%
             fit$coefficients[1:(ncov + intercept)]
-        fit$means <- apply(X, 2, mean)
+        fit$means <- X.means
     }else{
-        fit$linear.predictors <- NULL
-        fit$means <- NULL
+        fit$linear.predictors <- numeric(0)
+        fit$means <- numeric(0)
     }
     ##score <- exp(lp)
 
-
+    fit$center <- center
 
     if (!fit$fail){
         fit$fail <- NULL
@@ -294,8 +337,6 @@ phreg <- function (formula = formula(data),
                 fit$w.means[[i]] <- sum(s.wght * m[, col.m]) / fit$ttr
             }
         }
-        fit$means <- colMeans(X)
-
     }
 
 ##########################################

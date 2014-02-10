@@ -1,6 +1,5 @@
 useDynLib(eha)
-import(survival)
-import(graphics,stats)
+import(survival,stats,graphics)
 export(ghq, glmmboot, glmmbootFit, glmmML, glmmML.fit, print.glmmML,
        summary.glmmML, print.glmmboot, summary.glmmboot,
        aftreg, aftreg.fit,
@@ -29,7 +28,6 @@ S3method(plot, Surv)
 S3method(plot, coxreg)
 S3method(plot, weibreg)
 S3method(plot, phreg)
-S3method(plot, pchreg)
 S3method(plot, hazdata)
 S3method(print, aftreg)
 S3method(print, coxreg)

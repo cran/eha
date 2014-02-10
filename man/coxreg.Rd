@@ -41,9 +41,11 @@ frailty = NULL, max.survs = NULL)
     change any component without mention the other(s).}
   \item{singular.ok}{Not used}
   \item{model}{Not used}
-  \item{center}{Now deprecated. The baseline hazards are always
+  \item{center}{Logical. If \code{center = TRUE} (default), the baseline
+    hazards are 
     calculated at the means of the 
-    covariates.}
+    covariates and for the reference category for factors, otherwise at
+    the value zero. See Details.}
   \item{x}{Return the design matrix in the model object?}
   \item{y}{return the response in the model object?}
   \item{rs}{Risk set?}
@@ -60,7 +62,17 @@ frailty = NULL, max.survs = NULL)
 The default method, \code{efron}, and the alternative, \code{breslow},
   are both the same as in \code{\link[survival]{coxph}} in package
   \code{survival}. The methods \code{mppl} and \code{ml} are maximum
-  likelihood based. 
+  likelihood, discrete-model, based. 
+
+If \code{center = TRUE} (default), graphs show the "baseline"
+distribution at the
+means of (continuous) covariates, and for the reference category in case
+of factors (avoiding representing "flying pigs"). If \code{center = FALSE}
+the baseline distribution is at the value zero of all covariates. It is
+usually a good idea to use \code{center = FALSE} in combination with
+"precentering" of covariates, that is, subtracting a reference value,
+ideally close to the center of the covariate distribution. In that way,
+the "reference" will be the same for all subsets of the data.
 }
 \value{
 A list of class \code{c("coxreg", "coxph")} with components
@@ -76,7 +88,10 @@ A list of class \code{c("coxreg", "coxph")} with components
     with one component per stratum. Each 
     component is a matrix with two columns, the first contains
     risktimes, the second the corresponding hazard atom.}
-  \item{means}{Means of the columns of the design matrix.}
+  \item{means}{Means of the columns of the design matrix corresponding
+    to covariates, if \code{center = TRUE}. Columns corresponding to
+    factor levels gice a zero in the corresponding position in
+    \code{means}. If \code{center = FALSE}, \code{means} are all zero.}
   \item{w.means}{Weighted (against exposure time) means of covariates;
     weighted relative frequencies of levels of factors.}
   \item{n}{Number of spells in indata (possibly after removal of cases
@@ -84,7 +99,7 @@ A list of class \code{c("coxreg", "coxph")} with components
   \item{events}{Number of events in data.}
   \item{terms}{Used by extractor functions.}
   \item{assign}{Used by extractor functions.}
-  \item{wald.test}{The Wald test statistic (at the initial value).}
+%  \item{wald.test}{The Wald test statistic (at the initial value).}
   \item{y}{The Surv vector.}
   \item{isF}{Logical vector indicating the covariates that are factors.}
   \item{covars}{The covariates.}
