@@ -63,13 +63,8 @@ plot.phreg <- function(x,
     if (x$dist == "weibull"){
         for (i in 1:ns){
             scal <- scale[i] / (score)^(1/shape[i])
-            cat("[weibull] score = ", score, "\n")
-            cat("[weibull] shape = ", shape[i], "\n")
-            cat("[weibull] scal = ", scal, "\n")
-            cat("[weibull] scale = ", scale[i], "\n")
             haz[i, ] <- hweibull(xx, shape = shape[i],
                                  scale = scal)
-            cat("[weibull] max(haz) = ", max(haz[, i]), "\n")
             sur[i, ] <- pweibull(xx, shape = shape[i],
                                  scale = scal, lower.tail = FALSE)
             Haz[i, ] <- Hweibull(xx, shape = shape[i],

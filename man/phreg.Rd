@@ -27,9 +27,10 @@ singular.ok = TRUE, model = FALSE, x = FALSE, y = TRUE, center = TRUE)
   alternatives "ev" (Extreme value), "gompertz", "pch" (piecewise
   constant hazards function), "loglogistic" and "lognormal". A special 
   case like the \code{exponential} can be obtained by choosing "weibull"
-  in combination with \code{shape = 1}.}
+  in combination with \code{shape = 1}, or "pch" without \code{cuts}.}
 \item{cuts}{Only used with \code{dist = "pch"}. Specifies the points in
-  time where the hazard function jumps.}
+  time where the hazard function jumps. If omitted, an exponential model
+  is fitted.}
   \item{init}{vector of initial values of the iteration.
     Default initial value is zero for all variables.}
   \item{shape}{If positive, the shape parameter is fixed at that value
@@ -114,16 +115,25 @@ A list of class \code{c("phreg", "coxreg")} with components
 }
 
 \author{\enc{Göran Broström}{George Bridgewater}}
-\note{For some of the baseline distributions, e.g., the lognormal
-  distribution, the family of distributions is not closed under
-  proportional hazards.}
+\note{The lognormal and loglogistic baseline distributions are extended
+  to a three-parameter family by adding a "proportionality" parameter
+  (multiplying the baseline hazard function). The log of the estimated
+  parameter turns up as '(Intercept)' in the printed output. The reason
+  for this extension is that the standard lognormal and loglogistic
+  distributions are not closed under proportional hazards.}
 
 
-\section{Warning}{Note that covariates are internally centered by this
-  function,  
-and this is not corrected for in the output. This affects the estimate
-of \eqn{\log(scale)}{log(scale)}, but nothing else. It is possible to
-  choose not to center, though. }
+\section{Warning}{The lognormal and loglogistic distributions are
+  included on an experimental basis for the moment. Use with care,
+  results may be unreliable!
+
+  The gompertz distribution has an exponentially increasing hazard
+  function under the canonical parametrization. This may cause
+  instability in the convergence of the fitting algorithm in the case of
+  near-exponential data. It may be resolved by using \code{param =
+    "rate"}.
+  
+}
 
 \seealso{\code{\link{coxreg}}, \code{\link{check.dist}}, \code{link{aftreg}}.}
 

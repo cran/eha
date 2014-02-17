@@ -1,5 +1,5 @@
-291126bc6243f9f1655f45de388a905c *ChangeLog
-f9a4f8d465587f457d18bb96843b3740 *DESCRIPTION
+2428a28f171f186d1407eaa5cfcd5cf7 *ChangeLog
+7157804f6f20320ace4f2712124bbad2 *DESCRIPTION
 5c4387ca9d7a48364bef1c5f16d74a16 *NAMESPACE
 07d4b8ccfddd26b518495ec8df997df0 *R/Extreme_Value.R
 f0238bc0d1fb712840f900d14a8a1b5b *R/Gompertz.R
@@ -17,7 +17,7 @@ a2385d166950e076a6c74f06c821072b *R/aftp1.R
 770b1c14108ec851f464324e1d8c5fe7 *R/aftreg.fit.R
 4a6852880861b71273125e84651f3075 *R/age.window.R
 b63d881e498ae62d60c821b79984a333 *R/cal.window.R
-7d98a6edb5019563b2184492aceb9a7c *R/check.dist.R
+c85cb37c79659bd314f46604d6fe7b0c *R/check.dist.R
 f55eec15444d7fb6679192a0c23e49c2 *R/check.surv.R
 7ca1444f979fc9b9e2bee95c81da6b9b *R/coxreg.R
 c99eca6e09a94c564179074caaea88f8 *R/coxreg.fit.R
@@ -48,14 +48,14 @@ a146370e6867040f0f5de2fccb0f92d8 *R/ltx.phreg.R
 b390bddb463c02dae7f241810bc29cec *R/pchreg2.R
 aa0e9a55f33be03f6771dd8462128199 *R/perstat.R
 433f0c0ba133e5c5d002a5f7fa4eac0f *R/phfunc.R
-2a276c43ac944f8c8fbd3cb2036f836a *R/phreg.R
+2ccade4b3755b55cb5c83a39aec30ee3 *R/phreg.R
 48be4a7558aaacdea506b87e5f30f74b *R/phreg.fit.R
 eb9b88e23a1c22503d4159dc231bda3a *R/piecewise.R
 d817178127dc4999babdb3ea16f4954f *R/plot.aftreg.R
 4795a35ecac49258efb79f7ffe3137dc *R/plot.coxreg.R
 c00b37d2e42e566390923df829ccb0bd *R/plot.hazards.R
 7d6132b11c6e856f2bccb50f375d22b4 *R/plot.hazdata.R
-fb4bf74cf82923005b3e81e0c1704c80 *R/plot.phreg.R
+de8e210a54f8bcca263c3e82865df721 *R/plot.phreg.R
 6e8aee58d1f31f706a64970493902ec4 *R/plot.surv.R
 00c18874152760f4e1cf9b9acf4d8649 *R/plot.weibreg.R
 42b7de3c3d50fc9cbe4e86f6784ac39d *R/poisgam.R
@@ -63,8 +63,8 @@ fb4bf74cf82923005b3e81e0c1704c80 *R/plot.phreg.R
 3416ba5cbda7f79d69e767ff247157f3 *R/print.coxreg.R
 cb056ab2d74c4799842829050f876a42 *R/print.glmmML.R
 ea641b4fbcceca18fc2b3ef55cb86854 *R/print.glmmboot.R
-f9ee53daa22991d07c8823f668b13579 *R/print.pchreg.R
-22a600d23e3a4e69f95da0f674aedecf *R/print.phreg.R
+7b54e987f0d4964cd8ddc4768a37439f *R/print.pchreg.R
+4e375ff97312d72cd39d9dc46b5e2c5c *R/print.phreg.R
 3ae0d07483a757023e82f098676e4306 *R/print.weibreg.R
 3f221c99d90023e455843336a245c675 *R/risksets.R
 db0e809a706f0802ad8f549a6437a4dc *R/summary.aftreg.R
@@ -106,7 +106,7 @@ a474c92bc87c3154c23ad65ed6077035 *man/aftreg.Rd
 8829cd1c9482cb95f1f81fe555a295ec *man/aftreg.fit.Rd
 a0e10b89a09e695a3398bc30fe29dd01 *man/age.window.Rd
 8ea7ea573d917e7d3e9bbc77d43eb238 *man/cal.window.Rd
-76545047c806859a232d539f662f0963 *man/check.dist.Rd
+1a15c8ae5b5a99559232fa4774b5e3c4 *man/check.dist.Rd
 d000484099372a3991c3a5eb24e43200 *man/check.surv.Rd
 67a8067999c345b1e1c27655ae5dc06f *man/coxreg.Rd
 e60264a2cc71bf76f9767c1f0b4fdfef *man/coxreg.fit.Rd
@@ -130,7 +130,7 @@ f9b5134c70ca218edaafaaa2d4e04771 *man/mlreg.Rd
 e65baa27ba03ef00b82059109f18fced *man/oldmort.Rd
 70b6e3fa5d45c317f5b1a65d3ac8e45b *man/perstat.Rd
 580d94516ecb91cff3b9c0ea97ffe986 *man/phfunc.Rd
-ea4cb2d29c99e115fbfedcf4d6598e81 *man/phreg.Rd
+f0b01b85681e3ecd5b7a2890f930c632 *man/phreg.Rd
 f97dfd57c30ef95667bc2b38dd9d5773 *man/phreg.fit.Rd
 d60e0c94dedb3f133e28b8ce0ce9f293 *man/piecewise.Rd
 f175e24e03979f9dae54897ee5c3baa4 *man/plot.Surv.Rd

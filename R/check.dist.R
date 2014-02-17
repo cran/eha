@@ -20,6 +20,13 @@ check.dist <- function(sp, pp, main = NULL, col = NULL){
     }
     if ((!is.null(sp$strata)) || (!is.null(pp$strata)))
         stop("Not for stratified fits; try a comparison stratum by stratum.") 
+    if (is.null(main)){
+        main <- pp$dist # Capitalize:
+        substr(main, 1, 1) <- toupper(substr(main, 1, 1))
+        if (main == "Pch") main <- "Piecewise constant"
+        if (main == "Ev") main = "Extreme value"
+    }
+
     x.max <- max(pp$y[, 2])
     x <- plot.coxreg(sp, fn = "cum", fig = FALSE)$x
     if (is.null(x)){

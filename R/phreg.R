@@ -118,7 +118,7 @@ phreg <- function (formula = formula(data),
         isF <- logical(0)
         ant.fak <- 0
     }
-    
+    ##cat("ant.fak = ", ant.fak, "\n")
     if (ant.fak){
         levels <- list()
         index <- 0
