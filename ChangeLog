@@ -1,3 +1,9 @@
+2.4-1: (Feb 14, 2014)
+	* phreg: Fails often for the lognormal and loglogistic models with
+	badly fitting data. A warning is included in the documentation,
+	and better error handling in case of a failure. Example under
+	'check.dist' changed accordingly.
+
 2.4-0:	(Feb 10, 2014)
 	* coxreg: Call to survival::[agreg,coxph].fit in "standard" cases
 	reintroduced; Thanks to Terry Therneau, who exports these

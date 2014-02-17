@@ -86,6 +86,9 @@ print.pchreg <- function(x, digits=max(options()$digits - 4, 3), ...){
                         cat(covar.names[covar.no], "\n")
                         
                         no.lev <- length(x$levels[[covar.no]])
+                        x$levels[[covar.no]] <-
+                            substring(x$levels[[covar.no]], 1, 16)
+
                         cat(formatC(x$levels[[covar.no]][1], width = 16, flag =
                                     "+"),
                             formatC(x$w.means[[covar.no]][1],
@@ -114,7 +117,8 @@ print.pchreg <- function(x, digits=max(options()$digits - 4, 3), ...){
                         }
                     }else{ ## Covariates:
                         index <- index + 1
-                        cat(formatC(covar.names[covar.no], width = 16, flag = "-"),
+                        cat(formatC(substr(covar.names[covar.no], 16),
+                                    width = 16, flag = "-"),
                             formatC(x$w.means[[covar.no]],
                                     width = 8, digits = 3, format = "f"),
                             coef[index],

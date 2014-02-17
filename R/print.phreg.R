@@ -90,7 +90,8 @@ print.phreg <- function(x, digits=max(options()$digits - 4, 3), ...){
             ##formatC(x$w.means[[1]],
               ##      width = 8, digits = 3, format = "f"),
             coef[index],
-            e.coef[index],
+            ##e.coef[index],
+            formatC(" ", width = 9), # Changed 2.4-1
                                         #exp(coef[index]),
             se[index],
                                         #formatC(" ", width = 1),
@@ -112,6 +113,9 @@ print.phreg <- function(x, digits=max(options()$digits - 4, 3), ...){
                     cat(covar.names[covar.no], "\n")
 
                     no.lev <- length(x$levels[[covar.no]])
+                    x$levels[[covar.no]] <-
+                        substring(x$levels[[covar.no]], 1, 16)
+
                     cat(formatC(x$levels[[covar.no]][1], width = 16, flag =
                                 "+"),
                         formatC(x$w.means[[covar.no]][1],
@@ -140,7 +144,8 @@ print.phreg <- function(x, digits=max(options()$digits - 4, 3), ...){
                     }
                 }else{ ## Covariates:
                     index <- index + 1
-                    cat(formatC(covar.names[covar.no], width = 16, flag = "-"),
+                    cat(formatC(substr(covar.names[covar.no], 1, 16),
+                                width = 16, flag = "-"),
                         formatC(x$w.means[[covar.no]],
                                 width = 8, digits = 3, format = "f"),
                         coef[index],
@@ -202,7 +207,7 @@ print.phreg <- function(x, digits=max(options()$digits - 4, 3), ...){
             formatC(" ",
                     width = 8, digits = 3, format = "c"),
             coef[index],
-            formatC(" ", width = 8), # Changed 2.4-0
+            formatC(" ", width = 9), # Changed 2.4-0
             #e.coef[index],
                                         #exp(coef[index]),
             se[index],

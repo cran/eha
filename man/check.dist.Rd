@@ -11,7 +11,7 @@ check.dist(sp, pp, main = NULL, col = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{sp}{An object of type "cotxreg", typically output from
+  \item{sp}{An object of type "coxreg", typically output from
 \code{\link{coxreg}}} 
   \item{pp}{An object of type "phreg", typically output from
 \code{\link{phreg}}}
@@ -21,7 +21,8 @@ check.dist(sp, pp, main = NULL, col = NULL)
   2}
 }
 \details{
-  For the moment only a graphical comparison.
+  For the moment only a graphical comparison. The arguments \code{sp}
+  and \code{pp} may be swapped.
 }
 \value{
 No return value.
@@ -37,13 +38,13 @@ fit.cr <- coxreg(Surv(enter, exit, event) ~ ses, data = mort)
 fit.w <- phreg(Surv(enter, exit, event) ~ ses, data = mort)
 fit.g <- phreg(Surv(enter, exit, event) ~ ses, data = mort,
 dist = "gompertz")
-fit.ln <- phreg(Surv(enter, exit, event) ~ ses, data = mort,
-dist = "lognormal")
+fit.pch <- phreg(Surv(enter, exit, event) ~ ses, data = mort,
+dist = "pch", cuts = c(5, 10, 15))
 fit.ev <- phreg(Surv(enter, exit, event) ~ ses, data = mort,
 dist = "ev")
 check.dist(fit.cr, fit.w)
 check.dist(fit.cr, fit.g)
-check.dist(fit.cr, fit.ln)
+check.dist(fit.cr, fit.pch)
 check.dist(fit.cr, fit.ev)
 par(oldpar)
 }
