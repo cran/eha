@@ -25,7 +25,7 @@ aftp0 <- function(printlevel, ns, nn, id,
                                         # results -->
                   loglik = double(1),  # function value at beta
                   fail = integer(1), # = 0: No failure
-                  DUP = FALSE,
+                  ## DUP = FALSE,
                   PACKAGE = "eha"
                   )
         if (fit$fail) stop("Error in likelihood calculation")

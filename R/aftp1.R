@@ -25,7 +25,7 @@ aftp1 <- function(printlevel, ns, nn, id,
                                         # results -->
                   loglik = double(1), # Return value at beta
                   fail = integer(1),
-                  DUP = TRUE,
+                  ##DUP = TRUE,
                   PACKAGE = "eha"
                   )
         if (fit$fail) stop("Error in exp likelihood calculation")

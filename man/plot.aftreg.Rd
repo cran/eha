@@ -1,14 +1,15 @@
 \name{plot.aftreg}
 \alias{plot.aftreg}
 
-\title{Plots output from a Weibull regression}
+\title{Plots output from an AFT regression}
 \description{
-Just a simple plot of the hazard functions for each stratum.
+Just a simple plot of the hazard (cumulative hazard, density, survival)
+functions for each stratum. 
 }
 \usage{
 \method{plot}{aftreg}(x, fn = c("haz", "cum", "den", "sur"), main = NULL,
-xlim = NULL, ylim = NULL, xlab = "Duration", ylab = "",
-new.data = x$means, \ldots)
+xlim = NULL, ylim = NULL, xlab = "Duration", ylab = "", col, lty,
+printLegend = TRUE, new.data = x$means, \ldots)
 }
 
 \arguments{
@@ -21,6 +22,9 @@ new.data = x$means, \ldots)
   \item{ylim}{y limits}
   \item{xlab}{x label}
   \item{ylab}{y label}
+  \item{col}{Colors?}
+  \item{lty}{Line types?}
+  \item{printLegend}{Should legend be printed? Default is yes.}
   \item{new.data}{At which covariate values?}
   
   \item{\dots}{Extra parameters passed to 'plot'}

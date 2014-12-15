@@ -45,7 +45,7 @@ risksets <- function (x, strata = NULL, max.survs = NULL, members = TRUE){
                n.events = integer(w.totrs),
                size = integer(w.totrs),
                totrs = integer(1),
-               DUP = FALSE,
+               ## DUP = FALSE,
                PACKAGE = "eha"
                )
 
@@ -79,7 +79,7 @@ risksets <- function (x, strata = NULL, max.survs = NULL, members = TRUE){
                 as.double(counts$risktimes),
                 eventset = integer(totevents),
                 riskset = integer(totsize),
-                DUP = FALSE,
+                ## DUP = FALSE,
                 PACKAGE = "eha"
                 )
       ##Size <- res$size

@@ -109,8 +109,8 @@ possibility to fix the value of sigma at several values and study the
 profile likelihood.}
 
 \seealso{\code{\link{glmmboot}}, \code{\link{glm}}, \code{\link{optim}},
-  \code{\link[lme4]{lmer}} in \code{lme4} and
-\code{\link[MASS]{glmmPQL}} in \code{MASS}.} 
+  \code{lmer} in the package \code{lme4} and
+\code{glmmPQL} in the package \code{MASS}.} 
 
 \examples{
 id <- factor(rep(1:20, rep(5, 20)))

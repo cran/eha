@@ -52,8 +52,8 @@ intercept = TRUE, boot = 0, prior = 0)
 %\note{The profiling method is very fast, compared to \code{glmm} and
 %  \code{glmmPQL}} 
 
-\seealso{\code{\link{glmmML}}, \code{\link[MASS]{glmmPQL}}, and
-  \code{\link[lme4]{lmer}}.} 
+\seealso{\code{\link{glmmML}}, \code{glmmPQL} in the package
+  \code{MASS}, and  \code{lmer} in the package \code{lme4}.} 
 
 \examples{
 x <- cbind(rep(1, 14), rnorm(14))

@@ -3,8 +3,26 @@ plot.Surv <- function (x, strata = NULL,
                        limits = TRUE, conf = 0.95, main = NULL, xlab = NULL,
                        ylab = NULL, xlim = NULL, ylim = NULL, lty = NULL,
                        col = NULL, lty.con = NULL, 
-                       col.con = NULL, x.axis = TRUE, ...) 
+                       col.con = NULL, x.axis = TRUE,
+                       printLegend = TRUE, ...) 
 {
+    fn <- fn[1]
+    if (is.logical(printLegend)){
+        if (printLegend) {
+            if (fn == "surv"){
+                where <- "bottomright"
+            }else{
+                where <- "bottomleft"
+            }
+        }
+    }else{
+        where <- printLegend
+        printLegend <- TRUE
+        if (!(where %in% c("bottomleft", "bottomright", "topleft", "topright",
+                           "left", "right", "top", "bottom", "center")))
+            stop(paste(where, " is not allowed as a value of 'printLegend'"))
+    }
+        
     if (!inherits(x, "Surv")) 
         stop("First argument must be of type 'Surv'")
     if (ncol(x) == 3) {
@@ -154,8 +172,16 @@ plot.Surv <- function (x, strata = NULL,
         else {
             y <- 0.4 * (y.max - y.min) + y.min
         }
-        legend(x, y, legend = strata, bty = "n", lty = lty[1:noOfGroups], 
-            col = col[1:noOfGroups])
+        if (printLegend){
+            if (fn == "surv"){
+                where <- "bottomleft"
+            }else{
+                where <- "bottomright"
+            }
+            legend(where, legend = strata,
+                   lty = lty[1:noOfGroups], 
+                   col = col[1:noOfGroups])
+        }
     }
     if (fn %in% c("surv", "cum") & x.axis) 
         abline(h = 0)

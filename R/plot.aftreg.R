@@ -5,6 +5,9 @@ plot.aftreg <- function(x,
                         ylim = NULL,
                         xlab = "Duration",
                         ylab = "",
+                        col,
+                        lty,
+                        printLegend = TRUE,
                         new.data = x$means,
                          ...){
     if (!inherits(x, "aftreg")) stop("Works only with 'aftreg' objects.")

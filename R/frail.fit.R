@@ -133,7 +133,7 @@ frail.fit <- function(X,
            ##   mu = double(n),
               convergence = integer(1),
               fail = integer(1),
-              DUP = FALSE,
+              ## DUP = FALSE,
               PACKAGE = "eha"
               )  
 

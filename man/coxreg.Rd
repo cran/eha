@@ -13,7 +13,7 @@ method = c("efron", "breslow", "mppl", "ml"),
 control = list(eps = 1e-08, maxiter = 25, trace = FALSE),
 singular.ok = TRUE, model = FALSE,
 center = TRUE,
-x = FALSE, y = TRUE, boot = FALSE, efrac = 0,
+x = FALSE, y = TRUE, hazards = FALSE, boot = FALSE, efrac = 0,
 geometric = FALSE, rs = NULL,
 frailty = NULL, max.survs = NULL)
 }
@@ -48,6 +48,7 @@ frailty = NULL, max.survs = NULL)
     the value zero. See Details.}
   \item{x}{Return the design matrix in the model object?}
   \item{y}{return the response in the model object?}
+  \item{hazards}{Calculate baseline hazards? Default is FALSE.}
   \item{rs}{Risk set?}
   \item{boot}{Number of boot replicates. Defaults to FALSE, no boot
     samples.}

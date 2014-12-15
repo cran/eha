@@ -133,7 +133,7 @@ function (dat, com.dat, communal = TRUE, start, period = 1, lag = 0,
                            as.integer(ind.iv), 
                            as.double(cuts),
                            as.integer(n.years),
-                           DUP = FALSE,
+                           ## DUP = FALSE,
                            PACKAGE = "eha")$yy
             yy <- matrix(yy, ncol = ncol(xx) + 1)
         }

@@ -120,7 +120,7 @@ phreg.fit <- function(X,
                                         #
                   conver = integer(1),
                   fail = integer(1),
-                  DUP = FALSE,
+                  ## DUP = FALSE,
                   PACKAGE = "eha"
                   )
 
@@ -207,7 +207,7 @@ phreg.fit <- function(X,
                                         #
                   conver = integer(1),
                   fail = integer(1),
-                  DUP = FALSE,
+                  ## DUP = FALSE,
                   PACKAGE = "eha"
                   )
         if (fit$fail) return(list(fail = fit$fail,

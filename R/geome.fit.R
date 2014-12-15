@@ -77,7 +77,7 @@ geome.fit <- function(X, Y, rs, strats, offset, init, max.survs,
                   conver = integer(1),
                   f.conver = integer(1),
                   fail = integer(1),
-                  DUP = FALSE,
+                  ## DUP = FALSE,
                   PACKAGE = "eha"
                   )
   if (fit$fail){
@@ -116,7 +116,7 @@ geome.fit <- function(X, Y, rs, strats, offset, init, max.survs,
                       as.double(score),       ## 'score'
                       as.double(hazard),
                       resid = double(nn),
-                      DUP = FALSE,
+                      ## DUP = FALSE,
                       PACKAGE = "eha"
                       )$resid
   }
@@ -173,7 +173,7 @@ geome.fit <- function(X, Y, rs, strats, offset, init, max.survs,
                                         #
                            conver = integer(1),
                            fail = integer(1),
-                           DUP = FALSE,
+                           ## DUP = FALSE,
                            PACKAGE = "eha"
                            )
       bootstrap <- matrix(fit.boot$boot.sample, ncol = ncov, byrow = TRUE)

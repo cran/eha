@@ -8,6 +8,7 @@ plot.phreg <- function(x,
                        col,   ## New 6 Feb 2013
                        lty,   ## New 6 Feb 2013
                        printLegend = TRUE,
+                       ##legend = printLegend,
                        new.data = NULL,
                          ...){
 
@@ -35,7 +36,7 @@ plot.phreg <- function(x,
     if (x$pfixed){
         shape <- rep(x$shape, ns)
         scale <- exp(x$coefficients[ncov + (1:ns)])
-    }else{
+    }else if (x$dist != "pch"){
         shape <- exp(x$coefficients[ncov + (1:ns) * 2])
         scale <- exp(x$coefficients[ncov + (1:ns) * 2 - 1])
     }

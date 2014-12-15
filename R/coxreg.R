@@ -12,6 +12,7 @@ coxreg <- function (formula = formula(data),
                     center = TRUE,
                     x = FALSE,
                     y = TRUE,
+                    hazards = FALSE,
                     boot = FALSE,
                     efrac = 0,
                     geometric = FALSE,
@@ -101,6 +102,7 @@ coxreg <- function (formula = formula(data),
 
     isI <- logical(NCOL(X)) # Added Jan 2014; 2.4-0.
     isF <- logical(length(covars))
+    isO <- logical(length(covars))
     if (length(covars)){
         for (i in 1:length(covars)){
             if (length(dropx)){
@@ -109,12 +111,14 @@ coxreg <- function (formula = formula(data),
                         as.factor(m[, -(dropx + 1)][, (i + 1)])
                 }
                 isF[i] <- is.factor(m[, -(dropx + 1)][, (i + 1)])## ||
+                isO[i] <- is.ordered(m[, -(dropx + 1)][, (i + 1)])## ||
                 ##is.logical(m[, -(dropx + 1)][, (i + 1)]) )
             }else{
                 if (is.logical(m[, (i + 1)])){
                     m[, (i + 1)] <- as.factor(m[, (i + 1)])
                 }
                 isF[i] <- is.factor(m[, (i + 1)]) ##||
+                isO[i] <- is.ordered(m[, (i + 1)]) ##||
                 ## is.logical(m[, (i + 1)]) )
             }
         }
@@ -127,9 +131,19 @@ coxreg <- function (formula = formula(data),
             if (isF[i]){
                 index <- index + 1
                 if (length(dropx)){
-                    levels[[i]] <- levels(m[, -(dropx + 1)][, (i + 1)])
+                    ll <- levels(m[, -(dropx + 1)][, (i + 1)])
+                    if (isO[i]){
+                        levels[[i]] <- paste("order", seq_along(ll) - 1)
+                    }else{
+                        levels[[i]] <- ll
+                    }
                 }else{
-                    levels[[i]] <- levels(m[, (i + 1)])
+                    ll <- levels(m[, (i + 1)])
+                    if (isO[i]){
+                        levels[[i]] <- paste("order", seq_along(ll) - 1)
+                    }else{
+                        levels[[i]] <- ll
+                    }
                 }
             }else{
                 levels[[i]] <- NULL
@@ -192,6 +206,7 @@ coxreg <- function (formula = formula(data),
                                         control, weights = weights,
                                         method = method, row.names(m))
         }
+        fit$nullModel <- FALSE
         ## get hazards
         ## New in 2.4-0: covariates are centered; indicators not!
         ## If center == FALSE, X.means are "added back" before call to
@@ -208,11 +223,15 @@ coxreg <- function (formula = formula(data),
             X.means <- numeric(NCOL(X))
             scores <- exp(offset + X %*% fit$coefficients)
         }
-        
-        hazards <- getHaz(Y, stratum, scores)
-        class(hazards) <- "hazdata"
-        fit$hazards <- hazards
-        ##rs <- risksets(Y, strats)
+
+        if (hazards){
+            hazards <- getHaz(Y, stratum, scores)
+            class(hazards) <- "hazdata"
+            fit$hazards <- hazards
+        }else{
+            fit$hazards <- NULL
+        }
+            ##rs <- risksets(Y, strats)
         ##hazard <- .Fortran("gethaz",
         ##                   as.integer(NROW(Y)),  # 'nn'
         ##                   as.integer(length(rs$antrs)), # 'ns' 
@@ -275,6 +294,7 @@ coxreg <- function (formula = formula(data),
                              method,
                              boot,
                              control)
+            fit$nullModel <- FALSE
         }else{
             fit <- coxreg.fit(X,
                               Y,
@@ -294,7 +314,7 @@ coxreg <- function (formula = formula(data),
                               control,
                               verbose = TRUE)
             ## get hazards
-            
+            fit$nullModel <- FALSE
             if (center){
                 X.means <- colMeans(X)
                 for (i in seq_len(NCOL(X))){
@@ -307,13 +327,19 @@ coxreg <- function (formula = formula(data),
                 scores <- exp(offset + X %*% fit$coefficients)
             }
 
-            if (is.null(strats)) stratum <- rep(1, NROW(Y))
-            else
+            if (is.null(strats)){
+                stratum <- rep(1, NROW(Y))
+            }else{
                 stratum <- strats
-            
-            hazards <- getHaz(Y, stratum, scores)
-            class(hazards) <- "hazdata"
-            fit$hazards <- hazards
+                fit$stratum <- strats
+            }
+            if (hazards){
+                hazards <- getHaz(Y, stratum, scores)
+                class(hazards) <- "hazdata"
+                fit$hazards <- hazards
+            }else{
+                fit$hazards <- NULL
+            }
         }
 
         fit$convergence <- as.logical(fit$conver)
@@ -374,6 +400,7 @@ coxreg <- function (formula = formula(data),
 
     fit$isI <- isI
     fit$isF <- isF
+    fit$isO <- isO
     fit$covars <- covars
     if (NCOL(Y) == 3){
         s.wght <- (Y[, 2] - Y[, 1])## * weights

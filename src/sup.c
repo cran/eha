@@ -209,7 +209,7 @@ static void n_r(int prl, int itmax, int *iter, double eps,
 	coxfun(what, totrs, risks, e_frac, 
 	       b, ll, dll, d2ll);
 
-	if (abs(*ll / ll_prev - one) < eps) *f_conver = 1; 
+	if (fabs(*ll / ll_prev - one) < eps) *f_conver = 1; 
 	ll_prev = *ll;
 	(*iter)++;
     }

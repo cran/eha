@@ -94,7 +94,7 @@ void get1_gam(RiskSet *risk){
 			 (double)(risk->size)) ); /* start value */
 	ax = gam - gmax;
 	bx = gam - gmin;
-	if (abs (ax - bx) < eps){
+	if (fabs (ax - bx) < eps){
 	    risk->gamma = (ax + bx) / 2.0;
 	}else{
 	    if (gam1_fun(ax, risk) * gam1_fun(bx, risk) > 0.0){

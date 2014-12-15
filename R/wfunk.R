@@ -35,7 +35,7 @@ wfunk <- function(beta = NULL, lambda, p, X = NULL, Y,
                         fp = double(bdim),
                         fpp = double(bdim * bdim),
                         ok = integer(1),
-                        DUP = FALSE,
+                        ## DUP = FALSE,
                         PACKAGE = "eha"
                         )
     }else{
@@ -68,7 +68,7 @@ wfunk <- function(beta = NULL, lambda, p, X = NULL, Y,
                         fp = double(bdim),
                         fpp = double(bdim * bdim),
                         ok = integer(1),
-                        DUP = FALSE,
+                        ## DUP = FALSE,
                         PACKAGE = "eha"
                         )
     }

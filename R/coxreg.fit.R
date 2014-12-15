@@ -138,7 +138,7 @@ coxreg.fit <- function(X, Y, rs, weights, t.offset = NULL,
                   conver = integer(1),
                   f.conver = integer(1),
                   fail = integer(1),
-                  DUP = FALSE,
+                  ## DUP = FALSE,
                   PACKAGE = "eha")
 
     if (FALSE){ ## NO!!!! 20110105; # YES!!! 20110103. Not for the moment...
@@ -212,7 +212,7 @@ coxreg.fit <- function(X, Y, rs, weights, t.offset = NULL,
                            as.double(score),
                            hazard = double(sum(rs$antrs)),
                            ##
-                           DUP = FALSE,
+                           ##DUP = FALSE,
                            PACKAGE = "eha"
                            )$hazard
         ##}else{ #if not calc.hazards or fail
@@ -237,7 +237,7 @@ coxreg.fit <- function(X, Y, rs, weights, t.offset = NULL,
                           as.double(score),  # 'score'
                           as.double(fit$hazard),
                           resid = double(nn),
-                          DUP = FALSE,
+                          ##DUP = FALSE,
                           PACKAGE = "eha"
                           )$resid
     }else{

@@ -9,7 +9,7 @@
 \method{plot}{hazdata}(x, strata = NULL,
 fn = c("cum", "surv", "log", "loglog"), fig = TRUE,
 xlim=NULL, ylim=NULL, main=NULL, xlab=NULL, ylab=NULL, col = "black",
-lty = 1, printLegend = TRUE, \ldots)
+lty = 1, printLegend = TRUE, where = NULL, \ldots)
 }
 \arguments{
   \item{x}{A \code{hazdata} object, typically the 'hazards' element in
@@ -28,6 +28,8 @@ the output from \code{link{coxreg}}.}
     No. of strata.}
   \item{printLegend}{Logical; should a legend be produced?
     Defaults to TRUE.}
+  \item{where}{Where should the legend be placed (if(printLegend))?
+    If \code{NULL},  "bottomleft" for fn = "surv", otherwise "bottomright".}
   \item{...}{Anything that \code{\link[graphics]{plot.default}} likes...}
 }
 \details{

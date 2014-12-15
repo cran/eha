@@ -10,7 +10,7 @@
 \method{plot}{Surv}(x, strata=NULL, fn = c("cum", "surv", "log", "loglog"),
 limits=TRUE, conf=0.95, main=NULL, xlab=NULL, ylab=NULL,
 xlim=NULL, ylim=NULL, lty = NULL, col = NULL,
-lty.con=NULL, col.con = NULL, x.axis = TRUE, \ldots)
+lty.con=NULL, col.con = NULL, x.axis = TRUE, printLegend, \ldots)
 }
 \arguments{
   \item{x}{A \code{Surv} object.}
@@ -30,6 +30,9 @@ lty.con=NULL, col.con = NULL, x.axis = TRUE, \ldots)
   \item{lty.con}{Line type of confidence bands.}
   \item{col.con}{Color of confidence bands.}
   \item{x.axis}{Should \code{abline(h=0)} be drawn?}
+  \item{printLegend}{Logical, defaults to \code{TRUE}. If \code{FALSE},
+    no legend is printed, but can be added after plotting. To be used
+    if the default place for the legend fits badly.}
   \item{...}{Anything that \code{plot} likes...}
 }
 \details{

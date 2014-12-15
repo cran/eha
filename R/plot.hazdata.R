@@ -9,13 +9,25 @@ plot.hazdata <- function(x, strata = NULL,
                          col = "black",
                          lty = 1,      # Jan 17, 2014.
                          printLegend = TRUE, # Jan 17, 2014.
+                         where = NULL,
                          ...
                          ){
     ## Added 7 dec 2013: col.
     ## x is of type 'hazdata', which is a list with two-column matrices
     ## as components, one component per stratum. The first column contains
     ## risktimes, and the second column the corresponding 'hazard atoms'.
+    if (is.null(where)){ # To print 'legend', if any.
+        if (fn[1] == "surv"){
+            where <- "bottomleft"
+        }else{
+            where <- "bottomright"
+        }
+    }
 
+    if (!(where %in% c("bottomleft", "bottomright", "topleft", "topright",
+                       "left", "right", "top", "bottom", "center")))
+        stop(paste(where, " is not allowed as a value of 'where'"))
+    
     if (is.null(x)){
         cat("Must be fixed in plot.hazdata!\n")
         return(NULL)
@@ -110,16 +122,8 @@ plot.hazdata <- function(x, strata = NULL,
             }
             if (is.null(strata)) strata <- 1:n.strata
             if (printLegend){
-                if (fn == "cum"){
-                    legend(x = "bottomright", legend = strata, lty = lty,
-                           col = col, inset = 0.02)
-                }else if (fn == "surv"){
-                    legend(x = "bottomleft", legend = strata, lty = lty,
-                           col = col, inset = 0.02)
-                }else{
-                    legend(x = "bottomright", legend = strata, lty = lty,
-                           col = col, inset = 0.02)
-                }
+                legend(where, legend = strata, lty = lty,
+                       col = col, inset = 0.02)
             }
         }else{
             abline(h = 0)

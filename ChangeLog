@@ -1,3 +1,12 @@
+2.4-2: (Dec 15, 2014)
+	* src: 'abs' corrected to 'fabs' in two places in C code.
+	* coxreg: Argument 'hazards' added, with default = FALSE.
+	* plot.Surv: Argument 'printLegend' added.
+	* coxreg: Changed labels in case of ordered factors.
+	* Foreign calls: 'DUP = FALSE' removed everywhere.
+	* print.pch: Bug preventing printing(!) fixed.
+	* plot.pch: Bug preventing plotting(!) fixed.
+
 2.4-1: (Feb 14, 2014)
 	* phreg: Fails often for the lognormal and loglogistic models with
 	badly fitting data. A warning is included in the documentation,
@@ -18,7 +27,7 @@
 
 2.3-5:  (Jan 17, 2014)
 	* plot.coxreg: Added the argument lty, for line type, and the
-	logical parameter legend (default: TRUE). Setting it to FALSE
+	logical parameter 'printLegend' (default: TRUE). Setting it to FALSE
 	skips the legend in the figure.
 
 2.3-4:	(Dec 5, 2013)

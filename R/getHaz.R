@@ -5,7 +5,7 @@ getHaz <- function(Y, strats, score){
         ##exit <- Y[, 1]
         ##event <- (Y[, 2] != 0)
     }else{
-        if (NCOL(Y) != 3) stop("Severe Error! Report to maintainer!!")
+        if (NCOL(Y) != 3) stop("'Y' is of wrong type.")
         ##enter <- Y[, 1]
         ##exit <- Y[, 2]
         ##event <- (Y[, 3] != 0)
@@ -32,6 +32,7 @@ getHaz <- function(Y, strats, score){
         out[[j]] <- haz
     }
     names(out) <- Strata
+    class(out) <- "hazdata"
     out
 }
         

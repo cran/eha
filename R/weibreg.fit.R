@@ -72,7 +72,7 @@ weibreg.fit <- function(X, Y,
                                         #
                   conver = integer(1),
                   fail = integer(1),
-                  DUP = FALSE,
+                  ## DUP = FALSE,
                   PACKAGE = "eha"
                   )
         
@@ -145,7 +145,7 @@ weibreg.fit <- function(X, Y,
                                         #
                   conver = integer(1),
                   fail = integer(1),
-                  DUP = FALSE,
+                  ## DUP = FALSE,
                   PACKAGE = "eha"
                   )
         if (fit$fail) return(list(fail = fit$fail,

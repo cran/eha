@@ -132,7 +132,7 @@ glmmbootFit <- function (X, Y, weights = rep(1, NROW(Y)),
                   bootP = double(1),
                   bootLog = double(boot),
                   convergence = integer(1),
-                  DUP = FALSE,
+                  ## DUP = FALSE,
                   PACKAGE = "eha"
                   )
         res <- list(coefficients = fit$beta,
@@ -184,7 +184,7 @@ glmmbootFit <- function (X, Y, weights = rep(1, NROW(Y)),
                   bootP = double(1),
                   bootLog = double(boot),
                   convergence = integer(1),
-                  DUP = FALSE,
+                  ## DUP = FALSE,
                   PACKAGE = "eha"
                   )
         res <- list(coefficients = NULL,

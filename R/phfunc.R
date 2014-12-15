@@ -45,7 +45,7 @@ phfunc <- function(beta = NULL, lambda, p, X = NULL, Y,
                             fp = double(bdim),
                             fpp = double(bdim * bdim),
                             ok = integer(1),
-                            DUP = FALSE,
+                            ## DUP = FALSE,
                             PACKAGE = "eha"
                             )
         }
@@ -78,7 +78,7 @@ phfunc <- function(beta = NULL, lambda, p, X = NULL, Y,
                  as.integer(Y[, 3]),
                  as.double(offset),
                  f = double(1), ## Return value
-                 DUP = FALSE,
+                 ## DUP = FALSE,
                  PACKAGE = "eha")
         ret <- list(f = - d0$f)
         if (ord >= 1){
@@ -95,7 +95,7 @@ phfunc <- function(beta = NULL, lambda, p, X = NULL, Y,
                    as.integer(Y[, 3]),
                    as.double(offset),
                    fp = double(bdim), ## Return value
-                   DUP = FALSE,
+                   ## DUP = FALSE,
                    PACKAGE = "eha")
           ret$fp <- d1$fp
           if (ord >= 2){
@@ -112,7 +112,7 @@ phfunc <- function(beta = NULL, lambda, p, X = NULL, Y,
                      as.integer(Y[, 3]),
                      as.double(offset),
                      fpp = double(bdim * bdim), ## Return value
-                     DUP = FALSE,
+                     ## DUP = FALSE,
                      PACKAGE = "eha")
             ret$fpp <- matrix(d2$fpp, ncol = bdim)
           }

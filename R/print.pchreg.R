@@ -117,7 +117,7 @@ print.pchreg <- function(x, digits=max(options()$digits - 4, 3), ...){
                         }
                     }else{ ## Covariates:
                         index <- index + 1
-                        cat(formatC(substr(covar.names[covar.no], 16),
+                        cat(formatC(substr(covar.names[covar.no], 1, 16),
                                     width = 16, flag = "-"),
                             formatC(x$w.means[[covar.no]],
                                     width = 8, digits = 3, format = "f"),
@@ -218,7 +218,7 @@ print.pchreg <- function(x, digits=max(options()$digits - 4, 3), ...){
         formatC(x$ttr, digits = 5, format = "fg"), "\n")
     cat(formatC("Max. log. likelihood", width = 25, flag = "-"),
         formatC(x$loglik[2], digits = 5, format = "fg"), "\n")
-    if (df > 0.5){
+    if (!is.null(x$coefficients)){
         cat(formatC("LR test statistic", width = 25, flag = "-"),
             format(round(logtest, 2), nsmall = 2), "\n")
         cat(formatC("Degrees of freedom", width = 25, flag = "-"),

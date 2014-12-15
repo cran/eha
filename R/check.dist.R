@@ -28,11 +28,13 @@ check.dist <- function(sp, pp, main = NULL, col = NULL){
     }
 
     x.max <- max(pp$y[, 2])
-    x <- plot.coxreg(sp, fn = "cum", fig = FALSE)$x
+    x <- plot.coxreg(sp, fn = "cum", fig = FALSE)
     if (is.null(x)){
-        cat("must be fixed in check.dist! or plot.coxreg")
+        cat("Error: Must be fixed in check.dist!")
         return(x)
     }
+    
+    x[[1]][, 2] <- cumsum(x[[1]][, 2]) # Added in 2.4-2
     y.max <- max(x[[1]][, 2])
     if (length(x) > 1){
         for (i in 2:length(x)) y.max <- max(y.max, x[[i]][, 2])
