@@ -135,6 +135,8 @@ glmmbootFit <- function (X, Y, weights = rep(1, NROW(Y)),
                   ## DUP = FALSE,
                   PACKAGE = "eha"
                   )
+        fit$frail[fit$frail < -999] <- -Inf
+        fit$frail[fit$frail > 999] <- Inf
         res <- list(coefficients = fit$beta,
                     predicted = fit$predicted,
                     fitted = fit$fitted,

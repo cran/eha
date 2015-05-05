@@ -43,14 +43,28 @@ plot.coxreg <- function(x,
                         newdata = NULL,
                         ...){
    if (!inherits(x, c("coxreg"))) stop("Works only with 'coxreg' objects")
-   if (!is.null(x$stratum)){
-      y <- with(x, getHaz(y, stratum, exp(linear.predictors)))
+   if (!is.null(x$hazards)){
+       y <- x$hazards
    }else{
-      y <- getHaz(x$y, rep(1, length(x$linear.predictors)), exp(x$linear.predictors))
+       if (!is.null(x$stratum)){
+           if(x$nullModel){
+               y <- with(x, getHaz(y, stratum, rep(1, NROW(y))))
+           }else{
+               y <- with(x, getHaz(y, stratum, exp(linear.predictors)))
+           }
+       }else{
+           if (x$nullModel){
+               y <- with(x, getHaz(y, rep(1, NROW(y)), rep(1, NROW(y))))
+           }else{
+               y <- getHaz(x$y, rep(1, length(x$linear.predictors)),
+                           exp(x$linear.predictors))
+           }
+       }
    }
    if (missing(col)) col = "black"
    if (fig){
-      plot.hazdata(y, strata = x$strata, fn = fn, fig = fig, xlim = xlim, ylim = ylim, main = main,
+      plot.hazdata(y, strata = x$strata, fn = fn, fig = fig,
+                   xlim = xlim, ylim = ylim, main = main,
                    xlab = xlab, ylab = ylab, col = col, ...)
    }
    invisible(y)

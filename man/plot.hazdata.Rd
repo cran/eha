@@ -13,7 +13,7 @@ lty = 1, printLegend = TRUE, where = NULL, \ldots)
 }
 \arguments{
   \item{x}{A \code{hazdata} object, typically the 'hazards' element in
-the output from \code{link{coxreg}}.}
+the output from \code{link{coxreg}} with \code{hazards = TRUE}.}
   \item{strata}{Stratum names if there are strata present.}
   \item{fn}{Which type of plot?}
   \item{fig}{Should a plot actually be produced? Default is TRUE.}
@@ -52,7 +52,7 @@ time0 <- numeric(50)
 group <- c(rep(0, 25), rep(1, 25))
 time1 <- rexp( 50, exp(group) )
 event <- rep(1, 50)
-fit <- coxreg(Surv(time0, time1, event) ~ strata(group))
+fit <- coxreg(Surv(time0, time1, event) ~ strata(group), hazards = TRUE)
 plot(fit$hazards)
 }
 \keyword{survival}

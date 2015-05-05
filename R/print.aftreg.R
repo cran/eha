@@ -172,7 +172,9 @@ print.aftreg <- function(x, digits=max(options()$digits - 4, 3), ...){
             formatC(" ",
                     width = 8, digits = 3, format = "c"),
             coef[index],
-            e.coef[index],
+            formatC(" ", width = 9), # Changed 2.4-3
+            
+            ##e.coef[index],
                                         #exp(coef[index]),
             se[index],
             #formatC(" ", width = 1),

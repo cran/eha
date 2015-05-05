@@ -1,4 +1,4 @@
-print.phreg <- function(x, digits=max(options()$digits - 4, 3), ...){
+print.phreg <- function(x, digits = max(options()$digits - 4, 3), ...){
 
     if (!is.null(cl<- x$call)) {
         cat("Call:\n")
@@ -83,7 +83,7 @@ print.phreg <- function(x, digits=max(options()$digits - 4, 3), ...){
 
     index <- 0
 
-    if(intercept){
+    if (intercept){
     ##if (FALSE){
         index <- index + 1
         cat(formatC("(Intercept)", width = 25, flag = "-"),

@@ -14,8 +14,8 @@
 \item{fn}{What should be plotted? Default is "cumhaz", and the other choices
 are "surv", "log", and "loglog".}
 
-\item{fig}{logical. If \code{TRUE} the plot is actually drawn, otherwise the
-coordinates of the curve(s).}
+\item{fig}{logical. If \code{TRUE} the plot is actually drawn, otherwise
+  only the coordinates of the curve(s) are returned.}
 
 \item{xlim}{Start and end of the x axis.}
 
@@ -38,16 +38,13 @@ printed. Otherwise, if a text string, it should be one of "bottomleft",
 
 \item{newdata}{Not used}
 
-\item{...}{Other parameters to pass to \code{plot.survfit}}
+\item{...}{Other parameters to pass to the plot.}
 }
 \value{
-An object of class \code{hazdata} containing the coordinates of one
-or more
+An object of class \code{hazdata} containing the coordinates of the curve(s).
 }
 \description{
 A plot of a baseline function of a \code{coxreg} fit is
-produced, one curve for each stratum. This function is a wrapper for
-\code{\link[survival]{survfit}} in combination with
-\code{\link[survival]{plot.survfit}}.
+produced, one curve for each stratum.
 }
 

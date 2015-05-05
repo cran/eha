@@ -1,3 +1,22 @@
+2.4-3: (May 5, 2015)
+	* coxreg: Changed the default for 'hazards' to TRUE.
+	* getHaz: Modified to handle missing strats and score.
+	* print.risksets: Added '...' to argument list.
+	* coxreg: Fitting a NULL model didn't produce enough information
+	like log likelihood ('loglik'), for comparison of models. Fixed.
+	* glmmboot: 'frail' set to Inf or -Inf for appropriate clusters.
+	* plot.hazdata: Updated to acknowledge the argument 'hazards' that was
+	included in 'coxreg' in version 2.4-2.
+	* plot.coxreg: Updated to acknowledge the argument 'hazards' that was
+	included in 'coxreg' in version 2.4-2. Errors in the manual page
+	corrected. 
+	* risksets: Risk set sampling did not always work (memory leak in
+	C code); fixed.
+	* risksets: New value in the Value list: sample_fraction.
+	* plot.aftreg: Now registered as an S3 method.
+	* print.aftreg: Scale and shape parameters are only printed on the
+	log scale.
+
 2.4-2: (Dec 15, 2014)
 	* src: 'abs' corrected to 'fabs' in two places in C code.
 	* coxreg: Argument 'hazards' added, with default = FALSE.

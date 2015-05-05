@@ -7,7 +7,7 @@ Comparison of the cumulative hazards functions for a semi-parametric and
 a parametric model.
 }
 \usage{
-check.dist(sp, pp, main = NULL, col = NULL)
+check.dist(sp, pp, main = NULL, col = NULL, printLegend = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -19,6 +19,7 @@ check.dist(sp, pp, main = NULL, col = NULL)
   hazard function"}
 \item{col}{Line colors. should be \code{NULL} (black lines) or of length
   2}
+\item{printLegend}{Should a legend be printed? Default is \code{TRUE}.}
 }
 \details{
   For the moment only a graphical comparison. The arguments \code{sp}

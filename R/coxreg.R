@@ -12,7 +12,7 @@ coxreg <- function (formula = formula(data),
                     center = TRUE,
                     x = FALSE,
                     y = TRUE,
-                    hazards = FALSE,
+                    hazards = TRUE,
                     boot = FALSE,
                     efrac = 0,
                     geometric = FALSE,
@@ -178,22 +178,42 @@ coxreg <- function (formula = formula(data),
     if (NCOL(X) == 0){ # No covariates; special treatment!
         if (is.null(strats)) stratum <- rep(1, NROW(Y))
         else stratum <- strats
-        scores <- exp(offset)
-        hazards <- getHaz(Y, stratum, scores)
-        class(hazards) <- "hazdata"
-        fit <- list(call = call,
-                    n.events = n.events,
-                    hazards = hazards,
-                    nullModel = TRUE)
-        class(fit) <- "coxreg"
+        type <- attr(Y, "type")
+        control$iter.max <- 0
+        control$toler.chol <- .Machine$double.eps^0.75
+        control$toler.inf <- sqrt(control$eps)
+        control$outer.max <- 10
+        X <- matrix(0, nrow = NROW(Y), ncol = 1)
+        init <- 0
+        if (type == "counting"){
+            fit <- survival::agreg.fit(X, Y, stratum, offset, init,
+                                        control, weights = weights,
+                                        method = method, row.names(m))
+        }else{
+            fit <- survival::coxph.fit(X, Y, stratum, offset, init,
+                                        control, weights = weights,
+                                        method = method, row.names(m))
+        }
+        fit$nullModel <- TRUE
+        if (hazards){
+            scores <- exp(offset)
+            hazards <- getHaz(Y, stratum, scores)
+            class(hazards) <- "hazdata"
+            fit$hazards <- hazards
+        }
+        fit$call <- call
+        fit$n.events <- n.events
+        fit$n <- NROW(Y)
+        fit$y <- Y
+        class(fit) <- c("coxreg", "coxph")
         fit$means <- 0
         return(fit)
     
     }else if (cox.ph){
         type <- attr(Y, "type")
         control$iter.max <- control$maxiter
-        control$toler.chol = .Machine$double.eps^0.75
-        control$toler.inf = sqrt(control$eps)
+        control$toler.chol <- .Machine$double.eps^0.75
+        control$toler.inf <- sqrt(control$eps)
         control$outer.max <- 10
         if (is.null(strats)) stratum <- rep(1, NROW(Y))
         else stratum <- strats

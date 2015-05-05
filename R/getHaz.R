@@ -11,6 +11,8 @@ getHaz <- function(Y, strats, score){
         ##event <- (Y[, 3] != 0)
     }
 
+    if (missing(score)) score <- rep(1, NROW(Y))   # New 29 april 2015
+    if (missing(strats)) strats <- rep(1, NROW(Y)) # New 29 april 2015
     strats <- as.factor(strats)
     Strata <- levels(strats)
     ns <- length(Strata)

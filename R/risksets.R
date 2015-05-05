@@ -54,10 +54,13 @@ risksets <- function (x, strata = NULL, max.survs = NULL, members = TRUE){
   counts$size <- counts$size[1:counts$totrs]
 
   totsize <- sum(counts$size)
+  if (totsize >= 2^31) stop("Too large  risk sets.") 
   totevents <- sum(counts$n.events)
 
   Eventset <- NULL
   Riskset <- NULL
+  sample_fraction <- NULL
+  
   if (members){
       res <- .C("risk_get",
                 as.integer(max.survs),
@@ -82,16 +85,26 @@ risksets <- function (x, strata = NULL, max.survs = NULL, members = TRUE){
                 ## DUP = FALSE,
                 PACKAGE = "eha"
                 )
-      ##Size <- res$size
+      Size <- res$size ## Previously out-commented; why??
+      N <- counts$size - counts$n.events
+      sample_fraction <- numeric(length(Size))
+      sample_fraction[N > 0] <- (Size - counts$n.events) /
+          (counts$size - counts$n.events)
+      sample_fraction[N <= 0] <- 1 # No survivors!
       Eventset <- ord[res$eventset]
       Riskset <- ord[res$riskset[1:res$new.totrs]]
   }
 
-  list(ns = ns,
-           antrs = counts$antrs,
-           risktimes = counts$risktimes,
-           n.events = counts$n.events,
-           size = counts$size,
-           eventset = Eventset,
-           riskset = Riskset)
+  rs <- list(ns = ns,
+             antrs = counts$antrs,
+             risktimes = counts$risktimes,
+             n.events = counts$n.events,
+             ##size = counts$size,
+             size = Size,
+             eventset = Eventset,
+             riskset = Riskset,
+             sample_fraction = sample_fraction)
+  class(rs) <- "risksets"
+  
+  invisible(rs)
 }

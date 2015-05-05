@@ -175,8 +175,12 @@ phreg <- function (formula = formula(data),
 
     n.events <- sum(Y[, 3] != 0)
     if (n.events == 0) stop("No events; no sense in continuing!")
-    if (missing(init)){
-        init <- coxreg(formula, data = data)$coefficients
+    if (missing(init)){ # Is this wise?
+        if (ncov){
+            init <- coxreg(formula, data = data)$coefficients
+        }else{
+             init <- numeric(0)
+         }
     }
     if (is.list(control)){
         if (is.null(control$eps)) control$eps <- 1e-8

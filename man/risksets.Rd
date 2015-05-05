@@ -6,7 +6,7 @@
   Focus is on the risk set composition just prior to a failure.
 }
 \usage{
-risksets(x, strata, max.survs, members = TRUE)
+risksets(x, strata = NULL, max.survs = NULL, members = TRUE)
 }
 %- maybe also `usage' for other objects documented here.
 \arguments{
@@ -14,9 +14,9 @@ risksets(x, strata, max.survs, members = TRUE)
   \item{strata}{Stratum indicator.}
   \item{max.survs}{Maximum number of survivors in each risk set. If
     smaller than the 'natural number', survivors are sampled from the
-    present ones.}
+    present ones. No sampling if missing.}
   \item{members}{If TRUE, all members of all risk sets are listed in the
-  resulting list, see below.}
+    resulting list, see below.}
 }
 \details{
   If the input argument max.survs is left alone, all survivors are
@@ -34,6 +34,8 @@ risksets(x, strata, max.survs, members = TRUE)
     first are the events. If 'members' is FALSE, 'riskset' is NULL.}
   \item{size}{The sizes of the risk sets.}
   \item{n.events}{The number of events in each risk set.}
+  \item{sample_fraction}{The sampling fraction of survivors in each risk
+  set. }
 }
 
 \author{\enc{Göran Broström}{George Bridgewater}}

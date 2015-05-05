@@ -15,7 +15,7 @@ printLegend = TRUE, new.data = x$means, \ldots)
 \arguments{
   \item{x}{A \code{aftreg} object}
   \item{fn}{Which functions shoud be plotted! Default is all. They
-    will scroll by, so you have to take care explicitely what you want
+    will scroll by, so you have to take care of explicitly what you want
     to be produced. See, eg, \code{par(mfrow = ...)}}
   \item{main}{Header for the plot}
   \item{xlim}{x limits}
