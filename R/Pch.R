@@ -88,5 +88,5 @@ qpch <- function(p, cuts, levels, lower.tail = TRUE, log.p = FALSE){
 
 rpch <- function(n, cuts, levels){
     x <- runif(n)
-    qpch(x)
+    qpch(x, cuts, levels) # ', cuts, levels' added in 2.4-4.
 }

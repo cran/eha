@@ -91,12 +91,14 @@ A list of class \code{c("weibreg", "coxreg")} with components
 }
 
 \author{\enc{Göran Broström}{George Bridgewater}}
-%\note{}
+
+\note{This function is not maintained, and may behave in unpredictable
+  ways. Use \code{\link{phreg}} with \code{dist = "weibull"} (the
+  default) instead! Will soon be declared deprecated.} 
 
 
 \section{Warning}{The print method \code{\link{print.weibreg}} doesn't work if
-threeway or higher order interactions are present. Use
-\code{\link[survival]{print.coxph}} in that case.
+threeway or higher order interactions are present.
 
 Note further that covariates are internally centered, if \code{center =
   TRUE}, by this function, 
@@ -106,7 +108,7 @@ of \eqn{\log(scale)}{log(scale)}, but nothing else. If you don't like this, set
 
 
 
-\seealso{\code{\link{coxreg}}, \code{\link{mlreg}},
+\seealso{\code{\link{phreg}}, \code{\link{coxreg}},
   \code{\link{print.weibreg}}}
 
 

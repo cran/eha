@@ -1,9 +1,10 @@
 \name{plot.phreg}
 \alias{plot.phreg}
 
-\title{Plots output from a Weibull regression}
+\title{Plots output from a phreg regression}
 \description{
-Just a simple plot of the hazard functions for each stratum.
+Plot(s) of the hazard, density, cumulative hazards, and/or the survivor
+function(s) for each stratum.
 }
 \usage{
 \method{plot}{phreg}(x, fn = c("haz", "cum", "den", "sur"), main = NULL,
@@ -23,13 +24,15 @@ printLegend = TRUE, new.data = NULL, \ldots)
   \item{ylab}{y label}
   \item{col}{Color(s) for the curves. Defaults to black.}
   \item{lty}{Line type for the curve(s). Defaults to 1:(No. of strata).}
-  \item{printLegend}{Logical; if \code{TRUE}, a legend is added to the
+  \item{printLegend}{Logical, or character ("topleft", "bottomleft",
+  "topright" or "bottomright"); if \code{TRUE} or character, a legend is
+  added to the 
   plot if the number of strata is two or more.}
   \item{new.data}{Now deprecated; reference hazard is given by the fit;
   either zero or the means all covariates, and (always) the
   reference category for factors.}
   
-  \item{\dots}{Extra parameters passed to 'plot'}
+  \item{\dots}{Extra parameters passed to 'plot' and 'lines'.}
 }
 
 %\details{

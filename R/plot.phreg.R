@@ -10,7 +10,7 @@ plot.phreg <- function(x,
                        printLegend = TRUE,
                        ##legend = printLegend,
                        new.data = NULL,
-                         ...){
+                       ...){
 
     if (!inherits(x, "phreg")) stop("Works only with 'phreg' objects.")
     if (!is.null(new.data)) warning("argument 'newdata' is not used any more")
@@ -160,20 +160,37 @@ plot.phreg <- function(x,
              xlab = xlab, ylab = ylab, main = hmain, ...)
         if (ns > 1){
             for (i in 2:ns){
-                lines(xx, haz[i, ], type = "l", lty = lty[i], col = col[i])
+                lines(xx, haz[i, ], type = "l", lty = lty[i],
+                      col = col[i], ...) # ', ...' added in 2.4-4
             }
         }
         ##abline(h = 0)
         ##abline(v = 0)
-        if ((ns > 1) && printLegend){
-            legend(x = "bottomright",  legend = x$strata, lty = lty,
-                   inset = 0.001,
-                   col = col)
+        if (is.character(printLegend)){
+            if (!(printLegend %in% c("topleft", "bottomleft",
+                                     "topright", "bottomright",
+                                     "bottom", "left", "top",
+                                     "right", "center"))){
+                printLegend <- FALSE
+                warning("Illegal value of 'printLegend'")
+            }
+        }
+        if (is.logical(printLegend)){
+            if ((ns > 1) && printLegend){
+                legend(x = "bottomright",  legend = x$strata, lty = lty,
+                       inset = 0.001,
+                       col = col)
+            }
+        }else{
+            if ((ns > 1) && is.character(printLegend)){
+                    legend(x = printLegend,  legend = x$strata,
+                           lty = lty, inset = 0.001, col = col)
+            }
         }
     }
     ## Cumulative hazard
     if ("cum" %in% fn){
-
+        
         if (is.null(ylim)){
             ylim0 <- c(0, max(Haz))
         }else{
@@ -194,16 +211,26 @@ plot.phreg <- function(x,
              lty = lty[1], ...)
         if (ns > 1){
             for (i in 2:ns){
-                lines(xx, Haz[i, ], type = "l", lty = lty[i], col = col[i])
+                lines(xx, Haz[i, ], type = "l", lty = lty[i],
+                      col = col[i], ...) # ', ...' added in 2.4-4
             }
         }
         ##abline(h = 0)
         ##abline(v = 0)
-        if ((ns > 1) && printLegend){
-            legend(x = "topleft",  legend = x$strata, lty = lty,
-                   col = col, inset = 0.001)
+        if (is.logical(printLegend)){
+            if ((ns > 1) && printLegend){
+                legend(x = "topleft",  legend = x$strata, lty = lty,
+                       col = col, inset = 0.001)
+            }
+        }else{
+            if ((ns > 1) && is.character(printLegend)){
+                    legend(x = printLegend, legend = x$strata,
+                           lty = lty, inset = 0.001, col = col)
+            }
         }
+        
     }
+
     ## density
     if ("den" %in% fn){
 
@@ -227,19 +254,27 @@ plot.phreg <- function(x,
              col = col[1], ...)
         if (ns > 1){
             for (i in 2:ns){
-                lines(xx, den[i, ], type = "l", lty = lty[i], col = col[i])
+                lines(xx, den[i, ], type = "l", lty = lty[i],
+                      col = col[i], ...) # ', ...' added in 2.4-4
             }
         }
         abline(h = 0)
         abline(v = 0)
-
-        if ((ns > 1) && printLegend){
-            legend(x = "topright",  legend = x$strata, lty = lty,
-                   inset = 0.001,
-                   col = col)
+        if (is.logical(printLegend)){
+            if ((ns > 1) && printLegend){
+                legend(x = printLegend,  legend = x$strata, lty = lty,
+                       inset = 0.001,
+                       col = col)
+            }
+        }else{
+            if ((ns > 1) && is.character(printLegend)){
+                    legend(x = printLegend,  legend = x$strata,
+                           lty = lty, inset = 0.001, col = col)
+            }
         }
         
     }
+    
     ## Survivor function
     if ("sur" %in% fn){
         
@@ -261,19 +296,24 @@ plot.phreg <- function(x,
         if (ns > 1){
             for (i in 2:ns){
                 lines(xx, sur[i, ], type = "l", lty = lty[i],
-                      col = col[i])
+                      col = col[i], ...) # ', ...' added in 2.4-4
             }
         }
         abline(h = 0)
         abline(v = 0)
-
-        if ((ns > 1) && printLegend){
-            legend(x = "bottomleft",  legend = x$strata, lty = lty,
-                   inset = 0.001,
-                   col = col)
+        if (is.logical(printLegend)){
+            if ((ns > 1) && printLegend){
+                legend(x = "bottomleft",  legend = x$strata, lty = lty,
+                       inset = 0.001,
+                       col = col)
+            }
+        }else{
+            if ((ns > 1) && is.character(printLegend)){
+                    legend(x = printLegend,  legend = x$strata,
+                           lty = lty, inset = 0.001, col = col)
+            }
         }
         
-
     }
     ##par(oldpar)
 }

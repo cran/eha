@@ -1,3 +1,11 @@
+2.4-4:	(Sep 21, 2016)
+	* rpch: Bug fixed (spotted by Brigitte Mueller).
+	* plot.phreg: parameters 'changeLog' and '...'
+	enhanced. Documentation updated.
+	* plot.coxreg: Bug concerning 'printLegend' fixed.
+	* weibreg: Note added in documentation: "Use phreg
+	instead". weibreg will soon be deprecated.
+
 2.4-3: (May 5, 2015)
 	* coxreg: Changed the default for 'hazards' to TRUE.
 	* getHaz: Modified to handle missing strats and score.
@@ -9,7 +17,7 @@
 	included in 'coxreg' in version 2.4-2.
 	* plot.coxreg: Updated to acknowledge the argument 'hazards' that was
 	included in 'coxreg' in version 2.4-2. Errors in the manual page
-	corrected. 
+	corrected.
 	* risksets: Risk set sampling did not always work (memory leak in
 	C code); fixed.
 	* risksets: New value in the Value list: sample_fraction.

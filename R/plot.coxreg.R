@@ -61,11 +61,19 @@ plot.coxreg <- function(x,
            }
        }
    }
-   if (missing(col)) col = "black"
+    if (missing(col)) col <- "black"
+   if (missing(lty)) lty <- 1
    if (fig){
-      plot.hazdata(y, strata = x$strata, fn = fn, fig = fig,
-                   xlim = xlim, ylim = ylim, main = main,
-                   xlab = xlab, ylab = ylab, col = col, ...)
+       if (is.logical(printLegend)){
+           where <- NULL
+       }else{
+           where <- printLegend
+           printLegend <- TRUE
+       }
+       plot.hazdata(y, strata = x$strata, fn = fn, fig = fig,
+                    xlim = xlim, ylim = ylim, main = main,
+                    xlab = xlab, ylab = ylab, lty = lty, col = col,
+                    printLegend = printLegend, where = where, ...)
    }
    invisible(y)
 }

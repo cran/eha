@@ -1,7 +1,7 @@
 Encoding: UTF-8
 Package: eha
-Version: 2.4-3
-Date: 2015-05-05
+Version: 2.4-4
+Date: 2016-09-21
 Title: Event History Analysis
 Description: Sampling of risk sets in Cox regression, selections in 
         the Lexis diagram, bootstrapping. Parametric proportional 
@@ -19,6 +19,6 @@ Depends: R (>= 3.0.0), survival (>= 2.37-6)
 NeedsCompilation: yes
 Author: Göran Broström [aut, cre]
 Maintainer: Göran Broström <goran.brostrom@umu.se>
-Packaged: 2015-05-05 18:00:08 UTC; gb
+Packaged: 2016-09-21 12:32:56 UTC; gb
 Repository: CRAN
-Date/Publication: 2015-05-05 23:18:54
+Date/Publication: 2016-09-21 15:40:57

@@ -3,7 +3,8 @@
 
 \title{Plots output from a Weibull regression}
 \description{
-Just a simple plot of the hazard functions for each stratum.
+Plot(s) of the hazard, density, cumulative hazards, and/or the survivor
+function(s) for each stratum.
 }
 \usage{
 \method{plot}{weibreg}(x, fn = c("haz", "cum", "den", "sur"), main = NULL,
@@ -35,7 +36,7 @@ No return value
 
 \author{\enc{Göran Broström}{George Bridgewater}}
 
-\seealso{\code{\link{weibreg}}}
+\seealso{\code{\link{phreg}}, \code{\link{weibreg}}}
 \examples{
 y <- rweibull(4, shape = 1, scale = 1)
 x <- c(1,1,2,2)
