@@ -1,3 +1,9 @@
+2.4-5:	(May 2, 2017)
+	* init.c: Added after R-3.4.0.
+	* coxreg: "Geometric bootstrap" removed (it never worked and was
+	never used).
+	* cal.window, age.window: Works now with 'tibbles'.
+
 2.4-4:	(Sep 21, 2016)
 	* rpch: Bug fixed (spotted by Brigitte Mueller).
 	* plot.phreg: parameters 'changeLog' and '...'

@@ -10,7 +10,7 @@ C     Calculates f, the negative of a Weibull loglihood function without
 C     covariates. Eventually calculates the first (fp) and second (fpp)
 C     order derivatives as well; see the input variable 'order' below.
 C
-C     Note: No stratification; or only calculations in one strata.
+C     Note: No stratification; or only calculations in one stratum.
 C ******************************************************************** C
 
       implicit none

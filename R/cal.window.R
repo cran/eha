@@ -9,11 +9,12 @@ cal.window <- function(dat, window,
         x <- which(is.na(surv.indices))
         stop(paste(surv[x], " is not a name in the fixed data frame."))
     }
-    
-    enter <- dat[, surv.indices[1]]
-    exit <- dat[, surv.indices[2]]
-    event <- dat[, surv.indices[3]]
-    bdate <- dat[, surv.indices[4]]
+
+    ## Utilize list property:
+    enter <- dat[[surv.indices[1]]]
+    exit <- dat[[surv.indices[2]]]
+    event <- dat[[surv.indices[3]]]
+    bdate <- dat[[surv.indices[4]]]
     
     who <- ((exit > (window[1] - bdate)) &
             (enter < (window[2] - bdate)))
@@ -29,10 +30,10 @@ cal.window <- function(dat, window,
         enter[underShoot] <- window[1] - bdate[underShoot]
         
         dat <- dat[who, ]
-        dat[, surv.indices[1]] <- enter
-        dat[, surv.indices[2]] <- exit
-        dat[, surv.indices[3]] <- event
-        dat[, surv.indices[4]] <- bdate
+        dat[surv.indices[1]] <- enter
+        dat[surv.indices[2]] <- exit
+        dat[surv.indices[3]] <- event
+        dat[surv.indices[4]] <- bdate
     }else{
         warning(paste("The period", window[1], "-", window[2], "is empty."))
         dat <- NULL

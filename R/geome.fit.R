@@ -1,5 +1,6 @@
 geome.fit <- function(X, Y, rs, strats, offset, init, max.survs,
-                       method = "ml", boot = FALSE, control){
+                      method = "ml", ##boot = FALSE,
+                      control){
 
   nn <- NROW(X)
   ncov <- NCOL(X)
@@ -125,59 +126,59 @@ geome.fit <- function(X, Y, rs, strats, offset, init, max.survs,
     var <- matrix(fit$variance, ncov, ncov)
   else
     var <- NULL
-
+  boot <- FALSE
   bootstrap <- NULL
   if (boot & (fit$fail == 0)){
     if (!is.numeric(boot)){
       cat("boot must be numeric (number of bootstrap replicates)")
     }else{
       init <- fit$beta
-      fit.boot <- .Fortran("bootcox",
-                           as.integer(2), ## means 'mlreg'
-                           as.integer(boot),
-                           boot.sample = double(boot * ncov),
-                           boot.sd = double(boot * ncov),
-                           as.integer(method == "efron"),
-                           iter = as.integer(iter),
-                           as.double(control$eps),
-                           as.integer(printlevel),
+##      fit.boot <- .Fortran("bootcox",
+  ##                         as.integer(2), ## means 'mlreg'
+    ##                       as.integer(boot),
+      ##                     boot.sample = double(boot * ncov),
+        ##                   boot.sd = double(boot * ncov),
+          ##                 as.integer(method == "efron"),
+            ##               iter = as.integer(iter),
+            ##               as.double(control$eps),
+            ##               as.integer(printlevel),
+            ##                            #
+            ##               as.integer(sum(rs$n.events)), 
+            ##               as.integer(sum(rs$antrs)),  
+            ##               as.integer(length(rs$antrs)),
+            ##                            #
+            ##               as.integer(rs$antrs),
+            ##               as.integer(rs$n.events),
+            ##               as.integer(rs$size),
+            ##                            #
+            ##               as.integer(length(rs$riskset)), 
+            ##               as.integer(rs$eventset),
+            ##               as.integer(rs$riskset),
                                         #
-                           as.integer(sum(rs$n.events)), 
-                           as.integer(sum(rs$antrs)),  
-                           as.integer(length(rs$antrs)),
+            ##               as.integer(nn),
+            ##               as.integer(ncov),
+            ##               as.double(scale(X, center = TRUE, scale = FALSE)),
+            ##               as.double(offset),
                                         #
-                           as.integer(rs$antrs),
-                           as.integer(rs$n.events),
-                           as.integer(rs$size),
+            ##               as.double(init),     
+            ##               as.double(fit$beta), ## Estimated beta
                                         #
-                           as.integer(length(rs$riskset)), 
-                           as.integer(rs$eventset),
-                           as.integer(rs$riskset),
+            ##               loglik = double(2), 
+            ##               dloglik = double(ncov),
+            ##               variance = double(ncov * ncov),
+            ##               sctest = double(1),
                                         #
-                           as.integer(nn),
-                           as.integer(ncov),
-                           as.double(scale(X, center = TRUE, scale = FALSE)),
-                           as.double(offset),
+            ##               double(nn),     
+            ##               double(ncov),   
+            ##               double(ncov * ncov),
                                         #
-                           as.double(init),     
-                           as.double(fit$beta), ## Estimated beta
-                                        #
-                           loglik = double(2), 
-                           dloglik = double(ncov),
-                           variance = double(ncov * ncov),
-                           sctest = double(1),
-                                        #
-                           double(nn),     
-                           double(ncov),   
-                           double(ncov * ncov),
-                                        #
-                           conver = integer(1),
-                           fail = integer(1),
+            ##               conver = integer(1),
+            ##               fail = integer(1),
                            ## DUP = FALSE,
-                           PACKAGE = "eha"
-                           )
-      bootstrap <- matrix(fit.boot$boot.sample, ncol = ncov, byrow = TRUE)
-      boot.sd <- matrix(fit.boot$boot.sd, ncol = ncov, byrow = TRUE)
+            ##               PACKAGE = "eha"
+            ##               )
+      ## bootstrap <- matrix(fit.boot$boot.sample, ncol = ncov, byrow = TRUE)
+      ## boot.sd <- matrix(fit.boot$boot.sd, ncol = ncov, byrow = TRUE)
     }      
   }else{
       boot.sd <- NULL
@@ -191,8 +192,8 @@ geome.fit <- function(X, Y, rs, strats, offset, init, max.survs,
        residuals = resid,
        hazard = hazard,
        means = apply(X, 2, mean),
-       bootstrap = bootstrap,
-       boot.sd = boot.sd,
+       ##bootstrap = bootstrap,
+       ##boot.sd = boot.sd,
        conver = fit$conver,
        fail = fit$fail,
        iter = fit$iter

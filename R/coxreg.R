@@ -312,7 +312,7 @@ coxreg <- function (formula = formula(data),
                              init,
                              max.survs,
                              method,
-                             boot,
+                             ##                         boot,
                              control)
             fit$nullModel <- FALSE
         }else{
@@ -333,34 +333,35 @@ coxreg <- function (formula = formula(data),
                               calc.martres = TRUE,
                               control,
                               verbose = TRUE)
-            ## get hazards
-            fit$nullModel <- FALSE
-            if (center){
-                X.means <- colMeans(X)
-                for (i in seq_len(NCOL(X))){
-                    if (isI[i]) X.means[i] <- 0
-                }
-                scores <- exp(offset + X %*% fit$coefficients -
-                              sum(X.means * fit$coefficients))
-            }else{
-                X.means <- numeric(NCOL(X))
-                scores <- exp(offset + X %*% fit$coefficients)
-            }
-
-            if (is.null(strats)){
-                stratum <- rep(1, NROW(Y))
-            }else{
-                stratum <- strats
-                fit$stratum <- strats
-            }
-            if (hazards){
-                hazards <- getHaz(Y, stratum, scores)
-                class(hazards) <- "hazdata"
-                fit$hazards <- hazards
-            }else{
-                fit$hazards <- NULL
-            }
         }
+        ## get hazards
+        fit$nullModel <- FALSE
+        if (center){
+            X.means <- colMeans(X)
+            for (i in seq_len(NCOL(X))){
+                if (isI[i]) X.means[i] <- 0
+            }
+            scores <- exp(offset + X %*% fit$coefficients -
+                          sum(X.means * fit$coefficients))
+        }else{
+            X.means <- numeric(NCOL(X))
+            scores <- exp(offset + X %*% fit$coefficients)
+        }
+        
+        if (is.null(strats)){
+            stratum <- rep(1, NROW(Y))
+        }else{
+            stratum <- strats
+            fit$stratum <- strats
+        }
+        if (hazards){
+            hazards <- getHaz(Y, stratum, scores)
+            class(hazards) <- "hazdata"
+            fit$hazards <- hazards
+        }else{
+            fit$hazards <- NULL
+        }
+        
 
         fit$convergence <- as.logical(fit$conver)
         fit$conver <- NULL ## Ugly!

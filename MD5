@@ -1,5 +1,5 @@
-935cdfd83d115d5a5cbaf7fecf0b9501 *ChangeLog
-ce751054a1cad56b249c147d34f0069a *DESCRIPTION
+aeb497ad650b909c74f94af6fb261e9b *ChangeLog
+f3b71f363fd77b6d1b0762a06875ccde *DESCRIPTION
 a2afe4a61380e1a2f6dd889fc2af72d4 *NAMESPACE
 07d4b8ccfddd26b518495ec8df997df0 *R/Extreme_Value.R
 f0238bc0d1fb712840f900d14a8a1b5b *R/Gompertz.R
@@ -15,17 +15,17 @@ e426248bd7285c5c9bb53f984961a70b *R/aftp0g.R
 a86be9a4c479b3947a4afa44abb3fe54 *R/aftp1.R
 28a23ef399d5804de94b195b3805520d *R/aftreg.R
 770b1c14108ec851f464324e1d8c5fe7 *R/aftreg.fit.R
-4a6852880861b71273125e84651f3075 *R/age.window.R
-b63d881e498ae62d60c821b79984a333 *R/cal.window.R
+bda5bd6d0a4e858368dbd6e0d4435512 *R/age.window.R
+f83a1f2e63680c45eaca8e93d4d176fc *R/cal.window.R
 c468939935a5a62b0492809f53263abf *R/check.dist.R
 f55eec15444d7fb6679192a0c23e49c2 *R/check.surv.R
-fd1e3125adcc060740896774a36e6850 *R/coxreg.R
+40767e4529655852000baa6fcda2b954 *R/coxreg.R
 5e4ead545ebe450122a9fccd52a2c05e *R/coxreg.fit.R
 7da682fc2b528a92c622af997bca5eca *R/cro.R
 ed25d9fe3c95bacf1f432f0717db5607 *R/cumhweibull.R
 0a710b3eff4d77cfa3746d026226ce91 *R/extract.R
 5e0ff567bde123a40781f5acccb240fc *R/frail.fit.R
-18e21da65b31f8362b628bfed0376755 *R/geome.fit.R
+7427cea49f42707baf968e22ec7b9e96 *R/geome.fit.R
 a6d418b009c398ddbdabc5979cac95fe *R/getHaz.R
 a228d6c24708837d3ec1c4fce83d8d14 *R/ghq.R
 03ffc773baaaf0e7519e592ee22e7b32 *R/glmmML.R
@@ -47,7 +47,7 @@ a146370e6867040f0f5de2fccb0f92d8 *R/ltx.phreg.R
 106d412ce0b9a08978c3c057a0a08b15 *R/pchreg.R
 b390bddb463c02dae7f241810bc29cec *R/pchreg2.R
 aa0e9a55f33be03f6771dd8462128199 *R/perstat.R
-a081b7ff1b3ee99747c2bda3d7710eb5 *R/phfunc.R
+971d78c4bdd180d1d4266a15025fc37c *R/phfunc.R
 e2db5d28a220832244b59d8fa03f0df5 *R/phreg.R
 1a96735280cf3067f856bb8d97c064ba *R/phreg.fit.R
 eb9b88e23a1c22503d4159dc231bda3a *R/piecewise.R
@@ -82,7 +82,7 @@ b72e2b21e573581e605fc603701da355 *R/toBinary.R
 26f4cac2bfa406e9fac71f5b29cbb417 *R/weibreg.R
 dd24e8bac636715e2c4784ae913f7050 *R/weibreg.fit.R
 6c647e0a5a0a1d12d633f0d9db364dd1 *R/wfunk.R
-2f546c9c863573330a26828e507ff460 *build/vignette.rds
+b0cdfddd417f9878853b85782c07c4ca *build/vignette.rds
 606ffac1de687625c16bf23d4875b1bc *data/fert.rda
 6e100ec5b878a6ddbee062099c8b74b7 *data/infants.rda
 f27001cd52d09216cd236d23847b26a7 *data/logrye.rda
@@ -92,9 +92,9 @@ f030989bf08cf761913881089fc35baf *data/oldmort.rda
 9704eb70e799f94e33579671af755faf *data/scania.rda
 deafc40d50b5fda64f89a2b71dfa227b *data/swe07.rda
 19d6d7e996c1c59fa73b9f72db926e03 *inst/doc/glmmML.Rnw
-066bb9aec766217c19ba78b42294771e *inst/doc/glmmML.pdf
+08c1f090af8fb8920f219525ce4fa8ba *inst/doc/glmmML.pdf
 61f37c51fc7daebe1a27ac5e78393004 *inst/doc/parametric.Rnw
-039245b44390c218e18deff2813419fa *inst/doc/parametric.pdf
+b492937990cda9ba24937a4264c021cc *inst/doc/parametric.pdf
 9fcadd2e16c7a941d863dd302894982b *man/EV.Rd
 2f86e4fd8fd62cc8d25e8f329e5746f8 *man/Gompertz.Rd
 dfb4738859d790609b37fe47cf01466f *man/Loglogistic.Rd
@@ -112,7 +112,7 @@ d000484099372a3991c3a5eb24e43200 *man/check.surv.Rd
 e60264a2cc71bf76f9767c1f0b4fdfef *man/coxreg.fit.Rd
 2331ebb47affe441683e21e9d9ae5195 *man/cro.Rd
 16773a9747a7c439139e45739ce044f4 *man/fert.Rd
-1c6c491e111d67b236fe17218b9d222e *man/geome.fit.Rd
+7fbce64680a7eab33b7d207d5f9456e1 *man/geome.fit.Rd
 de196ffe6125feb9299a654babbf3665 *man/ghq.Rd
 751aa9439271cfd6fa0362c1d94731f8 *man/glmmML.Rd
 bcd35d980ae1e18abc7162edfcfd104a *man/glmmML.fit.Rd
@@ -200,6 +200,7 @@ ddac5160713e5af88da427a6e9534501 *src/glmmboot.h
 68d01e380e386ed0e3d20ad36c4c3c9c *src/glmmml.h
 ea78303a8c238ee46bff9ec999f11c08 *src/gmlfun.f
 4520c31906d0d2610f7aa96673e32f22 *src/hazards.f
+f1086455364b7699dc5d1610b747ffba *src/init.c
 b641f3dbbcc59b1b21220cbb510a3e22 *src/loglik_ph.c
 85bf82900ccd6eb0063d12fc72b31723 *src/loglik_ph.h
 360853230c7a7aab273b881baa9385a5 *src/loglik_phexp.c
@@ -219,7 +220,7 @@ f80bf44f87f43f624ff9775696932f71 *src/sup.c
 7934a3858a901661556be56184fa6f60 *src/weibreg.c
 b9cdd66812aa48eafe5d96d35912f7d7 *src/weibreg.h
 d9806598637deb425ce2b91653ca1f51 *src/wfunc.f
-ec68564877b9f8a6ca1655711dd7b9dc *src/wfunc.null.f
+8ce85a6ed1fd7dab8bd210c78a4eb009 *src/wfunc.null.f
 7f19861a360262ef074a63d7f2a1119e *vignettes/cluster.bib
 19d6d7e996c1c59fa73b9f72db926e03 *vignettes/glmmML.Rnw
 61f37c51fc7daebe1a27ac5e78393004 *vignettes/parametric.Rnw

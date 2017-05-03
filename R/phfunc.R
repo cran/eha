@@ -30,24 +30,24 @@ phfunc <- function(beta = NULL, lambda, p, X = NULL, Y,
                 b <- c(log(lambda), log(p))
             }
 
-            fit <- .Fortran("phfuncnull",
-                            as.integer(ord),
-                            as.integer(pfixed),
-                            as.double(p),
-                            as.integer(bdim),
-                            as.double(b),
-                            as.integer(nn),
-                            as.double(Y[, 1]),
-                            as.double(Y[, 2]),
-                            as.integer(Y[, 3]),
+    ##        fit <- .Fortran("phfuncnull",
+      ##                      as.integer(ord),
+      ##                      as.integer(pfixed),
+      ##                      as.double(p),
+      ##                      as.integer(bdim),
+      ##                      as.double(b),
+      ##                      as.integer(nn),
+      ##                      as.double(Y[, 1]),
+      ##                      as.double(Y[, 2]),
+      ##                      as.integer(Y[, 3]),
                                         #
-                            f = double(1),
-                            fp = double(bdim),
-                            fpp = double(bdim * bdim),
-                            ok = integer(1),
+      ##                      f = double(1),
+      ##                      fp = double(bdim),
+      ##                      fpp = double(bdim * bdim),
+      ##                      ok = integer(1),
                             ## DUP = FALSE,
-                            PACKAGE = "eha"
-                            )
+      ##                      PACKAGE = "eha"
+      ##                      )
         }
 
     }else{

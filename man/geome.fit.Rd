@@ -7,7 +7,7 @@ This function is called from \code{coxreg}. A user may call it directly.
 }
 \usage{
 geome.fit(X, Y, rs, strats, offset, init, max.survs, method = "ml",
-boot = FALSE, control)
+control)
 }
 
 \arguments{
@@ -19,7 +19,6 @@ boot = FALSE, control)
   \item{init}{Initial values}
   \item{max.survs}{Maximal survivors}
   \item{method}{"ml", always, i.e., this argument is ignored.}
-  \item{boot}{should we bootstrap?}
   \item{control}{See \code{coxreg}.}
 }
 
