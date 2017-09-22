@@ -294,5 +294,6 @@ aftreg <- function (formula = formula(data),
 
     ##
     fit$pfixed <- pfixed
+    if (pfixed) fit$shape <- shape ## Added 2 Aug 2017.
     fit
 }

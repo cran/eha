@@ -60,9 +60,10 @@ aftp1 <- function(printlevel, ns, nn, id,
                  control = list(trace = as.integer(printlevel)),
                  hessian = TRUE)
 
-    fit <- list(beta = res$par, loglik = c(loglik.start, -res$value))
-    fit$fail <- res$convergence != 0
-    fit$var <- try(solve(res$hessian))
+    ## Error below fixed (res --> res1!) 2 Aug 2017.
+    fit <- list(beta = res1$par, loglik = c(loglik.start, -res1$value))
+    fit$fail <- res1$convergence != 0
+    fit$var <- try(solve(res1$hessian))
     fit$shape.fixed <- TRUE
     fit$shape <- shape
     fit$shape.sd <- NULL  ## Not necessary!?!?

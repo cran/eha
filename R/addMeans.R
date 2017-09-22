@@ -25,16 +25,19 @@ addMeans <- function(means, par, var, ns, pfixed, coef.names){
     var <- dxy %*% var %*% t(dxy)
 
     if (ns > 1){
-##        for (i in 1:ns){
+        ##        for (i in 1:ns){
         for (i in seq_len(ns)){
             coef.names <- c(coef.names,
-                            paste("log(scale)", as.character(i), sep =":"),
-                            paste("log(shape)", as.character(i), sep =":"))
+                            paste("log(scale)", as.character(i), sep =":"))
+            if (!pfixed){
+                coef.names <- c(coef.names,
+                                paste("log(shape)", as.character(i), sep =":"))
+            }
         }
         
     }else{
-        coef.names <- c(coef.names,
-                        "log(scale)", "log(shape)")
+        coef.names <- c(coef.names, "log(scale)")
+        if (!pfixed) coef.names <- c(coef.names, "log(shape)")
     }
 
     names(par) <- coef.names

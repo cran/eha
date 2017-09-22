@@ -122,15 +122,20 @@ aftreg.fit <- function(X, Y, dist, param,
     }else{
         ## Just add names
         if (ns > 1){
-            coef.names <- c("log(scale):1", "log(shape):1")
+            coef.names <- c("log(scale):1")
+            if (!pfixed) coef.names <- c(coef.names, "log(shape):1")
             for (i in 2:ns){
                 coef.names <- c(coef.names,
-                            paste("log(scale)", as.character(i), sep =":"),
-                            paste("log(shape)", as.character(i), sep =":"))
+                                paste("log(scale)", as.character(i), sep =":"))
+                if (!pfixed){
+                    coef.names <- c(coef.names, 
+                                    paste("log(shape)", as.character(i), sep =":"))
+                }
             }
             
         }else{
-            coef.names <- c("log(scale)", "log(shape)")
+            coef.names <- "log(scale)"
+            if (!pfixed) coef.names <- c(coef.names, "log(shape)")
         }
         names(fit$beta) <- coef.names
         colnames(fit$var) <- rownames(fit$var) <- coef.names

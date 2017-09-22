@@ -1,3 +1,8 @@
+2.4-6:  (Sep 22, 2017)
+	* phreg: Start values by 'coxreg' (bad idea) removed.
+	* aftreg: in 'addMeans' and 'aftreg1', an error
+	(spotted by Jingchunzi Shi) with fixed scale corrected.
+
 2.4-5:	(May 2, 2017)
 	* init.c: Added after R-3.4.0.
 	* coxreg: "Geometric bootstrap" removed (it never worked and was

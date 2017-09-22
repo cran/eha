@@ -175,9 +175,10 @@ phreg <- function (formula = formula(data),
 
     n.events <- sum(Y[, 3] != 0)
     if (n.events == 0) stop("No events; no sense in continuing!")
-    if (missing(init)){ # Is this wise?
+    if (missing(init)){ # Is this wise? No!
         if (ncov){
-            init <- coxreg(formula, data = data)$coefficients
+            ##init <- coxreg(formula, data = data)$coefficients
+            init <- rep(0, ncov)
         }else{
              init <- numeric(0)
          }

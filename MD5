@@ -1,5 +1,5 @@
-aeb497ad650b909c74f94af6fb261e9b *ChangeLog
-f3b71f363fd77b6d1b0762a06875ccde *DESCRIPTION
+a261a95069856c152358894fbc375655 *ChangeLog
+eefcb02423305833f0ca29b802862b1c *DESCRIPTION
 a2afe4a61380e1a2f6dd889fc2af72d4 *NAMESPACE
 07d4b8ccfddd26b518495ec8df997df0 *R/Extreme_Value.R
 f0238bc0d1fb712840f900d14a8a1b5b *R/Gompertz.R
@@ -9,12 +9,12 @@ f0238bc0d1fb712840f900d14a8a1b5b *R/Gompertz.R
 d82620613693f0621262ef90326534b4 *R/Pch.R
 b88d6c93e5ad35ca475161036d8131b7 *R/SurvSplit.R
 d4212fcf44666c101b8560c98779cf6c *R/Weibull.R
-dbe1f679dfdb2140846e3b2fb3471430 *R/addMeans.R
+ab8a08141c07d53092fb6cc65e76c536 *R/addMeans.R
 116cec0eb56922d7f9ff3f821b53c593 *R/aftp0.R
 e426248bd7285c5c9bb53f984961a70b *R/aftp0g.R
-a86be9a4c479b3947a4afa44abb3fe54 *R/aftp1.R
-28a23ef399d5804de94b195b3805520d *R/aftreg.R
-770b1c14108ec851f464324e1d8c5fe7 *R/aftreg.fit.R
+dc95fd318e8a17ff00c6c1916de9a3db *R/aftp1.R
+280da6481c3fdb3351dd08ff35ec76f0 *R/aftreg.R
+1bf95a7eb3d1b1aef5b170735dd1e58f *R/aftreg.fit.R
 bda5bd6d0a4e858368dbd6e0d4435512 *R/age.window.R
 f83a1f2e63680c45eaca8e93d4d176fc *R/cal.window.R
 c468939935a5a62b0492809f53263abf *R/check.dist.R
@@ -48,7 +48,7 @@ a146370e6867040f0f5de2fccb0f92d8 *R/ltx.phreg.R
 b390bddb463c02dae7f241810bc29cec *R/pchreg2.R
 aa0e9a55f33be03f6771dd8462128199 *R/perstat.R
 971d78c4bdd180d1d4266a15025fc37c *R/phfunc.R
-e2db5d28a220832244b59d8fa03f0df5 *R/phreg.R
+fe9d7e81199c3f17ecc14953bb6d5eb9 *R/phreg.R
 1a96735280cf3067f856bb8d97c064ba *R/phreg.fit.R
 eb9b88e23a1c22503d4159dc231bda3a *R/piecewise.R
 84be3ef133137584baa5cfaddc5ace06 *R/plot.aftreg.R
@@ -82,7 +82,7 @@ b72e2b21e573581e605fc603701da355 *R/toBinary.R
 26f4cac2bfa406e9fac71f5b29cbb417 *R/weibreg.R
 dd24e8bac636715e2c4784ae913f7050 *R/weibreg.fit.R
 6c647e0a5a0a1d12d633f0d9db364dd1 *R/wfunk.R
-b0cdfddd417f9878853b85782c07c4ca *build/vignette.rds
+d3cf49acc64da2d2672a1ab27d4a3447 *build/vignette.rds
 606ffac1de687625c16bf23d4875b1bc *data/fert.rda
 6e100ec5b878a6ddbee062099c8b74b7 *data/infants.rda
 f27001cd52d09216cd236d23847b26a7 *data/logrye.rda
@@ -92,9 +92,9 @@ f030989bf08cf761913881089fc35baf *data/oldmort.rda
 9704eb70e799f94e33579671af755faf *data/scania.rda
 deafc40d50b5fda64f89a2b71dfa227b *data/swe07.rda
 19d6d7e996c1c59fa73b9f72db926e03 *inst/doc/glmmML.Rnw
-08c1f090af8fb8920f219525ce4fa8ba *inst/doc/glmmML.pdf
+7c0735a7dd8129fbe86dd666e88c3d82 *inst/doc/glmmML.pdf
 61f37c51fc7daebe1a27ac5e78393004 *inst/doc/parametric.Rnw
-b492937990cda9ba24937a4264c021cc *inst/doc/parametric.pdf
+8295db80545bc0fe5da9f4f1e10b89b1 *inst/doc/parametric.pdf
 9fcadd2e16c7a941d863dd302894982b *man/EV.Rd
 2f86e4fd8fd62cc8d25e8f329e5746f8 *man/Gompertz.Rd
 dfb4738859d790609b37fe47cf01466f *man/Loglogistic.Rd
