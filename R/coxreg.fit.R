@@ -1,3 +1,56 @@
+#' Cox regression
+#' 
+#' Called by \code{\link{coxreg}}, but a user can call it directly.
+#' 
+#' \code{rs} is dangerous to use when NA's are present.
+#' 
+#' @param X The design matrix.
+#' @param Y The survival object.
+#' @param rs The risk set composition. If absent, calculated.
+#' @param weights Case weights; time-fixed or time-varying.
+#' @param t.offset Case offset; time-varying.
+#' @param strats The stratum variable. Can be absent.
+#' @param offset Offset. Can be absent.
+#' @param init Start values. If absent, equal to zero.
+#' @param max.survs Sampling of risk sets? If so, gives the maximum number of
+#' survivors in each risk set.
+#' @param method Either "efron" (default) or "breslow".
+#' @param center See \code{\link{coxreg}}.
+#' @param boot Number of bootstrap replicates. Defaults to FALSE, no
+#' bootstrapping.
+#' @param efrac Upper limit of fraction failures in 'mppl'.
+#' @param calc.hazards Should estimates of baseline hazards be calculated?
+#' @param calc.martres Should martingale residuals be calculated?
+#' @param control See \code{\link{coxreg}}
+#' @param verbose Should Warnings about convergence be printed?
+#' @return A list with components \item{coefficients}{Estimated regression
+#' parameters.} \item{var}{Covariance matrix of estimated coefficients.}
+#' \item{loglik}{First component is value at \code{init}, second at maximum.}
+#' \item{score}{Score test statistic, at initial value.}
+#' \item{linear.predictors}{Linear predictors.} \item{residuals}{Martingale
+#' residuals.} \item{hazard}{Estimated baseline hazard. At value zero of
+#' 'design' variables.} \item{means}{Means of the columns of the design
+#' matrix.} \item{bootstrap}{The bootstrap replicates, if requested on input.}
+#' \item{conver}{\code{TRUE} if convergence.} \item{f.conver}{TRUE if variables
+#' converged.} \item{fail}{\code{TRUE} if failure.} \item{iter}{Number of
+#' performed iterations.}
+#' @note It is the user's responsibility to check that indata is sane.
+#' @author Göran Broström
+#' @seealso \code{\link{coxreg}}, \code{\link{risksets}}
+#' @keywords survival regression
+#' @examples
+#' 
+#'  X <- as.matrix(data.frame(
+#'                 x=     c(0, 2,1,4,1,0,3),
+#'                 sex=   c(1, 0,0,0,1,1,1)))
+#'  time <- c(1,2,3,4,5,6,7)
+#'  status <- c(1,1,1,0,1,1,0)
+#'  stratum <- rep(1, length(time))
+#' 
+#'  coxreg.fit(X, Surv(time, status), strats = stratum, max.survs = 6,
+#'      control = list(eps=1.e-4, maxiter = 10, trace = FALSE))
+#' 
+#' @export
 coxreg.fit <- function(X, Y, rs, weights, t.offset = NULL,
                        strats, offset, init, max.survs,
                        method = "breslow", center = TRUE,

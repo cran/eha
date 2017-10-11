@@ -1,3 +1,32 @@
+#' Weibull regression
+#' 
+#' This function is called by \code{\link{weibreg}}, but it can also be
+#' directly called by a user.
+#' 
+#' See \code{\link{weibreg}} for more detail.
+#' 
+#' @param X The design (covariate) matrix.
+#' @param Y A survival object, the response.
+#' @param strata A stratum variable.
+#' @param offset Offset.
+#' @param init Initial regression parameter values.
+#' @param shape If positive, a fixed value of the shape parameter in the
+#' Weibull distribution. Otherwise, the shape is estimated.
+#' @param control Controls convergence and output.
+#' @param center Should covariates be centered?
+#' @return \item{coefficients}{Estimated regression coefficients plus estimated
+#' scale and shape coefficients, sorted by strata, if present.} \item{var}{}
+#' \item{loglik}{Vector of length 2. The first component is the maximized
+#' loglihood with only scale and shape in the model, the second the final
+#' maximum.} \item{score}{Score test statistic at initial values}
+#' \item{linear.predictors}{Linear predictors for each interval.}
+#' \item{means}{Means of the covariates} \item{conver}{TRUE if convergence}
+#' \item{fail}{TRUE if failure} \item{iter}{Number of Newton-Raphson iterates.}
+#' \item{n.strata}{The number of strata in the data.}
+#' @author Göran Broström
+#' @seealso \code{\link{weibreg}}
+#' @keywords survival regression
+#' @export weibreg.fit
 weibreg.fit <- function(X, Y,
                         strata, offset,
                         init, shape,

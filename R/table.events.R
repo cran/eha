@@ -1,3 +1,27 @@
+#' Calculating failure times, risk set sizes and No. of events in each risk set
+#' 
+#' From input data of the 'interval' type, with an event indicator, summary
+#' statistics for each risk set (at an event time point) are calculated.
+#' 
+#' 
+#' @param enter Left truncation time point.
+#' @param exit End time point, an event or a right censoring.
+#' @param event Event indicator.
+#' @param strict If TRUE, then tabulating is not done after a time point where
+#' all individuals in a riskset failed.
+#' @return A list with components \item{times}{Ordered distinct event time
+#' points.} \item{events}{Number of events at each event time point.}
+#' \item{riskset.sizes}{Number at risk at each event time point.}
+#' @author Göran Broström
+#' @seealso \code{\link{risksets}}
+#' @keywords survival
+#' @examples
+#' 
+#' exit = c(1,2,3,4,5)
+#' event = c(1,1,0,1,1)
+#' table.events(exit = exit, event = event)
+#' 
+#' @export table.events
 table.events <- function(enter = rep(0, length(exit)),
                          exit,
                          event,

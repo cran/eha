@@ -1,3 +1,28 @@
+#' Check the integrity of survival data.
+#' 
+#' Check that exit occurs after enter, that spells from an individual do not
+#' overlap, and that each individual experiences at most one event.
+#' 
+#' Interval lengths must be strictly positive.
+#' 
+#' @param enter Left truncation time.
+#' @param exit Time of exit.
+#' @param event Indicator of event. Zero means 'no event'.
+#' @param id Identification of individuals.
+#' @param eps The smallest allowed spell length or overlap.
+#' @return A vector of id's for the insane individuals. Of zero length if no
+#' errors.
+#' @author Göran Broström
+#' @seealso \code{\link{join.spells}}, \code{\link{coxreg}},
+#' \code{\link{aftreg}}
+#' @keywords manip survival
+#' @examples
+#' 
+#' xx <- data.frame(enter = c(0, 1), exit = c(1.5, 3), event = c(0, 1), id =
+#' c(1,1))
+#' check.surv(xx$enter, xx$exit, xx$event, xx$id)
+#' 
+#' @export
 check.surv <- function(enter, exit, event, id = NULL, eps = 1.e-8){
     ## The '.Fortran' version.
     ##########################

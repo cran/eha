@@ -1,3 +1,23 @@
+#' Piecewise hazards
+#' 
+#' Calculate piecewise hazards, no. of events, and exposure times in each
+#' interval indicated by cutpoints.
+#' 
+#' Exact calculation.
+#' 
+#' @param enter Left interval endpoint
+#' @param exit Right interval endpoint
+#' @param event Indicator of event
+#' @param cutpoints Vector of cutpoints
+#' @return A list with components
+#' 
+#' \item{events}{Vector of number of events} \item{exposure}{Vector of total
+#' exposure time} \item{intensity}{Vector of hazards, \code{intensity} ==
+#' \code{events} / \code{exposure}}
+#' @author Göran Broström
+#' @seealso \code{\link{perstat}}
+#' @keywords survival nonparametric
+#' @export piecewise
 piecewise <- function(enter, exit, event, cutpoints){
     n <- length(cutpoints) + 1 ## No. of time intervals.
     d <- numeric(n) ## Events

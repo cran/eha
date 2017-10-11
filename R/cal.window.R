@@ -1,3 +1,28 @@
+#' Calendar time cut of survival data
+#' 
+#' For a given time interval, each spell is cut so that it fully lies in the
+#' given time interval
+#' 
+#' The \code{window} must be in the order \code{(begin, end)}
+#' 
+#' @param dat Input data frame. Must contain survival data and a birth date.
+#' @param window Vector of length two; the time interval
+#' @param surv Vector of length four giving the names of the central variables
+#' in 'dat'.
+#' @return A data frame of the same form as the input data frame, but 'cut' as
+#' desired. Intervals exceeding \code{window[2]} will be given \code{event = 0}
+#' @author Göran Broström
+#' @seealso \code{\link{age.window}}, \code{\link{coxreg}},
+#' \code{\link{aftreg}}
+#' @keywords survival
+#' @examples
+#' 
+#' dat <- data.frame(enter = 0, exit = 5.731, event = 1,
+#' birthdate = 1962.505, x = 2)
+#' window <- c(1963, 1965)
+#' dat.trim <- cal.window(dat, window)  
+#' 
+#' @export
 cal.window <- function(dat, window,
                        surv = c("enter", "exit", "event", "birthdate")){
 

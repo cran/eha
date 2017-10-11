@@ -1,3 +1,36 @@
+#' Plots output from an AFT regression
+#' 
+#' Just a simple plot of the hazard (cumulative hazard, density, survival)
+#' functions for each stratum.
+#' 
+#' The plot is drawn at the mean values of the covariates, by default.
+#' 
+#' @param x A \code{aftreg} object
+#' @param fn Which functions shoud be plotted! Default is all. They will scroll
+#' by, so you have to take care of explicitly what you want to be produced.
+#' See, eg, \code{par(mfrow = ...)}
+#' @param main Header for the plot
+#' @param xlim x limits
+#' @param ylim y limits
+#' @param xlab x label
+#' @param ylab y label
+#' @param col Colors?
+#' @param lty Line types?
+#' @param printLegend Should legend be printed? Default is yes.
+#' @param new.data At which covariate values?
+#' @param \dots Extra parameters passed to 'plot'
+#' @return No return value.
+#' @author Göran Broström
+#' @seealso \code{\link{aftreg}}
+#' @keywords dplot survival
+#' @examples
+#' 
+#' y <- rllogis(40, shape = 1, scale = 1)
+#' x <- rep(c(1,1,2,2), 10)
+#' fit <- aftreg(Surv(y, rep(1, 40)) ~ x, dist = "loglogistic")
+#' plot(fit)
+#' 
+#' @export
 plot.aftreg <- function(x,
                         fn = c("haz", "cum", "den", "sur"),
                         main = NULL,

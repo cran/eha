@@ -1,3 +1,32 @@
+#' Loglihood function of a proportional hazards regression
+#' 
+#' Calculates minus the log likelihood function and its first and second order
+#' derivatives for data from a Weibull regression model.
+#' 
+#' Note that the function returns log likelihood, score vector and minus
+#' hessian, i.e. the observed information. The model is 
+#' \deqn{S(t; p, \lambda, \beta, z) = S_0((t / \lambda)^p)^{e^(z \beta)}}{S(t; p, lambda, beta, z) = S_0((t / lambda)^p)^exp(z beta)}
+#' 
+#' @param beta Regression parameters
+#' @param lambda The scale paramater
+#' @param p The shape parameter
+#' @param X The design (covariate) matrix.
+#' @param Y The response, a survival object.
+#' @param offset Offset.
+#' @param ord ord = 0 means only loglihood, 1 means score vector as well, 2
+#' loglihood, score and hessian.
+#' @param pfixed Logical, if TRUE the shape parameter is regarded as a known
+#' constant in the calculations, meaning that it is not cosidered in the
+#' partial derivatives.
+#' @param dist Which distribtion? The default is "weibull", with the
+#' alternatives "loglogistic" and "lognormal".
+#' @return A list with components \item{f}{The log likelihood. Present if
+#' \code{ord >= 0}} \item{fp}{The score vector. Present if \code{ord >= 1}}
+#' \item{fpp}{The negative of the hessian. Present if \code{ord >= 2}}
+#' @author Göran Broström
+#' @seealso \code{\link{phreg}}
+#' @keywords survival distribution
+#' @export phfunc
 phfunc <- function(beta = NULL, lambda, p, X = NULL, Y,
                   offset = rep(0, length(Y)),
                   ord = 2, pfixed = FALSE, dist = "weibull"){

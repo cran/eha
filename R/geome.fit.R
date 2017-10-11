@@ -1,3 +1,26 @@
+#' Constant intensity discrete time proportional hazards
+#' 
+#' This function is called from \code{coxreg}. A user may call it directly.
+#' 
+#' 
+#' @param X The design matrix
+#' @param Y Survival object
+#' @param rs risk set produced by \code{\link{risksets}}
+#' @param strats Stratum indicator
+#' @param offset Offset
+#' @param init Initial values
+#' @param max.survs Maximal survivors
+#' @param method "ml", always, i.e., this argument is ignored.
+#' @param control See \code{coxreg}.
+#' @return See the code.
+#' @note Nothing special
+#' @author Göran Broström
+#' @seealso \code{\link{coxreg}}
+#' @references See \code{\link{coxreg}}.
+#' @keywords survival
+#' 
+#' @note \code{coxreg} is a defunct function
+#' @export
 geome.fit <- function(X, Y, rs, strats, offset, init, max.survs,
                       method = "ml", ##boot = FALSE,
                       control){

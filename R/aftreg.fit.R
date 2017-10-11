@@ -1,3 +1,38 @@
+#' Parametric proportional hazards regression
+#' 
+#' This function is called by \code{\link{aftreg}}, but it can also be directly
+#' called by a user.
+#' 
+#' See \code{\link{aftreg}} for more detail.
+#' 
+#' @param X The design (covariate) matrix.
+#' @param Y A survival object, the response.
+#' @param dist Which baseline distribution?
+#' @param param Which parametrization?
+#' @param strata A stratum variable.
+#' @param offset Offset.
+#' @param init Initial regression parameter values.
+#' @param shape If positive, a fixed value of the shape parameter in the
+#' distribution. Otherwise, the shape is estimated.
+#' @param id See corresponding argument to \code{\link{aftreg}}.
+#' @param control Controls convergence and output.
+#' @param pfixed A logical indicating fixed shape parameter(s).
+#' @return 
+#' \item{coefficients}{Estimated regression coefficients plus estimated
+#' scale and shape coefficients, sorted by strata, if present.}
+#' \item{df}{Degrees of freedom; No. of regression parameters.}
+#' \item{var}{Variance-covariance matrix} 
+#' \item{loglik}{Vector of length 2. The
+#' first component is the maximized loglihood with only scale and shape in the
+#' model, the second the final maximum.} 
+#' \item{conver}{TRUE if convergence} 
+#' \item{fail}{TRUE if failure} 
+#' \item{iter}{Number of Newton-Raphson iterates.} 
+#' \item{n.strata}{The number of strata in the data.}
+#' @author Göran Broström
+#' @seealso \code{\link{aftreg}}
+#' @keywords survival regression
+#' @export
 aftreg.fit <- function(X, Y, dist, param,
                        strata, offset,
                        init, shape, id,

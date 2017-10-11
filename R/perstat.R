@@ -1,3 +1,20 @@
+#' Period statistics
+#' 
+#' Calculates occurrence / exposure rates for time periods given by
+#' \code{period} and for ages given by \code{age}.
+#' 
+#' 
+#' @param surv An (extended) \code{surv} object (4 columns with \code{enter},
+#' \code{exit}, \code{event}, \code{birthdate})
+#' @param period A vector of dates (in decimal form)
+#' @param age A vector of length 2; lowest and highest age
+#' @return A list with components \item{events}{No. of events in eavh time
+#' period.} \item{exposure}{Exposure times in each period.}
+#' \item{intensity}{\code{events / exposure}}
+#' @author Göran Broström
+#' @seealso \code{\link{piecewise}}
+#' @keywords survival nonparametric
+#' @export perstat
 perstat <- function(surv, period, age = c(0, 200)){
     if (ncol(surv) != 4) stop("Need a full 'surv' object with four columns.")
     surv <- data.frame(surv)

@@ -1,3 +1,27 @@
+#' Age cut of survival data
+#' 
+#' For a given age interval, each spell is cut to fit into the given age
+#' interval.
+#' 
+#' The \code{window} must be in the order \code{(begin, end)}
+#' 
+#' @param dat Input data frame. Must contain survival data.
+#' @param window Vector of length two; the age interval.
+#' @param surv Vector of length three giving the names of the central variables
+#' in 'dat'.
+#' @return A data frame of the same form as the input data frame, but 'cut' as
+#' desired. Intervals exceeding \code{window[2]} will be given \code{event = 0}
+#' @author Göran Broström
+#' @seealso \code{\link{cal.window}}, \code{\link{coxreg}},
+#' \code{\link{aftreg}}
+#' @keywords survival
+#' @examples
+#' 
+#' dat <- data.frame(enter = 0, exit = 5.731, event = 1, x = 2)
+#' window <- c(2, 5.3)
+#' dat.trim <- age.window(dat, window)  
+#' 
+#' @export
 age.window <- function(dat, window,
                        surv = c("enter", "exit", "event")){
     

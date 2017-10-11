@@ -1,3 +1,19 @@
+#' Prints phreg objects
+#' 
+#' The hazard, the cumulative hazard, the density, and the survivor baseline
+#' functions are plotted.
+#' 
+#' 
+#' @param x A \code{phreg} object
+#' @param digits Precision in printing
+#' @param \dots Not used.
+#' @return No value is returned.
+#' @note Doesn't work for threeway or higher order interactions. Use
+#' \code{\link[survival]{print.coxph}} in that case.
+#' @author Göran Broström
+#' @seealso \code{\link{phreg}}, \code{\link[survival]{print.coxph}}
+#' @keywords survival regression
+#' @export
 print.phreg <- function(x, digits = max(options()$digits - 4, 3), ...){
 
     if (!is.null(cl<- x$call)) {

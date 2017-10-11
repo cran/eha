@@ -1,3 +1,116 @@
+#' Parametric Proportional Hazards Regression
+#' 
+#' Proportional hazards model with parametric baseline hazard(s).  Allows for
+#' stratification with different scale and shape in each stratum, and left
+#' truncated and right censored data.
+#' 
+#' The parameterization is the same as in \code{\link{coxreg}} and
+#' \code{\link[survival]{coxph}}, but different from the one used by
+#' \code{\link[survival]{survreg}} (which is not a proportional hazards
+#' modelling function). The model is \deqn{S(t; a, b, \beta, z) =
+#' S_0((t/b)^a)^{\exp((z-mean(z))\beta)}}{% S(t; a, b, beta, z) =
+#' S0((t/b)^a)^exp((z - mean(z)) beta)} where S0 is some standardized survivor
+#' function.
+#' 
+#' If \code{center = TRUE} (default), graphs show the "baseline" distribution
+#' at the means of (continuous) covariates, and for the reference category in
+#' case of factors (avoiding representing "flying pigs"). If \code{center =
+#' FALSE} the baseline distribution is at the value zero of all covariates. It
+#' is usually a good idea to use \code{center = FALSE} in combination with
+#' "precentering" of covariates, that is, subtracting a reference value,
+#' ideally close to the center of the covariate distribution. In that way, the
+#' "reference" will be the same for all subsets of the data.
+#' 
+#' @param formula a formula object, with the response on the left of a ~
+#' operator, and the terms on the right.  The response must be a survival
+#' object as returned by the Surv function.
+#' @param data a data.frame in which to interpret the variables named in the
+#' formula.
+#' @param na.action a missing-data filter function, applied to the model.frame,
+#' after any subset argument has been used.  Default is
+#' \code{options()$na.action}.
+#' @param dist Which distribution? Default is "weibull", with the alternatives
+#' "ev" (Extreme value), "gompertz", "pch" (piecewise constant hazards
+#' function), "loglogistic" and "lognormal". A special case like the
+#' \code{exponential} can be obtained by choosing "weibull" in combination with
+#' \code{shape = 1}, or "pch" without \code{cuts}.
+#' @param cuts Only used with \code{dist = "pch"}. Specifies the points in time
+#' where the hazard function jumps. If omitted, an exponential model is fitted.
+#' @param init vector of initial values of the iteration.  Default initial
+#' value is zero for all variables.
+#' @param shape If positive, the shape parameter is fixed at that value (in
+#' each stratum).  If zero or negative, the shape parameter is estimated.  If
+#' more than one stratum is present in data, each stratum gets its own
+#' estimate.
+#' @param param Applies only to the Gompertz distribution: "canonical" is
+#' defined in the description of the \code{\link{Gompertz}} distribution;
+#' "rate" transforms \code{scale} to 1/log(scale), giving the same
+#' parametrization as in Stata and SAS. The latter thus allows for a negative
+#' rate, or a "cure" (Gompertz) model. The default is "canonical"; if this
+#' results in extremely large scale and/or shape estimates, consider trying
+#' "rate".
+#' @param control a list with components \code{eps} (convergence criterion),
+#' \code{maxiter} (maximum number of iterations), and \code{silent} (logical,
+#' controlling amount of output).  You can change any component without mention
+#' the other(s).
+#' @param singular.ok Not used.
+#' @param model Not used.
+#' @param x Return the design matrix in the model object?
+#' @param y Return the response in the model object?
+#' @param center Logical, only affects plotting. Results are reported as is,
+#' without centering. See Details.
+#' @return A list of class \code{c("phreg", "coxreg")} with components
+#' \item{coefficients}{Fitted parameter estimates.} \item{cuts}{Cut points for
+#' the "pch" distribution. \code{NULL} otherwise.} \item{hazards}{The estimated
+#' constant levels in the case of the "pch" distribution. \code{NULL}
+#' otherwise.} \item{var}{Covariance matrix of the estimates.}
+#' \item{loglik}{Vector of length two; first component is the value at the
+#' initial parameter values, the second componet is the maximized value.}
+#' \item{score}{The score test statistic (at the initial value).}
+#' \item{linear.predictors}{The estimated linear predictors.}
+#' \item{means}{Means of the columns of the design matrix, except those columns
+#' corresponding to a factor level, if \code{center = TRUE}. Otherwise all
+#' zero.} \item{w.means}{Weighted (against exposure time) means of covariates;
+#' weighted relative frequencies of levels of factors.} \item{n}{Number of
+#' spells in indata (possibly after removal of cases with NA's).}
+#' \item{events}{Number of events in data.} \item{terms}{Used by extractor
+#' functions.} \item{assign}{Used by extractor functions.} %
+#' \item{wald.test}{The Wald test statistic (at the initial value).}
+#' \item{y}{The Surv vector.} \item{isF}{Logical vector indicating the
+#' covariates that are factors.} \item{covars}{The covariates.}
+#' \item{ttr}{Total Time at Risk.} \item{levels}{List of levels of factors.}
+#' \item{formula}{The calling formula.} \item{call}{The call.}
+#' \item{method}{The method.} \item{convergence}{Did the optimization
+#' converge?} \item{fail}{Did the optimization fail? (Is \code{NULL} if not).}
+#' \item{pfixed}{TRUE if shape was fixed in the estimation.}
+#' @note The lognormal and loglogistic baseline distributions are extended to a
+#' three-parameter family by adding a "proportionality" parameter (multiplying
+#' the baseline hazard function). The log of the estimated parameter turns up
+#' as '(Intercept)' in the printed output. The reason for this extension is
+#' that the standard lognormal and loglogistic distributions are not closed
+#' under proportional hazards.
+#' @section Warning: The lognormal and loglogistic distributions are included
+#' on an experimental basis for the moment. Use with care, results may be
+#' unreliable!
+#' 
+#' The gompertz distribution has an exponentially increasing hazard function
+#' under the canonical parametrization. This may cause instability in the
+#' convergence of the fitting algorithm in the case of near-exponential data.
+#' It may be resolved by using \code{param = "rate"}.
+#' @author Göran Broström
+#' @seealso \code{\link{coxreg}}, \code{\link{check.dist}},
+#' \code{link{aftreg}}.
+#' @keywords survival regression
+#' @examples
+#' 
+#' data(mort)
+#' fit <- phreg(Surv(enter, exit, event) ~ ses, data = mort)
+#' fit
+#' plot(fit)
+#' fit.cr <- coxreg(Surv(enter, exit, event) ~ ses, data = mort)
+#' check.dist(fit.cr, fit)
+#' 
+#' @export phreg
 phreg <- function (formula = formula(data),
                    data = parent.frame(),
                    na.action = getOption("na.action"),

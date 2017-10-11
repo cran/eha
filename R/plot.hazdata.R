@@ -1,3 +1,42 @@
+#' Plots of survivor functions.
+#' 
+#' Baseline hazards estimates.
+#' 
+#' It is also possible to have as first argument an object of type "coxreg",
+#' given that it contains a component of type "hazdata".
+#' 
+#' @param x A \code{hazdata} object, typically the 'hazards' element in the
+#' output from \code{link{coxreg}} with \code{hazards = TRUE}.
+#' @param strata Stratum names if there are strata present.
+#' @param fn Which type of plot?
+#' @param fig Should a plot actually be produced? Default is TRUE.
+#' @param xlim Horizontal plot limits. If NULL, calculated by the function.
+#' @param ylim Vertical plot limits. If NULL, set to \code{c(0, 1)}
+#' @param main A heading for the plot.
+#' @param xlab Label on the x axis.
+#' @param ylab Label on the y-axis.
+#' @param col Color of the lines. May be a vector of length equal to No. of
+#' strata.
+#' @param lty Line type(s). May be a vector of length equal to No. of strata.
+#' @param printLegend Logical; should a legend be produced?  Defaults to TRUE.
+#' @param where Where should the legend be placed (if(printLegend))?  If
+#' \code{NULL}, "bottomleft" for fn = "surv", otherwise "bottomright".
+#' @param ... Anything that \code{\link[graphics]{plot.default}} likes...
+#' @return A list where the elements are two-column matrices, one for each
+#' stratum in the model. The first column contains risktimes, and the second
+#' the y coordinates for the requested curve(s).
+#' @author Göran Broström
+#' @keywords survival
+#' @examples
+#' 
+#' time0 <- numeric(50)
+#' group <- c(rep(0, 25), rep(1, 25))
+#' time1 <- rexp( 50, exp(group) )
+#' event <- rep(1, 50)
+#' fit <- coxreg(Surv(time0, time1, event) ~ strata(group), hazards = TRUE)
+#' plot(fit$hazards)
+#' 
+#' @export
 plot.hazdata <- function(x, strata = NULL,
                          fn = c("cum", "surv", "log", "loglog"),
                          fig = TRUE,

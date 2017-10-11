@@ -1,3 +1,33 @@
+#' Plots output from a Weibull regression
+#' 
+#' Plot(s) of the hazard, density, cumulative hazards, and/or the survivor
+#' function(s) for each stratum.
+#' 
+#' The plot is drawn at the mean values of the covariates.
+#' 
+#' @param x A \code{weibreg} object
+#' @param fn Which functions shoud be plotted! Default is all. They will scroll
+#' by, so you have to take care explicitely what you want to be produced. See,
+#' eg, \code{par(mfrow = ...)}
+#' @param main Header for the plot
+#' @param xlim x limits
+#' @param ylim y limits
+#' @param xlab x label
+#' @param ylab y label
+#' @param new.data At which covariate values?
+#' @param \dots Extra parameters passed to 'plot'
+#' @return No return value
+#' @author Göran Broström
+#' @seealso \code{\link{phreg}}, \code{\link{weibreg}}
+#' @keywords dplot survival
+#' @examples
+#' 
+#' y <- rweibull(4, shape = 1, scale = 1)
+#' x <- c(1,1,2,2)
+#' fit <- weibreg(Surv(y, c(1,1,1,1)) ~ x)
+#' plot(fit)
+#' 
+#' @export
 plot.weibreg <- function(x,
                          fn = c("haz", "cum", "den", "sur"),
                          main = NULL,

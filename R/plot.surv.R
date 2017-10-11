@@ -1,3 +1,44 @@
+#' Plots of survivor functions.
+#' 
+#' Kaplan-Meier estimates. If only one curve, confidence limits according to
+#' Greenwood's formula are drawn.
+#' 
+#' Left truncation is allowed. Note, though, that this fact may result in
+#' strange estimated curves due to lack of data in certain (low) ages.
+#' 
+#' @param x A \code{Surv} object.
+#' @param strata Defines a partition of the data. One survivor function for
+#' each level of \code{strata} is drawn.
+#' @param fn Which type of plot?
+#' @param limits If TRUE, and if the number of curves is one, confidence limits
+#' are drawn.
+#' @param conf The confidence level for the confidence limits.
+#' @param main A heading for the plot.
+#' @param xlab Label on the x axis.
+#' @param ylab Label on the y-axis.
+#' @param xlim Horizontal plot limits. If NULL, calculated by the function.
+#' @param ylim Vertical plot limits. If NULL, set to \code{c(0, 1)}
+#' @param lty Line type of curves.
+#' @param col Color of curves.
+#' @param lty.con Line type of confidence bands.
+#' @param col.con Color of confidence bands.
+#' @param x.axis Should \code{abline(h=0)} be drawn?
+#' @param printLegend Logical, defaults to \code{TRUE}. If \code{FALSE}, no
+#' legend is printed, but can be added after plotting. To be used if the
+#' default place for the legend fits badly.
+#' @param ... Anything that \code{plot} likes...
+#' @return No value is returned.
+#' @author Göran Broström
+#' @keywords survival
+#' @examples
+#' 
+#' time0 <- numeric(50)
+#' group <- c(rep(0, 25), rep(1, 25))
+#' time1 <- rexp( 50, exp(group) )
+#' event <- rep(1, 50)
+#' plot(Surv(time0, time1, event), strata = group)
+#' 
+#' @export
 plot.Surv <- function (x, strata = NULL,
                        fn = c("cum", "surv", "log", "loglog"), 
                        limits = TRUE, conf = 0.95, main = NULL, xlab = NULL,
