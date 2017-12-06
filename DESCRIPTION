@@ -1,7 +1,7 @@
 Encoding: UTF-8
 Package: eha
-Version: 2.5.0
-Date: 2017-10-11
+Version: 2.5.1
+Date: 2017-12-04
 Title: Event History Analysis
 Description: Sampling of risk sets in Cox regression, selections in 
         the Lexis diagram, bootstrapping. Parametric proportional 
@@ -23,6 +23,6 @@ Maintainer: Göran Broström <goran.brostrom@umu.se>
 RoxygenNote: 6.0.1
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
-Packaged: 2017-10-11 20:07:09 UTC; gb
+Packaged: 2017-12-06 10:05:44 UTC; gobr0002
 Repository: CRAN
-Date/Publication: 2017-10-11 22:57:21 UTC
+Date/Publication: 2017-12-06 11:03:49 UTC
