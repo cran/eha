@@ -1,21 +1,21 @@
 Encoding: UTF-8
 Package: eha
-Version: 2.5.1
-Date: 2017-12-04
+Version: 2.6.0
+Date: 2018-07-13
 Title: Event History Analysis
 Description: Sampling of risk sets in Cox regression, selections in 
         the Lexis diagram, bootstrapping. Parametric proportional 
         hazards fitting with left truncation and right censoring for 
         common families of distributions, piecewise constant hazards, 
-        and discrete models. AFT regression for left truncated and 
-        right censored data.
+        and discrete models. Parametric accelerated failure time models 
+        for left truncated and right censored data.
 BugReports: https://github.com/goranbrostrom/eha/issues
 License: GPL (>= 2)
 LazyData: yes
 ByteCompile: yes
 Authors@R: c(person("Göran", "Broström", role = c("aut", "cre"),
                     email = "goran.brostrom@umu.se"))
-Depends: R (>= 3.0.0), survival (>= 2.37-6)
+Depends: R (>= 3.0.0), survival (>= 2.42-5)
 Imports: stats, graphics
 NeedsCompilation: yes
 Author: Göran Broström [aut, cre]
@@ -23,6 +23,6 @@ Maintainer: Göran Broström <goran.brostrom@umu.se>
 RoxygenNote: 6.0.1
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
-Packaged: 2017-12-06 10:05:44 UTC; gobr0002
+Packaged: 2018-07-13 10:34:35 UTC; goran
 Repository: CRAN
-Date/Publication: 2017-12-06 11:03:49 UTC
+Date/Publication: 2018-07-13 11:10:02 UTC
