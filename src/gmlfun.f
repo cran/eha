@@ -1,4 +1,5 @@
-C +++
+
+C+++
 C
       subroutine ginit_ml(ns, antcov, loglik,
      &     h1, h2, h11, h21, h22)
@@ -200,9 +201,8 @@ C
       parameter (zero = 0.d0, one = 1.d0) 
       integer ione
       parameter (ione = 1)
-      character*1 trans
+      character trans
       parameter (trans = 'N')
-
       integer i, j, s, m, rs
       integer aindx, eindx, rsindx, sindx
 

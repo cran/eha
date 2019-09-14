@@ -1,3 +1,31 @@
+# eha 2.7.5
+
+* More fixes to work around the gfortran bug. 
+
+* Add C wrapper, cdgemv,  for Fortran call to BLAS subroutine dgemv.
+
+# eha 2.7.1
+
+* *gdgemv.f* contains a new FORTRAN subroutine, essentially a copy of the LAPACK subroutine *dgemv*. Purpose: Avoid bug in gfortran 7+. Relevant calls updated. 
+
+# eha 2.7.0
+
+* *risksets*: Warning about sample_fraction fixed.
+
+* Errors in *plot.aftreg* fixed (thanks to Mark Clements).
+
+* In *eha_fun.c*, changed 'finite' to 'isfinite' (C99).
+
+* Fix *tpchreg* with *extractAIC* and *nobs*.
+
+* New functions *tpchreg* and *toTpch*.
+
+* Bug in *phreg*, Gompertz distribution, 'param ="rate"', fixed.
+
+* Bug in *phreg*, Gompertz distribution, 'param ="rate"', with strata, fixed.
+
+* Error in *plot.phreg*, Gompertz with 'param = "rate"' fixed.
+
 # eha 2.6.0
 
 * New function: *mpch* gives the mean of a piecewise constant hazards distribution.
@@ -38,7 +66,7 @@
 * `coxreg()`: "Geometric bootstrap" removed (it never worked and was
 	never used).
 
-* `cal.window()`, `age.window(: Works now with 'tibbles'.
+* `cal.window()`, `age.window()`: Works now with 'tibbles'.
 
 # eha 2.4-4
 
