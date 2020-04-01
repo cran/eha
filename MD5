@@ -1,7 +1,7 @@
-5a5858ae51fef3af9f3e7a4fcf8c4967 *ChangeLog
-cefb32810c9ba8900dd7ab70ef633289 *DESCRIPTION
+1d1be9fd51a8d5a473f2e5fb6a9562f0 *ChangeLog
+06e362f8874c5d8d551528a4a3f39563 *DESCRIPTION
 fbf16cbb45d949dd81a1774c78d8dbbb *NAMESPACE
-b63a3e2b3f3bb13d67cf6a8787410e8b *NEWS.md
+efbc6fc84acfe943181bb86f198e004f *NEWS.md
 8659e1171218e29c2d4250570496263c *R/Extreme_Value.R
 c9cf71e0e97dccae09c3032000cf0a0b *R/Gompertz.R
 607587ec2ccf1ed13cb660ad42449d89 *R/Loglogistic.R
@@ -33,7 +33,7 @@ a6d418b009c398ddbdabc5979cac95fe *R/getHaz.R
 c966f390bb48d8e1e81e0c9d88457524 *R/gompregRate.R
 a1ea4b792db53b7edb29fe75b4cf73c8 *R/gompstartAft.R
 d7c75f6a5d4a73e8a592919a34626daa *R/gompstartCanonical.R
-e9878466e51f7e256ebfe75931f19e36 *R/gompstartRate.R
+033d55dd279f981c48cdb45eed414b5e *R/gompstartRate.R
 0781faae065d7a3e182ba10d1fd7953d *R/join.spells.R
 a351173f784543bde45b259f4bb59ff7 *R/ltx.R
 24890ac50220b918720c11e439dc80bd *R/ltx.aftreg.R
@@ -64,7 +64,7 @@ d6fbc034bf08af55dbbb31917ec24212 *R/print.pchreg.R
 4c6036943a223db1cd169da2ce27ec9b *R/print.risksets.R
 8d082fd192955b9f8fcb676120ef0377 *R/print.tpchreg.R
 a30f4985f18cea7a64cb90ee90204b67 *R/print.weibreg.R
-2f1c2ccfd502d6652a73331275e1310c *R/risksets.R
+d2b82c3d93c4151a2080ad80b6495530 *R/risksets.R
 5c237b904f513ef9a063a32511320d15 *R/struct.R
 b190b19fd3f85573daff2438d2228877 *R/summary.aftreg.R
 ebc0000b37ea97f85ec06f7bd203b462 *R/summary.coxreg.R
@@ -81,7 +81,7 @@ e191d878a4a1477007788a427fe32539 *R/toBinary.R
 ca099ff8cea36c272c8d1bf28cc9e8d4 *R/weibreg.R
 bd45927d97aa0a3c95500a2e29cc2870 *R/weibreg.fit.R
 64fba67ffe98767e89e8fcedbafbf08f *R/wfunk.R
-fb7c1642f05ecf11cff2ad9dd833200c *build/vignette.rds
+9f197a61709d77c4b631996cb1ff1147 *build/vignette.rds
 606ffac1de687625c16bf23d4875b1bc *data/fert.rda
 6e100ec5b878a6ddbee062099c8b74b7 *data/infants.rda
 f27001cd52d09216cd236d23847b26a7 *data/logrye.rda
@@ -91,9 +91,9 @@ f030989bf08cf761913881089fc35baf *data/oldmort.rda
 9704eb70e799f94e33579671af755faf *data/scania.rda
 deafc40d50b5fda64f89a2b71dfa227b *data/swe07.rda
 c59912da7f3d98570f2c320f97a74e1d *inst/doc/eha.Rmd
-7b2e288959f4e87888956a03390af97e *inst/doc/eha.html
+6212bd690485861f4eddcbeb13a8b01e *inst/doc/eha.html
 8075aae9903989bbf3d21258da38ae3d *inst/doc/parametric.Rnw
-3747581fe78fdec78445465a7c26db26 *inst/doc/parametric.pdf
+6bd9d2077dd36c84b9b3cece316e2904 *inst/doc/parametric.pdf
 a011108db145c7850a7e241ebc98be9a *man/EV.Rd
 b8a5b032029d181ed92c7c85473856a8 *man/Gompertz.Rd
 133ab1a018e46314808ad9016eefc0e5 *man/Loglogistic.Rd
@@ -143,7 +143,7 @@ fa1e8659f06144fa53bf9bc94fe70468 *man/plot.weibreg.Rd
 0e0965616c4d4ed0100dfd6fd336dd5e *man/print.risksets.Rd
 6e6c360f6253d5ecf46fc07cfaaa6c74 *man/print.tpchreg.Rd
 71e6e6c93ce0ae71d5195eced28e0129 *man/print.weibreg.Rd
-df97e9403f18e5e26335ca14a40eca64 *man/risksets.Rd
+80cd218b1f86764430317e74daf970ab *man/risksets.Rd
 2bc22e44272832bb84875ca9f636a266 *man/scania.Rd
 a0608981fa68e71d9efb3a9f4f3bc885 *man/summary.aftreg.Rd
 0cee9179e0ab2fa5b03c0bad0916a3ac *man/summary.coxreg.Rd
@@ -182,7 +182,7 @@ a75ac7f47298f4756b9ba54ebb08e4aa *src/expreg.h
 1d27838d714bd26033b3d9ca8149d667 *src/frail_ml.h
 65794f8caa95df23766854a6927aa607 *src/geomsup.f
 bf31aba19bdf09feff8a60e98a569850 *src/getHaz.f
-a04fec70359e60744be90694e56f2c02 *src/getsums.f
+3afa94ed446fea8f16091cdb19a7b01c *src/getsums.f
 22d9ea47682c3a44ecd1a2da7039d668 *src/getsums.null.f
 8b043d371bba69844de029183887361e *src/ghq.f
 64cae894bf834cc24aa8db5c0b979da7 *src/ghq.h

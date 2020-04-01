@@ -1,7 +1,7 @@
 Encoding: UTF-8
 Package: eha
-Version: 2.8.0
-Date: 2019-12-19
+Version: 2.8.1
+Date: 2020-03-31
 Title: Event History Analysis
 Description: Sampling of risk sets in Cox regression, selections in 
         the Lexis diagram, bootstrapping. Parametric proportional 
@@ -13,6 +13,7 @@ BugReports: https://github.com/goranbrostrom/eha/issues
 License: GPL (>= 2)
 LazyData: yes
 ByteCompile: yes
+URL: https://goranbrostrom.github.io/eha/
 Authors@R: c(person("Göran", "Broström", role = c("aut", "cre"),
                     email = "goran.brostrom@umu.se"),
 	     person("Jianming", "Jin", role = "ctb"))
@@ -20,11 +21,11 @@ Depends: R (>= 3.0.0), survival (>= 2.42-5)
 Imports: stats, graphics
 NeedsCompilation: yes
 Maintainer: Göran Broström <goran.brostrom@umu.se>
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
-Packaged: 2019-12-19 12:57:31 UTC; gobr0002
+Packaged: 2020-03-31 19:27:21 UTC; gobr0002
 Author: Göran Broström [aut, cre],
   Jianming Jin [ctb]
 Repository: CRAN
-Date/Publication: 2019-12-19 22:40:06 UTC
+Date/Publication: 2020-04-01 18:40:11 UTC
