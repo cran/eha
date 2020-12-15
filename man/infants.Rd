@@ -34,11 +34,11 @@
 From 5641 first-born in seven Swedish parishes 1820-1895, from Fleninge in the
 very south to Nedertorneå in the very north, those whose mother died
 during their first year of life were selected, in all 35 infants. To
-each of them, two cotrols were selected by matching on the given covariates.
+each of them, two controls were selected by matching on the given covariates.
 } 
 \source{
 Data originate from The Demographic Data Base, Umeå University, Umeå, Sweden,
-\url{http://www.ddb.umu.se}.}
+\url{https://www.umu.se/enheten-for-demografi-och-aldrandeforskning/}.}
 \references{
 Broström, G. (1987). The influence of mother's death on infant
 mortality: A case study in matched data survival analysis. Scandinavian
@@ -51,6 +51,6 @@ fit <- coxreg(Surv(enter, exit, event) ~ strata(stratum) + mother, data
 fit
 fit.w <- phreg(Surv(enter, exit, event) ~ mother + parish + ses, data =
 infants)
-fit.w ## Weibull proportional hazards model.
+summary(fit.w) ## Weibull proportional hazards model.
 }
 \keyword{datasets}

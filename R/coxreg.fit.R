@@ -15,14 +15,16 @@
 #' @param max.survs Sampling of risk sets? If so, gives the maximum number of
 #' survivors in each risk set.
 #' @param method Either "efron" (default) or "breslow".
-#' @param center See \code{\link{coxreg}}.
+#'
 #' @param boot Number of bootstrap replicates. Defaults to FALSE, no
 #' bootstrapping.
 #' @param efrac Upper limit of fraction failures in 'mppl'.
-#' @param calc.hazards Should estimates of baseline hazards be calculated?
 #' @param calc.martres Should martingale residuals be calculated?
 #' @param control See \code{\link{coxreg}}
 #' @param verbose Should Warnings about convergence be printed?
+#' @param calc.hazards Deprecated. See \code{\link{coxreg}}.
+#' @param center Deprecated. See \code{\link{coxreg}}.
+#'  
 #' @return A list with components \item{coefficients}{Estimated regression
 #' parameters.} \item{var}{Covariance matrix of estimated coefficients.}
 #' \item{loglik}{First component is value at \code{init}, second at maximum.}
@@ -53,17 +55,25 @@
 #' @export
 coxreg.fit <- function(X, Y, rs, weights, t.offset = NULL,
                        strats, offset, init, max.survs,
-                       method = "breslow", center = TRUE,
+                       method = "efron",
                        boot = FALSE, efrac = 0,
-                       calc.hazards = TRUE, calc.martres = TRUE,
-                       control, verbose = TRUE){
+                       calc.martres = TRUE,
+                       control, verbose = TRUE, calc.hazards = NULL,
+                       center = NULL){
 
+    if (!is.null(center)){
+      warning("argument 'center' is deprecated.")
+    }
+    if (!is.null(calc.hazards)){
+      warning("argument 'calc.hazards' is deprecated")
+    }
+  
     nn <- NROW(Y)
     if (is.matrix(X)){
         ncov <- NCOL(X)
     }else{
-        if (length(X)) NCOL <- 1
-        else NCOL <- 0
+        if (length(X)) ncov <- 1
+        else ncov <- 0
     }
 
     if (missing(strats) || is.null(strats))
@@ -195,10 +205,12 @@ coxreg.fit <- function(X, Y, rs, weights, t.offset = NULL,
                   PACKAGE = "eha")
 
     if (FALSE){ ## NO!!!! 20110105; # YES!!! 20110103. Not for the moment...
+        ## 
         score.means <- exp(sum(means * fit$beta[1:ncov]))
         haz.mean <- 1 - (1 - fit$hazard)^score.means
-    }else{
-        haz.mean <- fit$hazard
+    }else{ ## Changed 20200907: Needs a follow-up!
+        score.means <- exp(sum(means * fit$beta[1:ncov]))
+        haz.mean <- fit$hazard / score.means
     }
     hazards <- list()
     stopp <- cumsum(rs$antrs)

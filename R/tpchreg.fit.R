@@ -1,7 +1,17 @@
-tpchreg.fit <- function(X, count, exposure, offset, strata, time, pieces){
+tpchreg.fit <- function(X, count, exposure, offset, weights, strata, time){
+    ## NOTE: 'time' must be a factor here.
+    
+    if (!is.factor(time)){
+        cat("time:", time[1:5], "\n")
+        stop("[tpchreg.fit] time must be a factor here.")
+    } 
     ##print(str(time))
-    names(pieces) <- levels(time)
-    ivl <- as.integer(time)
+    if (!missing(weights)){
+        count <- count * weights
+        exposure <- exposure * weights   
+    }
+    
+    ivl <- as.integer(time) ## time must be a factor here!
     ##cat("unique(time) = ", unique(time), "\n")
     nn <- length(count)
         if (!is.matrix(X)) X <- matrix(X, ncol = 1)
@@ -15,15 +25,15 @@ tpchreg.fit <- function(X, count, exposure, offset, strata, time, pieces){
         strata <- as.integer(strata)
         ns <- max(strata)
     }
-
     ns <- length(unique(strata))
     ncov <- NCOL(X) # Assume here that ncov >= 0!
     init <- rep(0, ncov) ## FIX THIS hack!!
     n.ivl <- length(unique(time))
-    Dtot <- sum(count)
+    Dtot <- sum(count) 
 #########
     loglik0 <- function(){
         alpha <- matrix(0, nrow = ns, ncol = n.ivl)
+        alpha_sd <- matrix(0, nrow = ns, ncol = n.ivl)
         res <- -Dtot
         for (i in seq_len(n.ivl)){
             for (j in 1:ns){
@@ -36,7 +46,8 @@ tpchreg.fit <- function(X, count, exposure, offset, strata, time, pieces){
                 ##cat("D = ", D, "\n")
                 if (D > 0){
                     sumT <- sum(exposure[indx])
-                    alpha[j, i] <- D / sumT 
+                    alpha[j, i] <- D / sumT
+                    alpha_sd[j, i] <- 1 / sqrt(D)
                     res <- res + D * (log(D) - log(sumT))
                 }
             }
@@ -45,14 +56,14 @@ tpchreg.fit <- function(X, count, exposure, offset, strata, time, pieces){
         ##
 
         cbind(strata, ivl, count)
-        list(loglik = res, hazards = alpha)
+        list(loglik0 = res, hazards0 = alpha, hazards0_sd = alpha_sd)
     }
 #########
    loglik <- function(beta){
         ##cat("beta = ", beta, "\n") 
         zb <- offset + X %*% beta
         ##cat("zb = ", zb, "\n")
-        tezb <- exposure * exp(zb)
+        tezb <- exposure * exp(zb) 
         ##cat("tezb = ", tezb, "\n")
         ##res <- sum(d * zb) - Dtot
         res <- drop(count %*% zb) - Dtot
@@ -105,17 +116,22 @@ tpchreg.fit <- function(X, count, exposure, offset, strata, time, pieces){
         ## Note: f = (alpha * exp(zb)^d * exp(-t * alpha * exp(zb))
         tezb <- exposure * exp(X %*% beta)
         alpha <- matrix(0, nrow = ns, ncol = n.ivl)
+        sd_alpha <- matrix(0, nrow = ns, ncol = n.ivl)
         for (i in seq_len(n.ivl)){
             for (j in 1:ns){
                 indx <- (strata == j) & (ivl == i)
                 D <- sum(count[indx])
-                alpha[j, i] <- D / sum(tezb[indx])
+                if (D > 0){
+                    alpha[j, i] <- D / sum(tezb[indx])
+                    sd_alpha[j, i] <- 1 / sqrt(D)
+                }
             }
         }
-    alpha
+    list(hazards = alpha, sd_hazards = sd_alpha)
     } # end getAlpha
 ############
-     fit <- loglik0()
+
+    fit <- loglik0()
     
     if (ncov){
         ##means <- colMeans(X)
@@ -130,17 +146,21 @@ tpchreg.fit <- function(X, count, exposure, offset, strata, time, pieces){
         beta <- res$par
         fit$gradient <- dloglik(beta)
         ##cat("score = ", deriv, " at solution\n")
-        fit$loglik <- c(fit$loglik, res$value)
+        fit$loglik <- c(fit$loglik0, res$value)
         fit$coefficients <- beta
         names(fit$coefficients) <- colnames(X)
         fit$var <- solve(-res$hessian)
-        fit$hazards <- getAlpha(beta)
+        xx <- getAlpha(beta)
+        fit$hazards_sd <- xx$hazards_sd
+        fit$hazards <- xx$hazards
         fit$hazards <- fit$hazards * exp(-drop(means %*% fit$coefficients))
         colnames(fit$var) <- rownames(fit$var) <- colnames(X)
         fit$nullModel <- FALSE
         ##fit$w.means <- means ## MUST be fixed: This is WRONG!!
     }else{# No covariates
-        fit$loglik <- rep(fit$loglik, 2)
+        fit$loglik <- rep(fit$loglik0, 2)
+        fit$hazards <- fit$hazards0
+        fit$hazards_sd <- fit$hazards0_sd
         fit$coefficients <- NULL
         fit$nullModel <- TRUE
     }

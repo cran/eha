@@ -8,21 +8,12 @@
 #' \code{survival}. The methods \code{mppl} and \code{ml} are maximum
 #' likelihood, discrete-model, based.
 #' 
-#' If \code{center = TRUE} (default), graphs show the "baseline" distribution
-#' at the means of (continuous) covariates, and for the reference category in
-#' case of factors (avoiding representing "flying pigs"). If \code{center =
-#' FALSE} the baseline distribution is at the value zero of all covariates. It
-#' is usually a good idea to use \code{center = FALSE} in combination with
-#' "precentering" of covariates, that is, subtracting a reference value,
-#' ideally close to the center of the covariate distribution. In that way, the
-#' "reference" will be the same for all subsets of the data.
-#' 
 #' @usage coxreg(formula = formula(data), data = parent.frame(), weights,
 #' subset, t.offset, na.action = getOption("na.action"), init = NULL, method =
 #' c("efron", "breslow", "mppl", "ml"), control = list(eps = 1e-08, maxiter =
-#' 25, trace = FALSE), singular.ok = TRUE, model = FALSE, center = TRUE, x =
-#' FALSE, y = TRUE, hazards = TRUE, boot = FALSE, efrac = 0, geometric = FALSE,
-#' rs = NULL, frailty = NULL, max.survs = NULL)
+#' 25, trace = FALSE), singular.ok = TRUE, model = FALSE, center = NULL, x =
+#' FALSE, y = TRUE, hazards = NULL, boot = FALSE, efrac = 0, geometric = FALSE,
+#' rs = NULL, frailty = NULL, max.survs = NULL, coxph = TRUE)
 #'
 #' @param formula a formula object, with the response on the left of a ~
 #' operator, and the terms on the right. The response must be a survival object
@@ -46,20 +37,21 @@
 #' the other(s).
 #' @param singular.ok Not used
 #' @param model Not used
-#' @param center Logical. If \code{center = TRUE} (default), the baseline
-#' hazards are calculated at the means of the covariates and for the reference
-#' category for factors, otherwise at the value zero. See Details.
+#' @param center deprecated. See Details.
 #' @param x Return the design matrix in the model object?
 #' @param y return the response in the model object?
-#' @param hazards Calculate baseline hazards? Default is TRUE.
+#' @param hazards deprecated. Was: Calculate baseline hazards? Default is TRUE.
+#' Calculating hazards is better done separately, after fitting. In most cases.
 #' @param boot Number of boot replicates. Defaults to FALSE, no boot samples.
 #' @param efrac Upper limit of fraction failures in 'mppl'.
 #' @param geometric If TRUE, forces an 'ml' model with constant riskset
 #' probability. Default is FALSE.
 #' @param rs Risk set?
-#' @param frailty Grouping variable for frailty analysis. Not in use yet.
+#' @param frailty Grouping variable for frailty analysis. Not in use (yet).
 #' @param max.survs Sampling of risk sets? If given, it should be (the upper
 #' limit of) the number of survivors in each risk set.
+#' @param coxph Logical, defaults to \code{TRUE}. Determines if standard work
+#' should be passed to \code{\link[survival]{coxph}} via entry points. 
 #' @return A list of class \code{c("coxreg", "coxph")} with components
 #' \item{coefficients}{Fitted parameter estimates.}
 #' \item{var}{Covariance matrix of the estimates.}
@@ -69,10 +61,10 @@
 #' \item{score}{The score test statistic (at the initial value).}
 #' \item{linear.predictors}{The estimated linear predictors.}
 #' \item{residuals}{The martingale residuals.}
-#' \item{hazard}{The estimated baseline hazard, calculated at the means of
+#' \item{hazards}{The estimated baseline hazards, calculated at the value zero of
 #' the covariates (rather, columns of the design matrix). Is a list,
 #' with one component per stratum. Each
-#' component is a matrix with two columns, the first contains risktimes, the
+#' component is a matrix with two columns, the first contains risk times, the
 #' second the corresponding hazard atom.}
 #' \item{means}{Means of the columns of
 #' the design matrix corresponding to covariates, if \code{center = TRUE}.
@@ -83,7 +75,7 @@
 #' weighted relative frequencies of levels of factors.}
 #' \item{n}{Number of spells in indata (possibly after removal of cases
 #' with NA's).}
-#' \item{events}{Number of events in data.}
+#' \item{n.events}{Number of events in data.}
 #' \item{terms}{Used by extractor functions.}
 #' \item{assign}{Used by extractor functions.}
 #' \item{y}{The Surv vector.}
@@ -137,29 +129,49 @@ coxreg <- function (formula = formula(data),
                     control = list(eps = 1e-8, maxiter = 25, trace = FALSE),
                     singular.ok = TRUE,
                     model = FALSE,
-                    center = TRUE,
+                    center = NULL,
                     x = FALSE,
                     y = TRUE,
-                    hazards = TRUE,
+                    hazards = NULL,
                     boot = FALSE,
                     efrac = 0,
                     geometric = FALSE,
                     rs = NULL,
                     frailty = NULL,
-                    max.survs = NULL)
+                    max.survs = NULL,
+                    coxph = TRUE)
 {
 
-    meth <- method[1]
-    cox.ph <- (missing(t.offset) &&
-               (meth %in% c("breslow", "efron")) &&
-               is.null(rs) &&
-               is.null(max.survs) &&
-               (!boot) &&
-               (efrac == 0) &&
-               is.null(frailty) &&
-               (!geometric)
-               )
+    if (!missing(center)){
+        warning("argument 'center' is deprecated.")
+    }
+    if (!missing(hazards)){
+        warning("argument 'hazards' is deprecated.")
+    }
     
+    meth <- method[1]
+    if (coxph){
+        cox.ph <- (missing(t.offset) &&
+                       (meth %in% c("breslow", "efron")) &&
+                       is.null(rs) &&
+                       is.null(max.survs) &&
+                       (!boot) &&
+                       (efrac == 0) &&
+                       is.null(frailty) &&
+                       (!geometric))
+        ##if (!cox.ph) warning("'coxph is not called despite 'coxph = TRUE'")
+    }else{
+        cox.ph <- coxph # == TRUE
+    }
+    if (FALSE){  ############################## NOTE!!!!###########
+    ##if (cox.ph){
+        Call <- match.call()
+        Call[[1]] <- quote(survival::coxph)
+        ##return(Call)
+        fit <- eval.parent(Call)
+        class(fit) <- c("coxreg", "coxph")
+        ##return(fit)
+    }
     if (!is.null(frailty))
         stop("Frailty not implemented (yet). Try the 'coxme' package")
     method <- match.arg(method)
@@ -205,19 +217,19 @@ coxreg <- function (formula = formula(data),
     dropx <- NULL
         
     if (length(strats)) {
-        temp <- untangle.specials(Terms, "strata", 1)
+        temp <- survival::untangle.specials(Terms, "strata", 1)
         dropx <- c(dropx, temp$terms)
         if (length(temp$vars) == 1)
             strata.keep <- m[[temp$vars]]
-        else strata.keep <- strata(m[, temp$vars], shortlabel = TRUE)
+        else strata.keep <- survival::strata(m[, temp$vars], shortlabel = TRUE)
         strats <- as.numeric(strata.keep)
     }
     if (length(dropx))
         newTerms <- Terms[-dropx]
     else newTerms <- Terms
     X <- model.matrix(newTerms, m)
-    assign <- lapply(attrassign(X, newTerms)[-1], function(x) x -
-                     1)
+    assign <- lapply(survival::attrassign(X, newTerms)[-1], 
+                     function(x) x -1)
     X <- X[, -1, drop = FALSE]
     ##}
 #########################################
@@ -299,13 +311,34 @@ coxreg <- function (formula = formula(data),
 
     n.events <- sum(Y[, NCOL(Y)] != 0)
     if (n.events == 0) stop("No events; no sense in continuing!")
-        
+    
+    if (FALSE){   ########################## NOTE!!!! ################### 
+    ##if (cox.ph){  ## NEW ++++
+        fit$df <- length(fit$coefficients)
+        fit$isF <- isF
+        fit$isI <- isI
+        fit$covars <- covars
+        fit$n.events <- n.events
+        fit$nullModel <- (NCOL(X) == 0)
+        fit$levels <- levels
+        fit$n.events <- n.events
+        fit <- wMeans(fit, Y, m, isF)
+        class(fit) <- "coxreg"
+        if (length(strats)){
+            fit$stratum <- levels(as.factor(strata.keep)) ## New
+            ## 'stratum' to be out of the way for 'strata' in survfit!
+        }
+        return(fit)
+    } # End if(FALSE)
     ##########################################
 
     ## Fixed now? if (FALSE){      ## This has to be fixed in the future!!
     if (NCOL(X) == 0){ # No covariates; special treatment!
-        if (is.null(strats)) stratum <- rep(1, NROW(Y))
-        else stratum <- strats
+        if (is.null(strats)){
+            stratum <- rep(1, NROW(Y))
+        }else{
+            stratum <- strata.keep
+        }
         type <- attr(Y, "type")
         control$iter.max <- 0
         control$toler.chol <- .Machine$double.eps^0.75
@@ -313,6 +346,7 @@ coxreg <- function (formula = formula(data),
         control$outer.max <- 10
         X <- matrix(0, nrow = NROW(Y), ncol = 1)
         init <- 0
+        if (FALSE){
         if (type == "counting"){
             fit <- survival::agreg.fit(X, Y, stratum, offset, init,
                                         control, weights = weights,
@@ -322,19 +356,25 @@ coxreg <- function (formula = formula(data),
                                         control, weights = weights,
                                         method = method, row.names(m))
         }
+        } # End if (FALSE)
+        fit <- list()
         fit$nullModel <- TRUE
-        if (hazards){
-            scores <- exp(offset)
-            hazards <- getHaz(Y, stratum, scores)
-            class(hazards) <- "hazdata"
-            fit$hazards <- hazards
-        }
+        fit$df <- 0
+        fit$loglik <- coxfun0(Y, strata = stratum, method = method)
+
+        ##if (hazards){
+        scores <- exp(offset)
+        hazards <- getHaz(Y, stratum, scores) ## Make this fast with C?
+        class(hazards) <- "hazdata"
+        fit$hazards <- hazards
+        ##}
         fit$call <- call
         fit$n.events <- n.events
         fit$n <- NROW(Y)
         fit$y <- Y
         class(fit) <- c("coxreg", "coxph")
         fit$means <- 0
+        fit$terms <- Terms
         return(fit)
     
     }else if (cox.ph){
@@ -360,7 +400,8 @@ coxreg <- function (formula = formula(data),
         ## If center == FALSE, X.means are "added back" before call to
         ## getHaz!!
 
-        if (center){
+        if (FALSE){ # 'center' is deprecated.
+        ##if (center){
             X.means <- colMeans(X)
             for (i in seq_len(NCOL(X))){
                 if (isI[i]) X.means[i] <- 0
@@ -372,13 +413,13 @@ coxreg <- function (formula = formula(data),
             scores <- exp(offset + X %*% fit$coefficients)
         }
 
-        if (hazards){
-            hazards <- getHaz(Y, stratum, scores)
-            class(hazards) <- "hazdata"
-            fit$hazards <- hazards
-        }else{
-            fit$hazards <- NULL
-        }
+        ##if (hazards){
+         ##   hazards <- getHaz(Y, stratum, scores)
+        ##    class(hazards) <- "hazdata"
+        ##    fit$hazards <- hazards
+        ##}else{
+        ##    fit$hazards <- NULL
+        ##}
             ##rs <- risksets(Y, strats)
         ##hazard <- .Fortran("gethaz",
         ##                   as.integer(NROW(Y)),  # 'nn'
@@ -454,17 +495,18 @@ coxreg <- function (formula = formula(data),
                               init,
                               max.survs,
                               method,
-                              center,
+                              center = NULL, # Deprecated
                               boot,
                               efrac,
-                              calc.hazards = FALSE, ## Changed 2.4-0
+                              calc.hazards = NULL, # Deprecated
                               calc.martres = TRUE,
                               control,
                               verbose = TRUE)
         }
         ## get hazards
         fit$nullModel <- FALSE
-        if (center){
+        if (FALSE){ # 'center' is deprecated
+        ##if (center){
             X.means <- colMeans(X)
             for (i in seq_len(NCOL(X))){
                 if (isI[i]) X.means[i] <- 0
@@ -482,13 +524,13 @@ coxreg <- function (formula = formula(data),
             stratum <- strats
             fit$stratum <- strats
         }
-        if (hazards){
-            hazards <- getHaz(Y, stratum, scores)
-            class(hazards) <- "hazdata"
-            fit$hazards <- hazards
-        }else{
-            fit$hazards <- NULL
-        }
+        ##if (hazards){
+        ##    hazards <- getHaz(Y, stratum, scores)
+        ##    class(hazards) <- "hazdata"
+        ##    fit$hazards <- hazards
+        ##}else{
+        ##    fit$hazards <- NULL
+        ##}
         
 
         fit$convergence <- as.logical(fit$conver)
@@ -525,7 +567,7 @@ coxreg <- function (formula = formula(data),
                   ##  survival:::coxph.wtest(fit$var[nabeta, nabeta],
                     ##                       temp, control$toler.chol)$test
             }
-        }
+        } ## End Out-commented
         na.action <- attr(m, "na.action")
         if (length(na.action))
             fit$na.action <- na.action
@@ -551,38 +593,17 @@ coxreg <- function (formula = formula(data),
     fit$isF <- isF
     fit$isO <- isO
     fit$covars <- covars
-    if (NCOL(Y) == 3){
-        s.wght <- (Y[, 2] - Y[, 1])## * weights
-    }else{
-        s.wght <- Y[, 1]
-    }
-    fit$ttr <- sum(s.wght)
-    fit$w.means <- list()
-    if (length(fit$covars)){
-        for (i in 1:length(fit$covars)){
-            nam <- fit$covars[i]
-            col.m <- which(nam == names(m))
-            if (isF[i]){
-                n.lev <- length(levels[[i]])
-                fit$w.means[[i]] <- numeric(n.lev)
-                for (j in 1:n.lev){
-                    who <- m[, col.m] == levels[[i]][j]
-                    fit$w.means[[i]][j] <-
-                      sum( s.wght[who] ) / fit$ttr ## * 100, if in per cent
-                }
-            }else{
-                fit$w.means[[i]] <- sum(s.wght * m[, col.m]) / fit$ttr
-            }
-        }
-    }
+    fit$levels <- levels
+    fit <- wMeans(fit, Y, m, isF)
+    
     ##########################################
     fit$nullModel <- FALSE
-    fit$levels <- levels
+
     fit$formula <- formula(Terms)
     fit$terms <- Terms
     fit$call <- call
-    fit$events <- n.events
-    fit$center <- center
+    fit$n.events <- n.events
+    ##fit$center <- center
     if (length(fit$coefficients)){
         names(fit$coefficients) <- colnames(X)
         fit$means <- X.means
@@ -595,7 +616,39 @@ coxreg <- function (formula = formula(data),
     fit$method <- method
     fit$n <- NROW(Y)
     fit$df <- length(fit$coefficients)
+    fit$lin.pred <- fit$linear.predictors # Just for error check ...
+    fit$linear.predictors <- offset + X %*% fit$coefficients
+    
     class(fit) <- c("coxreg", "coxph") # Not Removed "coxph"; cox.zph!
     ##class(fit) <- "coxreg"
+    fit
+}
+
+wMeans <- function(fit, Y, m, isF){
+    if (NCOL(Y) == 3){
+        s.wght <- (Y[, 2] - Y[, 1])## * weights
+    }else{
+        s.wght <- Y[, 1]
+    }
+    fit$ttr <- sum(s.wght)
+    fit$w.means <- list()
+    if (length(fit$covars)){
+        for (i in 1:length(fit$covars)){
+            nam <- fit$covars[i]
+            col.m <- which(nam == names(m))
+            if (isF[i]){
+                n.lev <- length(fit$levels[[i]])
+                fit$w.means[[i]] <- numeric(n.lev)
+                for (j in 1:n.lev){
+                    who <- m[, col.m] == fit$levels[[i]][j]
+                    fit$w.means[[i]][j] <-
+                        sum( s.wght[who] ) / fit$ttr ## * 100, if in per cent
+                }
+            }else{
+                ##fit$w.means[[i]] <- sum(s.wght * m[, col.m]) / fit$ttr
+                fit$w.means[[i]] <- weighted.mean(m[, col.m], s.wght)
+            }
+        }
+    }
     fit
 }

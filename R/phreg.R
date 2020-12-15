@@ -12,15 +12,6 @@
 #' S0((t/b)^a)^exp((z - mean(z)) beta)} where S0 is some standardized survivor
 #' function.
 #' 
-#' If \code{center = TRUE} (default), graphs show the "baseline" distribution
-#' at the means of (continuous) covariates, and for the reference category in
-#' case of factors (avoiding representing "flying pigs"). If \code{center =
-#' FALSE} the baseline distribution is at the value zero of all covariates. It
-#' is usually a good idea to use \code{center = FALSE} in combination with
-#' "precentering" of covariates, that is, subtracting a reference value,
-#' ideally close to the center of the covariate distribution. In that way, the
-#' "reference" will be the same for all subsets of the data.
-#' 
 #' @param formula a formula object, with the response on the left of a ~
 #' operator, and the terms on the right.  The response must be a survival
 #' object as returned by the Surv function.
@@ -41,7 +32,7 @@
 #' @param shape If positive, the shape parameter is fixed at that value (in
 #' each stratum).  If zero or negative, the shape parameter is estimated.  If
 #' more than one stratum is present in data, each stratum gets its own
-#' estimate.
+#' estimate. Only relevant for the Weibull and Extreme Value distributions.
 #' @param param Applies only to the Gompertz distribution: "canonical" is
 #' defined in the description of the \code{\link{Gompertz}} distribution;
 #' "rate" transforms \code{scale} to 1/log(scale), giving the same
@@ -57,31 +48,42 @@
 #' @param model Not used.
 #' @param x Return the design matrix in the model object?
 #' @param y Return the response in the model object?
-#' @param center Logical, only affects plotting. Results are reported as is,
-#' without centering. See Details.
+#' @param center Is now deprecated. 
 #' @return A list of class \code{c("phreg", "coxreg")} with components
-#' \item{coefficients}{Fitted parameter estimates.} \item{cuts}{Cut points for
-#' the "pch" distribution. \code{NULL} otherwise.} \item{hazards}{The estimated
+#' \item{coefficients}{Fitted parameter estimates.} 
+#' \item{cuts}{Cut points for
+#' the "pch" distribution. \code{NULL} otherwise.} 
+#' \item{hazards}{The estimated
 #' constant levels in the case of the "pch" distribution. \code{NULL}
-#' otherwise.} \item{var}{Covariance matrix of the estimates.}
+#' otherwise.} 
+#' \item{var}{Covariance matrix of the estimates.}
 #' \item{loglik}{Vector of length two; first component is the value at the
 #' initial parameter values, the second componet is the maximized value.}
 #' \item{score}{The score test statistic (at the initial value).}
 #' \item{linear.predictors}{The estimated linear predictors.}
 #' \item{means}{Means of the columns of the design matrix, except those columns
-#' corresponding to a factor level, if \code{center = TRUE}. Otherwise all
-#' zero.} \item{w.means}{Weighted (against exposure time) means of covariates;
-#' weighted relative frequencies of levels of factors.} \item{n}{Number of
+#' corresponding to a factor level. Otherwise all
+#' zero.} 
+#' \item{w.means}{Weighted (against exposure time) means of covariates;
+#' weighted relative frequencies of levels of factors.} 
+#' \item{n}{Number of
 #' spells in indata (possibly after removal of cases with NA's).}
-#' \item{events}{Number of events in data.} \item{terms}{Used by extractor
-#' functions.} \item{assign}{Used by extractor functions.} %
+#' \item{n.events}{Number of events in data.} 
+#' \item{terms}{Used by extractor functions.} 
+#' \item{assign}{Used by extractor functions.} %
 #' \item{wald.test}{The Wald test statistic (at the initial value).}
-#' \item{y}{The Surv vector.} \item{isF}{Logical vector indicating the
-#' covariates that are factors.} \item{covars}{The covariates.}
-#' \item{ttr}{Total Time at Risk.} \item{levels}{List of levels of factors.}
-#' \item{formula}{The calling formula.} \item{call}{The call.}
-#' \item{method}{The method.} \item{convergence}{Did the optimization
-#' converge?} \item{fail}{Did the optimization fail? (Is \code{NULL} if not).}
+#' \item{y}{The Surv vector.} 
+#' \item{isF}{Logical vector indicating the
+#' covariates that are factors.} 
+#' \item{covars}{The covariates.}
+#' \item{ttr}{Total Time at Risk.} 
+#' \item{levels}{List of levels of factors.}
+#' \item{formula}{The calling formula.} 
+#' \item{call}{The call.}
+#' \item{method}{The method.} 
+#' \item{convergence}{Did the optimization
+#' converge?} 
+#' \item{fail}{Did the optimization fail? (Is \code{NULL} if not).}
 #' \item{pfixed}{TRUE if shape was fixed in the estimation.}
 #' @note The lognormal and loglogistic baseline distributions are extended to a
 #' three-parameter family by adding a "proportionality" parameter (multiplying
@@ -125,12 +127,18 @@ phreg <- function (formula = formula(data),
                    model = FALSE,
                    x = FALSE,
                    y = TRUE,
-                   center = TRUE) # NOTE: Changed from 'NULL' in 1.4-1
+                   center = NULL) # NOTE: Changed from 'NULL' in 1.4-1
 {                                 # NOTE: Changed back in 2.2-2!
-                                 ## NOTE: Changed again in 2.4-0; affects only plot
-                                 ## and log(scale)
+                                 ## NOTE: Changed again in 2.4-0; affects only 
+                                 ## plot and log(scale)
+                                 ## Finally (2.8.2) deprecated. 
+                                 ## Centering never a good idea!
+    if (!missing(center)){
+      warning("argument 'center' is deprecated: 
+              Reported results are not centered.", call. = FALSE)
+    }
     param <- param[1]
-    pfixed <- any(shape > 0)
+    pfixed <- any(shape > 0) & dist %in% c("weibull", "ev") # Fixed 2020-07-26!
     call <- match.call()
     m <- match.call(expand.dots = FALSE)
     temp <- c("", "formula", "data", "na.action")
@@ -168,11 +176,11 @@ phreg <- function (formula = formula(data),
     if (length(strats)) {
         ##if (dist == "pch") # Changed 2.4-0
           ##  stop("No strata allowed in the pch model (yet)") 
-        temp <- untangle.specials(Terms, "strata", 1)
+        temp <- survival::untangle.specials(Terms, "strata", 1)
         dropx <- c(dropx, temp$terms)
         if (length(temp$vars) == 1)
           strata.keep <- m[[temp$vars]]
-        else strata.keep <- strata(m[, temp$vars], shortlabel = TRUE)
+        else strata.keep <- survival::strata(m[, temp$vars], shortlabel = TRUE)
         strats <- as.numeric(strata.keep)
     }
     
@@ -196,7 +204,7 @@ phreg <- function (formula = formula(data),
         intercept <- TRUE
         ncov <- NCOL(X) - 1
     }
-
+    nullModel <- ncov == 0
 #########################################
 
     if (ncov){
@@ -268,8 +276,8 @@ phreg <- function (formula = formula(data),
             }
         }
     }
-
-    if (center){
+    if (FALSE){
+    ##if (center){
         X.means <- colMeans(X)
         X.means[isI] <- 0
     }else{
@@ -352,7 +360,7 @@ phreg <- function (formula = formula(data),
                          init,
                          shape,
                          control,
-                         center)
+                         center = NULL)
     }
     
     if (fit$fail){
@@ -361,17 +369,17 @@ phreg <- function (formula = formula(data),
     }
 
     if (ncov){
-        fit$linear.predictors <- offset + X %*%
-            fit$coefficients[1:(ncov + intercept)]
-        fit$means <- X.means
+      ##cat("ncov = ", ncov, "\n")
+      fit$linear.predictors <- offset + X %*%
+        fit$coefficients[1:(ncov + intercept)]
+      ##fit$means <- X.means
     }else{
-        fit$linear.predictors <- numeric(0)
-        fit$means <- numeric(0)
+      fit$linear.predictors <- numeric(0)
+      ##fit$means <- numeric(0)
     }
     ##score <- exp(lp)
 
-    fit$center <- center
-
+    ##cat("fit$means == ", fit$means, "\n")
     if (!fit$fail){
         fit$fail <- NULL
     }else{
@@ -452,7 +460,8 @@ phreg <- function (formula = formula(data),
                       sum( s.wght[who] ) / fit$ttr ## * 100, if in per cent
                 }
             }else{
-                fit$w.means[[i]] <- sum(s.wght * m[, col.m]) / fit$ttr
+                ##fit$w.means[[i]] <- sum(s.wght * m[, col.m]) / fit$ttr
+                fit$w.means[[i]] <- weighted.mean(m[, col.m], s.wght)
             }
         }
     }
@@ -464,14 +473,19 @@ phreg <- function (formula = formula(data),
     fit$formula <- formula(Terms)
     fit$call <- call
     fit$dist <- dist
-    fit$events <- n.events
+    fit$n.events <- n.events
+    fit$nullModel <- nullModel # Added 2020-07-26
     ##class(fit) <- c("phreg", "weibreg", "coxreg", "coxph")
     if (fit$dist == "pch"){
         class(fit) <- c("pchreg", "phreg")
     }else{
         class(fit) <- "phreg"
     }
-    fit$pfixed <- pfixed
+    if (dist %in% c("weibull", "cv")){
+        fit$pfixed <- pfixed
+    }else{
+        fit$pfixed <- FALSE
+    }
     if (length(strats))
         fit$strata <- names(strats)
     if (length(strats)){

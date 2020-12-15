@@ -1,6 +1,221 @@
+2.8.4 (Dec 15, 2020)
+    * Fixed error in doi field in inst/CITATION, resubmitted.
+
+2.8.3 (Dec 14, 2020)
+    * Vignette problems fixed.
+    * check.dist: Bug fixed.
+
+2.8.2 (Dec 13, 2020)
+    * CRAN Release.
+
+2.8.1.99993 (Dec 8, 2020)
+    * hazards: made generic with methods for regression outputs. 
+    
+2.8.1.99991 (Dec 2, 2020)
+    * ltx: Introduce "\footnotesize" in latex table printing.
+    
+2.8.1.9999 (Nov 29, 2020)
+    * tpchreg: fix error in example.
+    * hazards: fix bug.
+
+2.8.1.9998 (Nov 28, 2020)
+    * Fix bug in ltx.coxreg.
+    * Add example to tpchreg help page.
+
+2.8.1.9997 (Nov 27, 2020)
+    * coxfun0: New function, loglihood for null coxreg model.
+    * ltx, print: Add and modify methods for printing regression fits.
+
+2.8.1.9996 (Nov 22, 2020)
+    * coxreg: Removed warning concerning not using option 'coxph'.
+    
+2.8.1.9995 (Nov 20, 2020)
+    * hazards: New function, that calculates the baseline hazards from a 
+    coxreg fit.
+
+2.8.1.9994 (Nov 19, 2020)
+    * coxreg: Add log likelihood and df to null models.
+    
+2.8.1.9993 (Nov 18, 2020)
+    * child: The data set is expanded with info about mother.
+
+2.8.1.9992 (Nov 16, 2020)
+    * coxreg, phreg, aftreg: Fixed bug in calculating weighted means, which
+    affects dates as covariates.
+    
+2.8.1.9991 (Nov 15, 2020)
+    * print.summary.coxreg: New argument 'short' added.
+    * plot.hazdata: Fix y limits.
+    
+2.8.1.9990 (Nov 12, 2020)
+    * summary.[aft,cox,ph,tpch]reg: Change p-value label to 'Wald p'.
+
+2.8.1.9989 (Nov 10, 2020)
+    * logrank: Fix error in evaluation of arguments.
+
+2.18.1.9988 (Nov 09, 2020)
+    * coxreg.fit: Bug fix (when one covariate).
+    * plot.logrank: New plot method for logrank objects.
+
+2.18.1.9987 (Nov 09, 2020)
+    * coxreg: fix stratum names when no covariates.
+
+2.18.1.9986 (Nov 08, 2020)
+    * logrank: 'hazards' is a new output component.
+    * plot.logrank: New function (plot method).
+
+2.8.1.9985 (Nov 07, 2020)
+    * logrank: New function with a print method (the log-rank test).
+    
+2.8.1.9975 (Oct 30, 2020)
+    * 'survival' moved from Depends to Imports.
+    * No import of functions 'frailty' and 'cluster' from survival. 
+    (Not used by eha, but by some innocent users of eha. Want to stop that.) 
+
+2.8.1.9971 (Oct 19, 2020)
+    * toTime: Change result from 'timediff' to 'numeric'.
+
+2.8.1.9970 (0ct 11, 2020)
+	* tpchreg.fit: Bug fixes.
+
+2.8.1.9965 (Oct 07, 2020)
+    * tpchreg: Estimates of sd of hazards introduced. Not completed.
+
+2.8.1.9961 (Sep 27, 2020)
+    * tpchreg: Failed for cases with zero exposure, fixed.
+    
+2.8.1.9960 (Sep 21, 2020)
+    * summary: Failed for null models with tpchreg, pchreg, now fixed.
+    
+2.8.1.9950 (Sep 08, 2020)
+    * coxreg: Default value for argument 'coxph' changed to TRUE.
+    * plot.phreg: Argument 'new.data' removed, 'score' added.
+
+2.8.1.9945 (Sep 07, 2020)
+    * coxreg: Fixed (bad) shift in 'linear.predictors'.
+    
+2.8.1.9942 (Aug 12, 2020)
+    * phreg: Added 'pfixed = FALSE' to return values of distributions
+    where pfixed is irrelevant. (Yet a reason to split 'phreg' into functions by
+    narrow groups of distributions.)
+
+2.8.1.9941 (Aug 11, 2020)
+    * phreg.summary: Bug fixed. It was introduced by differences between the
+    distribution 'pch' and the other distributions. The piecewise constant 
+    hazards regression will eventually break out of phreg and form a separate
+    function, named 'pchreg'. Have the same thoughts about the Gompertz 
+    distribution, to be put in 'gompreg'. We'll see... Main reason is that 
+    these guys need special treatment in the programming.
+
+2.8.1.9935 (Aug 8, 2020)
+    * phreg: Number of events in output was denoted 'events', now changed
+    to 'n.events'.
+    * aftreg: Number of events in output was denoted 'events', now changed
+    to 'n.events'.
+    * weibreg: Number of events in output was denoted 'events', now changed
+    to 'n.events'.
+    * tpchreg: Number of events in output was denoted 'events', now changed
+    to 'n.events'.
+    * coxreg: Number of events in output was denoted 'events', now changed
+    to 'n.events' (to match output from coxreg).
+
+2.8.1.9930 (Jul 26, 2020)
+    * phreg: Fix issue with 'shape = ' something positive.
+    * summary.phreg: Rewritten to conform with other summaries.
+
+2.8.1.9925 (Jul 24, 2020)
+    * plot.phreg: Only one function per plot is the rule now. Except of course
+    if the analysis was stratified.
+    * Gompertz: Fix errors in documentation.
+    * plot.coxreg: Some minor anomalies fixed.
+    * coxreg: Default for coxph changed to FALSE.
+    * print.summary.coxreg: Bug wrt LR p fixed.
+    * child: New data set added.
+
+2.8.1.9920 (Jul 23, 2020)
+    * phreg: fixed bug in Gompertz regresion with 'rate' parametrization. 
+    BTW, the 'rate' paramerization will be the default soon!
+
+2.8.1.9910 (Jul 22, 2020)
+    * Gompertz: added argument 'rate' to all functions.
+    
+2.8.1.9900 (Jul 17, 2020)
+    plot.coxreg: Test for presence of 'hazards' object, avoid bug when 
+    'coxph = FALSE'.
+
+2.8.1.9850 (Jul 13, 2020)
+    * risksets: New argument 'collate_sets', a logical. Defaults to FALSE,
+    which conserves old behaviour. If TRUE, output is a list of lists, where 
+    each level 2 list describes one risk set.
+    
+2.8.1.9800 (Jul 13, 2020)
+	* coxfunk: New function calculating a partial likelihood.
+
+2.8.1.9750 (Jul 10, 2020)
+    * Vignette 'Proportional hazards regression with tabular data' develops.
+
+2.8.1.9700 (Jul 8, 2020)
+    * coxreg: New argument 'coxph' (logical) is introduced. If TRUE, 
+    survival::agreg.fit (or survival::coxph.fit) is called for in the 
+    optimization. If FALSE, 'own' optimization is called for, can be slow 
+    for (even moderately) large data sets (many distinct event time points).
+    Default value is TRUE.
+
+2.8.1.9650 (Jul 7, 2020)
+    * plot.coxreg: Fixed newly introduced bug in the cases 'method = m(pp)l'.
+    * eha vignette: First serious attempt.
+    * summary.tpchreg: New function, with a print method.
+
+2.8.1.9600 (June 30, 2020)
+    * tpchreg: add argument 'last', and allow 'time' to be numeric. 
+    Documentation changed accordingly.
+
+2.8.1.9550 (June 28, 2020)
+    * swepop: New data set, Swedish population by age, sex, and 
+    year 1968-2019.
+    * swedeaths: New data set, Swedish deaths by age, sex, and 
+    year 1968-2019.
+    * swe07: Old data set is now obsolete and deprecated. Will be removed.
+
+2.8.1.9500 (June 17, 2020)
+	* tcphreg: Added debug info.
+
+2.8.1.9450 (June 15, 2020)
+    * tpchreg: Add rownames and colnames to hazards (if matrix).
+    * summary.tpchreg: New function.
+    
+2.8.1.9400 (June 14, 2020)
+    * tpchreg: Finish first step of development, now useful.
+
+2.8.1.9300 (June 11, 2020)
+	* plot.coxreg: Bug fix.
+
+2.8.1.9200 (June 9, 2020)
+    * coxreg revised for "coxhp case".
+    * plot.coxreg rewritten, using survival::(survfit, plot.survfit)
+    * toTpch: Bug fixed.
+    * nobs.coxreg: Changed to count events instead of rows (bug fix).
+    * plot.hazards: Removed.
+    * plot.hazdata: Removed.
+    
+2.8.1.9150 (june 7, 2020)
+    * coxreg: Arguments 'hazards' and 'center' deprecated.
+    * phreg: Argument 'center' deprecated.
+    * Bugs (some ...) fixed.
+    
+2.8.1.9100 (June 6, 2020)
+    * coxreg: Default values of arguments 'hazards' and 'center' changed to FALSE.
+              A null model output has a 'terms' added.
+              
+2.8.1.9050 (Jun 4, 2020)
+    * tpchreg: Argument 'pieces' removed (is now calculated from 'time').
+
+2.8.1.9000 (Jun 3, 2020)
+	* tpchreg: and friends. Work continues.
+
 2.8.1 (Mar 31, 2020)
     * Published on CRAN.
-    
+
 2.8.0.9050 (Mar 3, 2020)
 	* gompstartRate: Simpler starting values introduced (internal).
 	* risksets: Bug fix: Now works when 'members = FALSE'.

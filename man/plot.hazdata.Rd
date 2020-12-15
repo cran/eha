@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.hazdata.R
 \name{plot.hazdata}
 \alias{plot.hazdata}
-\title{Plots of survivor functions.}
+\title{Plots of hazdata objects.}
 \usage{
 \method{plot}{hazdata}(
   x,
@@ -12,28 +12,31 @@
   xlim = NULL,
   ylim = NULL,
   main = NULL,
-  xlab = NULL,
-  ylab = NULL,
+  xlab = "",
+  ylab = "",
   col = "black",
   lty = 1,
   printLegend = TRUE,
-  where = NULL,
   ...
 )
 }
 \arguments{
 \item{x}{A \code{hazdata} object, typically the 'hazards' element in the
-output from \code{link{coxreg}} with \code{hazards = TRUE}.}
+output from \code{link{coxreg}} with \code{method = "ml"} or 
+\code{method = "mppl"} or \code{coxph = FALSE}.}
 
 \item{strata}{Stratum names if there are strata present.}
 
-\item{fn}{Which type of plot?}
+\item{fn}{Which type of plot? Allowed values are "cum" (or "cumhaz"),
+"surv" (or "sur"), "log", or "loglog". The last two plots the cumulative 
+hazards on a log (y) scale or a log-log (xy) scale, respectively.}
 
 \item{fig}{Should a plot actually be produced? Default is TRUE.}
 
 \item{xlim}{Horizontal plot limits. If NULL, calculated by the function.}
 
-\item{ylim}{Vertical plot limits. If NULL, set to \code{c(0, 1)}}
+\item{ylim}{Vertical plot limits. If NULL, set to \code{c(0, 1)} for a 
+plot of the survival function.}
 
 \item{main}{A heading for the plot.}
 
@@ -46,10 +49,9 @@ strata.}
 
 \item{lty}{Line type(s). May be a vector of length equal to No. of strata.}
 
-\item{printLegend}{Logical; should a legend be produced?  Defaults to TRUE.}
-
-\item{where}{Where should the legend be placed (if(printLegend))?  If
-\code{NULL}, "bottomleft" for fn = "surv", otherwise "bottomright".}
+\item{printLegend}{Logical or character; should a legend be produced?
+Defaults to TRUE. If character, it should be one of \code{bottomleft}, 
+\code{bottomright}, etc, see \code{\link{legend}}.}
 
 \item{...}{Anything that \code{\link[graphics]{plot.default}} likes...}
 }
@@ -65,14 +67,22 @@ Baseline hazards estimates.
 It is also possible to have as first argument an object of type "coxreg",
 given that it contains a component of type "hazdata".
 }
+\note{
+\code{x} is a list where each element is a two-column matrix. The first
+ column contains failure times, and the second column contains the 
+ corresponding 'hazard atoms'.
+}
 \examples{
 
 time0 <- numeric(50)
 group <- c(rep(0, 25), rep(1, 25))
+x <- runif(50, -0.5, 0.5)
 time1 <- rexp( 50, exp(group) )
 event <- rep(1, 50)
-fit <- coxreg(Surv(time0, time1, event) ~ strata(group), hazards = TRUE)
-plot(fit$hazards)
+fit <- coxreg(Surv(time0, time1, event) ~ x + strata(group), method = "ml")
+plot(fit$hazards, col = 1:2, fn = "surv", xlab = "Duration")
+## Same result as:
+## plot(fit, col = 1:2, fn = "sur", xlab = "Duration")
 
 }
 \author{

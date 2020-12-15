@@ -60,7 +60,7 @@
 #' \item{w.means}{Weighted (against exposure time) means of covariates;
 #' weighted relative frequencies of levels of factors.} \item{n}{Number of
 #' spells in indata (possibly after removal of cases with NA's).}
-#' \item{events}{Number of events in data.} \item{terms}{Used by extractor
+#' \item{n.events}{Number of events in data.} \item{terms}{Used by extractor
 #' functions.} \item{assign}{Used by extractor functions.} %
 #' \item{wald.test}{The Wald test statistic (at the initial value).}
 #' \item{y}{The Surv vector.} \item{isF}{Logical vector indicating the
@@ -149,7 +149,7 @@ aftreg <- function (formula = formula(data),
     dropx <- NULL
     
     if (length(strats)) {
-        temp <- untangle.specials(Terms, "strata", 1)
+        temp <- survival::untangle.specials(Terms, "strata", 1)
         dropx <- c(dropx, temp$terms)
         if (length(temp$vars) == 1)
             strata.keep <- m[[temp$vars]]
@@ -214,6 +214,7 @@ aftreg <- function (formula = formula(data),
         }
     }
     
+    nullModel <- ncov == 0
 ##########################################
     type <- attr(Y, "type")
     if (type != "right" && type != "counting")
@@ -343,7 +344,8 @@ aftreg <- function (formula = formula(data),
                       sum( s.wght[who] ) / fit$ttr ## * 100, if in per cent
                 }
             }else{
-                fit$w.means[[i]] <- sum(s.wght * m[, col.m]) / fit$ttr
+                ##fit$w.means[[i]] <- sum(s.wght * m[, col.m]) / fit$ttr
+                fit$w.means[[i]] <- weighted.mean(m[, col.m], s.wght)
             }
         }
         fit$means <- colMeans(X)
@@ -357,7 +359,7 @@ aftreg <- function (formula = formula(data),
     fit$formula <- formula(Terms)
     fit$call <- call
     fit$dist <- dist
-    fit$events <- n.events
+    fit$n.events <- n.events
 
     class(fit) <- c("aftreg", "phreg")
     fit$param <- param # New in 2.1-1:
@@ -374,7 +376,7 @@ aftreg <- function (formula = formula(data),
     }else{ # To be filled for other dists!
         fit$baselineMean <- NULL
     }
-
+    fit$nullModel <- nullModel # Added 2020-07-26.
     ##
     fit$pfixed <- pfixed
     if (pfixed) fit$shape <- shape ## Added 2 Aug 2017.

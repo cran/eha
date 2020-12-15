@@ -2,29 +2,24 @@
 % Please edit documentation in R/tpchreg.R
 \name{tpchreg}
 \alias{tpchreg}
-\title{Proportional hazards regression with piecewise constant hazards and tabular data.}
+\title{Proportional hazards regression with piecewise constant hazards and tabular 
+data.}
 \usage{
-tpchreg(
-  formula,
-  data,
-  time,
-  pieces,
-  subset,
-  na.action,
-  contrasts = NULL,
-  start.coef = NULL,
-  control = list(epsilon = 1e-08, maxit = 200, trace = FALSE)
-)
+tpchreg(formula, data, time, weights, last, subset, na.action, 
+contrasts = NULL, start.coef = NULL, 
+control = list(epsilon = 1.e-8, maxit = 200, trace = FALSE))
 }
 \arguments{
 \item{formula}{a formula with 'oe(count, exposure) ~ x1 + ...'}
 
-\item{data}{a data frame with event, exposure, age plus covariates}
+\item{data}{a data frame with occurrence/exposure data plus covariates.}
 
-\item{time}{the time variable, a factor indicating time intervals.}
+\item{time}{the time variable, a factor character vector indicating time 
+intervals, or numeric, indicating the start of intervals.}
 
-\item{pieces}{numeric vector of length 1 or length(levels(time)): The length(s)
-of timeintervals.}
+\item{weights}{Case weights.}
+
+\item{last}{If \code{time} is numeric, the closing of the last interval.}
 
 \item{subset}{subset of data, not implemented yet.}
 
@@ -32,17 +27,29 @@ of timeintervals.}
 
 \item{contrasts}{Not implemented yet.}
 
-\item{start.coef}{For themoment equal to zero.}
+\item{start.coef}{For the moment equal to zero, not used.}
 
 \item{control}{list of control parameters for the optimization.}
 }
 \description{
-Proportional hazards regression with piecewise constant hazards and tabular data.
+Proportional hazards regression with piecewise constant hazards and tabular 
+data.
 }
 \note{
-This function is under development and not well ducumented for the time
-being. Use it with care, but it should work with standard (default) settings.
+The interpretation of cuts is different from that in \code{link{hpch}}.
+This is intentional.
+}
+\examples{
+
+sw <- swepop
+sw$deaths <- swedeaths$deaths
+fit <- tpchreg(oe(deaths, pop) ~ strata(sex) + I(year - 1990), time = age, last = 101, data = sw)
+summary(fit)
+
 }
 \seealso{
 \code{\link{oe}}.
 }
+\keyword{regression}
+\keyword{survival}
+\keyword{table}

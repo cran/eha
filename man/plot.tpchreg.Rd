@@ -7,6 +7,7 @@
 \method{plot}{tpchreg}(
   x,
   fn = c("haz", "cum", "sur"),
+  log = "",
   main = NULL,
   xlim = NULL,
   ylim = NULL,
@@ -21,7 +22,9 @@
 \arguments{
 \item{x}{A \code{tpchreg} object}
 
-\item{fn}{Which functions shoud be plotted! Default is the hazard function.}
+\item{fn}{Which functions should be plotted? Default is the hazard function.}
+
+\item{log}{character, "" (default), "y", or "xy".}
 
 \item{main}{Header for the plot}
 
