@@ -1,20 +1,20 @@
-#' Prints summary.aftreg objects
+#' Retrieves regression tables
 #' 
-#' @param x A \code{summary.aftreg} object, typically the result of running
-#' \code{summary.aftreg}, summary on a phreg object.
+#' @param x A \code{summary.XXreg} object, typically the result of running
+#' \code{summary.XXreg}, summary on a XXreg object.
 #' @param digits Output format.
-#' @param short Logical: If TRUE, short output, only regression.
+#' @param short If TRUE, return only coefficients table.
 #' @param \dots Other arguments.
-#' @return No value is returned.
+#' @return A character data frame, ready to print in various formats.
+#' @note Should not be used if interactions present.
 #' @author Göran Broström
-#' @seealso \code{\link{aftreg}}, \code{\link{summary.aftreg}}
+#' @seealso \code{\link{coxreg}}, \code{\link{summary.coxreg}}
 #' @keywords survival
 #' @export
-print.summary.aftreg <- function(x, 
-                                  digits = max(getOption("digits") - 3, 3),
-                                  short = FALSE, ...){
-    if (!("summary.aftreg" %in% class(x))){
-        stop("Only for 'summary.aftreg' ojects.")
+regtable <- function(x, digits = 3, short = TRUE, ...){
+
+    if (!("summary.coxreg" %in% class(x))){
+    ##    stop("Only for 'summary.coxreg' ojects.")
     }
 
     ##if (!is.null(cl<- x$call)) {
@@ -61,15 +61,17 @@ print.summary.aftreg <- function(x,
             print(x$dr)
             cat("\n")
         }
+        return(NULL)
     }
     ####
     
+    res <- matrix(NA, ncol = 7, nrow = 0)
+    colnames(res) <- c("Covariate", "level", "W_mean", "Coef", "HR", "SE", "LR_p")
+
+    if (!lp) colnames(res)[7] <- "Wald_p"
+    ##res <- as.data.frame(res)
+    ##return(res)
 #####################################
-    if (x$param == "lifeAcc"){
-        cat("Covariate            W.mean      Coef Time-Accn  se(Coef)    LR p\n")        
-    }else{
-        cat("Covariate            W.mean      Coef Life-Expn  se(Coef)    LR p\n")
-    }
     e.coef <- formatC(exp(coef), width = 9, digits = 3, format = "f")
     coef <- formatC(coef, width = 9, digits = 3, format = "f")
     se <- formatC(se, width = 9, digits = 3, format = "f")
@@ -105,6 +107,7 @@ print.summary.aftreg <- function(x,
 
     index <- 0
     lpindx <- 0
+    row <- 0
     for (term.no in 1:length(term.names)){
 
         if (ord[term.no] == 1){
@@ -115,23 +118,48 @@ print.summary.aftreg <- function(x,
                     lpindx <- lpindx + 1
                     outp <- formatC(covar.names[covar.no], width = 56, 
                                     flag = "-")
-                    cat(outp, lpval[lpindx], "\n")
+                    row <- row + 1
+                    res <- rbind(res, rep("", 7))
+                    res[row, 1] <- covar.names[covar.no]
+                    res[row, 7] <- lpval[lpindx]
+                    ##return(res)
+                    ##cat(outp, lpval[lpindx], "\n")
                 }else{
-                    cat(covar.names[covar.no], "\n")
+                    row <- row + 1
+                    res <- rbind(res, rep("", 7))
+                    res[row, 1] <- covar.names[covar.no]
+                    ##cat(covar.names[covar.no], "\n")
                 }
                 ##p <- match(covar.names[covar.no], names(data))
                 no.lev <- length(x$levels[[covar.no]])
                 x$levels[[covar.no]] <-
                     substring(x$levels[[covar.no]], 1, 16)
-                cat(formatC(x$levels[[covar.no]][1], width = 16, flag = "+"),
-                    formatC(x$w.means[[covar.no]][1],
-                            width = 10, digits = 3, format = "f"),
-                    noll,
-                    ett,
-                    "  (reference)\n")
+                row <- row + 1
+                res <- rbind(res, rep("", 7))
+                res[row, 2] <- x$levels[[covar.no]][1]
+                res[row, 3] <- formatC(x$w.means[[covar.no]][1],
+                                       width = 10, digits = 3, format = "f")
+                res[row, 4] <- noll
+                res[row, 5] <- ett
+                ##cat(formatC(x$levels[[covar.no]][1], width = 16, flag = "+"),
+                  ##  formatC(x$w.means[[covar.no]][1],
+                    ##        width = 10, digits = 3, format = "f"),
+                ##    noll,
+                 ##   ett,
+                   ## "(reference)\n")
                 for (lev in 2:no.lev){
             ##cat("lev = ", lev, "\n")
                     index <- index + 1
+                    row <- row + 1
+                    res <- rbind(res, rep("", 7))
+                    res[row, 2] <- x$levels[[covar.no]][lev]
+                    res[row, 3]  <- formatC(x$w.means[[covar.no]][lev], width = 10,
+                                            digits = 3, format = "f")
+                    res[row, 4] <- coef[index]
+                    res[row, 5] <- e.coef[index]
+                    res[row, 6] <- se[index]
+                    if (!lp) res[row, 7] <- wald.p[index]
+                    if (FALSE){
                     cat(formatC(x$levels[[covar.no]][lev], width = 16,
                                 flag = "+"),
                         formatC(x$w.means[[covar.no]][lev],
@@ -150,6 +178,7 @@ print.summary.aftreg <- function(x,
                         ##signif(1 - pchisq((coef/ se)^2, 1), digits - 1),
                         "\n")
                     }
+                    }
                 }
             }else{ ## Covariates:
                 index <- index + 1
@@ -160,13 +189,20 @@ print.summary.aftreg <- function(x,
                     xxx <- formatC(xxx,
                                    width = 10, digits = 3, format = "f")
                 }
-                cat(formatC(substr(covar.names[covar.no], 1, 16),
-                            width = 16, flag = "-"),
-                    xxx,
-                    coef[index],
-                    e.coef[index],
+                row <- row + 1
+                res <- rbind(res, rep("", 7))
+                res[row, 1] <- covar.names[covar.no]
+                res[row, 3] <- xxx
+                res[row, 4] <- coef[index]
+                res[row, 5] <- e.coef[index]
+                res[row, 6] <- se[index]
+                ##cat(formatC(substr(covar.names[covar.no], 1, 16),
+                  ##          width = 16, flag = "-"),
+                    ##xxx,
+                ##    coef[index],
+                ##    e.coef[index],
                                         #exp(coef[index]),
-                    se[index])
+                  ##  se[index])
                 ##formatC(" ", width = 9),
                 if (lp){
                     lpindx <- lpindx + 1
@@ -174,13 +210,17 @@ print.summary.aftreg <- function(x,
                 }else{
                     ppv <- wald.p[index]
                 }
-                cat(formatC(ppv,
-                            digits = 3,
-                            width = digits + 2,
-                            format = "f"), "\n")
+                res[row, 7] <- ppv
+                ##cat(formatC(ppv,
+                  ##          digits = 3,
+                    ##        width = digits + 2,
+                      ##      format = "f"), "\n")
             }
         }else if (ord[term.no] > 1){ ## Interactions:
-            cat(formatC(term.names[term.no], width = 16, flag = "-"), "\n")
+            row <- row + 1
+            rbind(res, rep("", 7))
+            res[row, 1] <- term.names[term.no]
+            ##cat(formatC(term.names[term.no], width = 16, flag = "-"), "\n")
             niv <- numeric(ord[term.no])
             covar.no <- which(factors[, term.no] == 1)
 
@@ -198,6 +238,14 @@ print.summary.aftreg <- function(x,
                     vn <- sub(covar.names[covar.no[i]], "", vn)
                 }
                 ##          cat(format(names(coef)[index], 15, "+"),
+                row <- row + 1
+                res <- rbind(res, rep("", 7))
+                res[row, 1] <- substring(vn, 1, 22)
+                res[row, 4] <- coef[index]
+                res[row, 5] <- e.coef[index]
+                res[row, 6] <- se[index]
+                if (!lp) res[row, 7] <- wald.p[index]
+                if (FALSE){
                 cat(formatC(" ", width = 2),
                     formatC(substring(vn, 1, 22), width = 22, flag = "-"),
                     ##format(" ", 8),
@@ -211,6 +259,7 @@ print.summary.aftreg <- function(x,
                             format = "f"),
                     ##signif(1 - pchisq((coef[index]/ se[index])^2, 1), digits - 1),
                     "\n")
+                }
             }
         }
         
@@ -238,7 +287,7 @@ print.summary.aftreg <- function(x,
     }else{
         df <- round(sum(x$df),2)
     }
-    if (!short){
+    if (FALSE){ #if (!short){
         cat("\n")
         cat(formatC("Events", width = 25, flag = "-"), x$n.events, "\n")
         cat(formatC("Total time at risk", width = 25, flag = "-"),
@@ -256,5 +305,5 @@ print.summary.aftreg <- function(x,
             cat("   number of clusters=", x$icc[1],
                 "    ICC=", format(x$icc[2:3]), "\n")
     }
-    invisible(x)
+    as.data.frame(res) ##invisible(x)
 }

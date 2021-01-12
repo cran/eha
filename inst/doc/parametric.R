@@ -47,6 +47,7 @@ lines(x, hllogis(x, shape = 5), lty = 2)
 par(op)
 
 ## ----oldmort6.aft-------------------------------------------------------------
-fit.g1 <- aftreg(Surv(enter - 60, exit - 60, event) ~ sex + civ + region, data = oldmort, dist = "gompertz")
+fit.g1 <- aftreg(Surv(enter - 60, exit - 60, event) ~ sex + civ + region,
+                 data = oldmort, dist = "gompertz")
 summary(fit.g1)
 

@@ -209,7 +209,8 @@ We repeat the analysis of the old age mortality data, but with an accelerated fa
 time model.
 
 ```{r oldmort6.aft}
-fit.g1 <- aftreg(Surv(enter - 60, exit - 60, event) ~ sex + civ + region, data = oldmort, dist = "gompertz")
+fit.g1 <- aftreg(Surv(enter - 60, exit - 60, event) ~ sex + civ + region,
+                 data = oldmort, dist = "gompertz")
 summary(fit.g1)
 ```
 

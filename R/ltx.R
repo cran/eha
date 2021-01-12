@@ -68,7 +68,7 @@ ltx.coxreg <- function(x, caption = NULL, label = NULL, dr = NULL,
     savedig <- options(digits = digits)
     on.exit(options(savedig))
 
-    ltxCoef(x, digits, dr) # Print regression coefficients
+    ltxCoef(x, digits, dr, caption) # Print regression coefficients
 ### New 2020-11-26:    
     if (inherits(x, "summary.tpchreg")){
         ivl <- paste("(", min(x$cuts), ", ", max(x$cuts), "]", sep = "")
@@ -92,10 +92,6 @@ ltx.coxreg <- function(x, caption = NULL, label = NULL, dr = NULL,
 
     cat("\\end{tabular}\n")
 
-    if (!is.null(caption)){
-        cat("\\caption{", caption, "} \n", sep = "")
-    }
-    
     if (!is.null(label)){
         cat("\\label{", label, "} \n", sep = "")
     }
@@ -178,10 +174,10 @@ ltx.phreg <- function(x, caption = NULL, label = NULL, dr = NULL,
     savedig <- options(digits = digits)
     on.exit(options(savedig))
 
-    ltxCoef(x, digits, dr) # Print regression coefficients.
+    ltxCoef(x, digits, dr, caption) # Print regression coefficients.
 
     if (FALSE){
-    cat("Baseline parameters \\\\\n")
+        cat("Baseline parameters \\\\\n")
         for (i in 1:n.slsh){
         jup <- length(x$coef)
         ss.names <- names(x$coef[(jup - n.slsh + 1):jup])
@@ -221,17 +217,13 @@ ltx.phreg <- function(x, caption = NULL, label = NULL, dr = NULL,
     ##    "\\\\", "\\hline", "\n")
 ### End hack!
     
-    cat("\\hline \n")
-    cat("Events & ", x$n.events, " & TTR & ", x$ttr, "\\\\ \n")
-    cat("Max. Log Likelihood & ", x$loglik[2], "\\\\ \\hline \n")
-    cat("\\hline \n")
+    ##cat("\\hline \n")
+    ##cat("Events & ", x$n.events, " & TTR & ", x$ttr, "\\\\ \n")
+    ##cat("Max. Log Likelihood & ", x$loglik[2], "\\\\ \\hline \n")
+    ##cat("\\hline \n")
 
     cat("\\end{tabular}\n")
 
-    if (!is.null(caption)){
-        cat("\\caption{", caption, "} \n", sep = "")
-    }
-    
     if (!is.null(label)){
         cat("\\label{", label, "} \n", sep = "")
     }
@@ -278,7 +270,11 @@ ltx.phreg <- function(x, caption = NULL, label = NULL, dr = NULL,
     }
 }
 
-ltxCoef <- function(x, digits, dr){
+#############################################################################
+###     Start of 'ltxCoef'                                                ###
+###
+
+ltxCoef <- function(x, digits, dr, caption){
     coef <- x$coef
 
     se <- sqrt(diag(x$var))
@@ -295,6 +291,11 @@ ltxCoef <- function(x, digits, dr){
     }
 #####################################
     cat("\\begin{table}[ht] \n")
+    if (!is.null(caption)){
+        cat("\\caption{", caption, "} \n", sep = "")
+    }
+    
+    
     cat("\\begin{center} \n")
     cat("\\footnotesize \n") # NOTE!!
     cat("\\begin{tabular}{lrrrrr} \n")
