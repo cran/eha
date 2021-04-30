@@ -46,8 +46,10 @@ plot(x, 2 * hllogis(2 * x, shape = 5), type = "l", ylab = "", main = "AFT", xlab
 lines(x, hllogis(x, shape = 5), lty = 2)
 par(op)
 
-## ----oldmort6.aft-------------------------------------------------------------
+## ----oldmort6.aftpre, echo = TRUE---------------------------------------------
 fit.g1 <- aftreg(Surv(enter - 60, exit - 60, event) ~ sex + civ + region,
-                 data = oldmort, dist = "gompertz")
+                 data = oldmort, id = id, dist = "gompertz")
+
+## ----oldmort6.aft-------------------------------------------------------------
 summary(fit.g1)
 

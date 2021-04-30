@@ -59,7 +59,11 @@ hazards.phreg <- function(x, cum = TRUE, ivl, n.points = 300, ...){
     }else{
         ns <- x$n.strata
         yp <- matrix(0, nrow = ns, ncol = n.points)
-        scsh <- x$coefficients[-(1:x$df)] # Has length 2 * ns (pfixed = FALSE)
+        if (x$df == 0){
+            scsh <- x$coefficients
+        }else{
+            scsh <- x$coefficients[-seq_len(x$df)] # Has length 2 * ns (pfixed = FALSE)
+        }
         sc <- numeric(ns)
         sh <- numeric(ns)
         if (x$pfixed){
@@ -161,7 +165,11 @@ hazards.aftreg <- function(x, cum = TRUE, ivl, n.points = 300, ...){
     }else{
         ns <- x$n.strata
         yp <- matrix(0, nrow = ns, ncol = n.points)
-        scsh <- x$coefficients[-(1:x$df)] # Has length 2 * ns
+        if (x$df == 0){
+            scsh <- x$coefficients
+        }else{
+            scsh <- x$coefficients[-seq_len(x$df)] # Has length 2 * ns
+        }
         sc <- numeric(ns)
         sh <- numeric(ns)
         if (x$pfixed){

@@ -67,14 +67,20 @@ regtable <- function(x, digits = 3, short = TRUE, ...){
     
     res <- matrix(NA, ncol = 7, nrow = 0)
     colnames(res) <- c("Covariate", "level", "W_mean", "Coef", "HR", "SE", "LR_p")
-
+    if (inherits(x, "summary.aftreg")){
+        if (x$param == "lifeAcc"){
+            colnames(res)[5] <- "lifeAcc"
+        }else{
+            colnames(res)[5] <- "lifeExp"
+        }
+    }
     if (!lp) colnames(res)[7] <- "Wald_p"
     ##res <- as.data.frame(res)
     ##return(res)
 #####################################
-    e.coef <- formatC(exp(coef), width = 9, digits = 3, format = "f")
-    coef <- formatC(coef, width = 9, digits = 3, format = "f")
-    se <- formatC(se, width = 9, digits = 3, format = "f")
+    e.coef <- formatC(exp(coef), width = 9, digits = digits, format = "f")
+    coef <- formatC(coef, width = 9, digits = digits, format = "f")
+    se <- formatC(se, width = 9, digits = digits, format = "f")
     
     ett <-  formatC(1, width = 9, digits = 0, format = "f")
     noll <-  formatC(0, width = 5, digits = 0, format = "f")

@@ -1,3 +1,24 @@
+2.9.0 (Apr 30, 2021)
+    * Submission to CRAN.
+    
+2.8.5.9100 (Apr 28, 2021)
+    * coxreg: Remove calculation of boot.sd (too freqent failures).
+
+2.8.5.9070 (Apr 18, 2021)
+    * plot.tpchreg: Error with arguments 'xlab' and 'ylab' fixed.
+
+2.8.5.9060 (Feb 24, 2021)
+    * Data for the year 2020 included in swepop and swdeaths.
+
+2.8.5.9050 (Jan 17, 2021)
+    * Vignettes updated and completed.
+
+2.8.5. 9010 (Jan 14, 2021)
+    * plotHaz: New arguments 'leglab' and 'log = ""'.
+
+2.8.5.9000 (Jan 13, 2021)
+    * hazards: Fix bug appearing when no covariates are present.
+    
 2.8.5 (Jan 11, 2021)
     * Submission to CRAN.
 
