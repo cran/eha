@@ -1,12 +1,8 @@
-#' LaTeX printing of regression results.
+#' LaTeX alternative printing of regression results.
 #' 
 #' This (generic) function prints the LaTeX code of the results of a fit from
 #' \code{\link{coxreg}}, \code{\link{phreg}}, \code{\link{tpchreg}}, 
-#' or \code{\link{aftreg}}, similar
-#' to what \code{xtable} does for fits from other functions.
-#' 
-#' The result is a printout which is (much) nicer than the standard printed
-#' output from \code{glm} and friends,
+#' or \code{\link{aftreg}}.
 #' 
 #' @param x The output from a call to \code{coxreg}, \code{tpchreg}, or
 #' \code{aftreg}
@@ -14,35 +10,43 @@
 #' @param label A label used in the LaTeX code.
 #' @param dr Output from a \code{drop1} call.
 #' @param digits Number of digits to be printed.
+#' @param conf Confidence intervals level.
+#' @param keep Number of covariates to present.
 #' @param \dots Not used.
 #' @return LaTeX code version of the results from a run with
 #' \code{\link{coxreg}}, \code{\link{phreg}}, \code{\link{phreg}}, 
-#' or \code{\link{aftreg}}.
-#' @note For printing confidence limits, use \code{\link{ltx2}}.
+#' \code{\link{aftreg}}.
+#' @note Resulting tables contain estimated hazard ratios and confidence limits
+#' instead of regression coefficients and standard errors as in \code{\link{ltx}}.
 #' @author Göran Broström.
-#' @seealso \code{\link{ltx2}}, \code{\link{coxreg}}, \code{\link{phreg}}, 
-#' \code{\link{phreg}}, and \code{\link{aftreg}}.
+#' @seealso \code{xtable}, \code{\link{coxreg}}, \code{\link{phreg}}, 
+#' \code{\link{phreg}}, \code{\link{aftreg}}, and \code{\link{ltx}}.
 #' @keywords printing
 #' @examples
 #' 
 #' data(oldmort)
-#' fit <- coxreg(Surv(enter, exit, event) ~ civ + sex, data = oldmort)
-#' dr <- drop1(fit, test = "Chisq")
-#' ltx(fit, dr = dr, caption = "A test example.", label = "tab:test1") 
+#' fit <- coxreg(Surv(enter, exit, event) ~ sex, data = oldmort)
+#' ltx2(fit, caption = "A test example.", label = "tab:test1") 
 #' 
-#' @export ltx
-ltx <- function(x,
-                caption = NULL,
-                label = NULL,
-                dr = NULL,
-                digits = max(options()$digits - 4, 3), ...){
-    UseMethod("ltx")
+#' @export ltx2
+ltx2 <- function(x,
+                 caption = NULL,
+                 label = NULL,
+                 dr = NULL,
+                 digits = max(options()$digits - 4, 4),
+                 conf = 0.95,
+                 keep = NULL, ...){
+    UseMethod("ltx2")
 }
 
 #' @export
-ltx.coxreg <- function(x, caption = NULL, label = NULL, dr = NULL, 
-          digits=max(options()$digits - 4, 3), ...){
-    
+ltx2.coxreg <- function(x, caption = NULL, label = NULL, dr = NULL, 
+          digits=max(options()$digits - 4, 3), conf = 0.95, keep = NULL, ...){
+
+    ## keep is checked in 
+    if (is.null(dr)){
+         dr <- drop1(x, test = "Chisq")
+    }
     if (!inherits(x, "coxreg")){
         stop("only for coxreg objects")
     }
@@ -67,7 +71,7 @@ ltx.coxreg <- function(x, caption = NULL, label = NULL, dr = NULL,
     savedig <- options(digits = digits)
     on.exit(options(savedig))
 
-    ltxCoef(x, digits, dr, caption) # Print regression coefficients
+    ltxCoef3(x, dr, conf, keep, digits, caption) # Print regression coefficients
 ### New 2020-11-26:    
     if (inherits(x, "summary.tpchreg")){
         ivl <- paste("(", min(x$cuts), ", ", max(x$cuts), "]", sep = "")
@@ -86,7 +90,8 @@ ltx.coxreg <- function(x, caption = NULL, label = NULL, dr = NULL,
             cat(" & ", formatC(x$rmean[x$n.strata], format = "g", flag = "#"), "\\\\ \n")
         }
     }
-### End New 2020-11-26.    
+### End New 2020-11-26. 
+    if (TRUE){
     cat("\\hline \n")
 
     cat("\\end{tabular}\n")
@@ -98,6 +103,7 @@ ltx.coxreg <- function(x, caption = NULL, label = NULL, dr = NULL,
     cat("\\end{center} \n")
     cat("\\end{table} \n\n\n")
     cat(" \n\n")
+    } # End FALSE
 #####################################
     if(FALSE){
         tmp <- cbind(coef, exp(coef), se,
@@ -138,10 +144,13 @@ ltx.coxreg <- function(x, caption = NULL, label = NULL, dr = NULL,
 }
 
 #' @export
-ltx.phreg <- function(x, caption = NULL, label = NULL, dr = NULL, 
-          digits=max(options()$digits - 4, 3), ...){
+ltx2.phreg <- function(x, caption = NULL, label = NULL, dr = NULL, 
+          digits=max(options()$digits - 4, 3), conf, keep = NULL, ...){
     
     if (!("phreg" %in% class(x))) stop("Only for 'phreg' output")
+    if (is.null(dr)){
+        dr <- drop1(x, test = "Chisq")
+    }
 
     if (!is.null(cl<- x$call)) {
 	##cat("Call:\n")
@@ -173,53 +182,8 @@ ltx.phreg <- function(x, caption = NULL, label = NULL, dr = NULL,
     savedig <- options(digits = digits)
     on.exit(options(savedig))
 
-    ltxCoef(x, digits, dr, caption) # Print regression coefficients.
+    ltxCoef3(x, dr, conf, keep, digits, caption) # Print regression coefficients.
 
-    if (FALSE){
-        cat("Baseline parameters \\\\\n")
-        for (i in 1:n.slsh){
-        jup <- length(x$coef)
-        ss.names <- names(x$coef[(jup - n.slsh + 1):jup])
-        index <- index + 1
-        ## covar.no <- covar.no + 1
-        cat(formatC(ss.names[i], width = 16, flag = "-"),
-            formatC(" & & ",
-                    width = 8, digits = 3, format = "c"),
-            coef[index], " & ",
-            e.coef[index], " & ",
-                                        #exp(coef[index]),
-            se[index], " & ",
-            #formatC(" ", width = 1),
-            formatC(wald.p[index],
-                    digits = 3,
-                    width = digits + 2,
-                    format = "f"), " \\\\ ", 
-            ##signif(1 - pchisq((coef/ se)^2, 1), digits - 1),
-            "\n")
-        }
-    }
-    ##cat("index = ", index, "\n")
-    ##cat("e.coef[index - 1] = ", e.coef[index - 1], "\n")
-    ##cat("e.coef[index] = ", e.coef[index], "\n")
-
-### The following about 'mean' is a hack!!! only for 'gompertz'!
-    ## Later to be moved to 'aftreg.fit'
-    ##if (x$param == "default"){
-    ##    shapen <- exp(x$coef[index])
-    ##}else{
-    ##    shapen <- exp(-x$coef[index])
-    ##}
-    ##medel <- integrate(pgompertz, 0, Inf, lower.tail = FALSE,
-    ##                   scale = exp(x$coef[index - 1]),
-    ##                   shape = shapen)$value
-    ##cat("Baseline mean: ", medel, 
-    ##    "\\\\", "\\hline", "\n")
-### End hack!
-    
-    ##cat("\\hline \n")
-    ##cat("Events & ", x$n.events, " & TTR & ", x$ttr, "\\\\ \n")
-    ##cat("Max. Log Likelihood & ", x$loglik[2], "\\\\ \\hline \n")
-    ##cat("\\hline \n")
 
     cat("\\end{tabular}\n")
 
@@ -231,63 +195,37 @@ ltx.phreg <- function(x, caption = NULL, label = NULL, dr = NULL,
     cat("\\end{table} \n\n\n")
     cat(" \n\n")
 #####################################
-    if(FALSE){
-        tmp <- cbind(coef, exp(coef), se,
-                     signif(1 - pchisq((coef/ se)^2, 1), digits - 1))
-        dimnames(tmp) <- list(names(coef), c("coef", "rel. risk",
-                                             "se(coef)", "p"))
-        
-        cat("\n")
-        prmatrix(tmp)
-    }
 
     if (!is.null(x$frailty)){
         cat("\nFrailty standard deviation = ", x$sigma, "\n")
         cat("                      S.E. = ", x$sigma.sd, "\n\n")
     }
-    if (FALSE){
-        logtest <- -2 * (x$loglik[1] - x$loglik[2])
-        if (is.null(x$df)) df <- sum(!is.na(coef))
-        else  df <- round(sum(x$df),2)
-        cat("\n")
-        cat(formatC("Events", width = 25, flag = "-"), x$events, "\n")
-        cat(formatC("Total time at risk", width = 25, flag = "-"),
-            formatC(x$ttr, digits = 5, format = "fg"), "\n")
-        cat(formatC("Max. log. likelihood", width = 25, flag = "-"),
-            formatC(x$loglik[2], digits = 5, format = "fg"), "\n")
-        cat(formatC("LR test statistic", width = 25, flag = "-"),
-            format(round(logtest, 2)), "\n")
-        cat(formatC("Degrees of freedom", width = 25, flag = "-"),
-            formatC(df, digits = 0, format = "f"), "\n")
-        cat(formatC("Overall p-value", width = 25, flag = "-"),
-            format.pval(1 - pchisq(logtest, df), digits = 6, "\n"))
-        cat("\n")
-        if (length(x$icc))
-            cat("   number of clusters=", x$icc[1],
-                "    ICC=", format(x$icc[2:3]), "\n")
-        invisible(x)
-    }
+
 }
 
-#############################################################################
-###     Start of 'ltxCoef'                                                ###
-###
-
-ltxCoef <- function(x, digits, dr, caption){
+ltxCoef3 <- function(x, dr, conf, keep, digits, caption){
     coef <- x$coef
 
     se <- sqrt(diag(x$var))
 
-    wald.p <- formatC(1 - pchisq((coef/ se)^2, 1),
-                      digits = digits,
-                      format = "f")
+##    wald.p <- formatC(1 - pchisq((coef/ se)^2, 1),
+##                      digits = digits,
+##                      format = "f")
     if(is.null(coef) | is.null(se))
         stop("Input is not valid")
     ## Check for dr:
-    lp <- !is.null(dr) 
+    lp <- TRUE
+    if (is.null(dr)) {
+        dr <- drop1(x, test = "Chisq")
+    }
     if (lp){
         lpval <- formatC(dr[-1, 4], digits = digits, format = "f")
     }
+    
+    qn <- qnorm(1 - (1 - conf) / 2)
+    lower <- exp(coef - qn * se)
+    upper <- exp(coef + qn * se)
+    
 #####################################
     cat("\\begin{table}[ht] \n")
     if (!is.null(caption)){
@@ -307,7 +245,7 @@ ltxCoef <- function(x, digits, dr, caption){
                 cat("\\bf Covariate & \\bf Mean & \\bf Coef & \\bf Life expn. & \\bf S.E. &   \\bf L-R p \\\\ \\hline\n")
             }
         }else{
-            cat("\\bf Covariate & \\bf Mean & \\bf Coef & \\bf H.R. & \\bf S.E. &   \\bf L-R p \\\\ \\hline\n")
+            cat("\\bf Covariate & \\bf Mean & \\bf H.R. & \\bf lowCI &  \\bf highCI & \\bf L-R p \\\\ \\hline\n")
         }
     }else{
         if ("aftreg" %in% x$class){
@@ -321,11 +259,11 @@ ltxCoef <- function(x, digits, dr, caption){
         }
     }
     e.coef <- formatC(exp(coef), digits = digits, format = "f")
-    coef <- formatC(coef, digits = digits, format = "f")
-    se <- formatC(se, digits = digits, format = "f")
+    lower <- formatC(lower, digits = digits, format = "f")
+    upper <- formatC(upper, digits = digits, format = "f")
     
     ett <-  1L
-    noll <-  0L
+##    noll <-  0L
 
     factors <- attr(x$terms, "factors")
     resp <- attr(x$terms, "response")
@@ -354,7 +292,13 @@ ltxCoef <- function(x, digits, dr, caption){
     index <- 0
     lpindx <- 0
 
-    for (term.no in 1:length(term.names)){
+    if (is.null(keep) || missing(keep)){
+        goto <- length(term.names)
+    }else{
+        goto <- min(keep, length(term.names))
+    }
+    
+    for (term.no in 1:goto){
 
         if (ord[term.no] == 1){
             covar.no <- which(factors[, term.no] == 1)
@@ -377,7 +321,7 @@ ltxCoef <- function(x, digits, dr, caption){
                     " & ",
                     formatC(x$w.means[[covar.no]][1],
                             width = 8, digits = digits, format = "f"), " & ",
-                    noll, " & ",
+                    
                     ett, " & ",
                     "\\multicolumn{2}{c}{(reference)} \\\\ \n", sep = "")
                 for (lev in 2:no.lev){
@@ -390,16 +334,14 @@ ltxCoef <- function(x, digits, dr, caption){
                         " & $",
                         formatC(x$w.means[[covar.no]][lev],
                                 width = 8, digits = digits, format = "f"), "$ & $",
-                        coef[index], "$ & $",
+                        ##coef[index], "$ & $",
                         e.coef[index], "$ & $",
-                         se[index], "$") 
+                        lower[index], "$ & $", 
+                        upper[index], "$") 
                         ##formatC(" ", width = 9),
-                    if (lp){
+                    
                         cat("\\\\ \n")
-                    }else{
-                        cat(" & $ ", wald.p[index],
-                            "$ \\\\ \n", sep = "")
-                    }
+                   
                 }
             }else{ ## Covariates:
                 index <- index + 1
@@ -410,15 +352,14 @@ ltxCoef <- function(x, digits, dr, caption){
                     formatC(x$w.means[[covar.no]],
                             width = 8, digits = digits, format = "f"),
                     " $ & $ ",
-                    coef[index], " $ & $ ",
+                    ##coef[index], " $ & $ ",
                     e.coef[index], " $ & $ ",
                                         #exp(coef[index]),
-                    se[index], " $ & $ ")
+                    lower[index], "$ & $",
+                    upper[index], " $ & $ ")
                 if (lp){
                     lpindx <- lpindx + 1
                     ppv <- lpval[lpindx]
-                }else{
-                    ppv <- wald.p[index]
                 }
                 cat(ppv, "$ \\\\ \n")
             }
@@ -444,22 +385,35 @@ ltxCoef <- function(x, digits, dr, caption){
                 cat(formatC(" ", width = 2),
                     formatC(substring(vn, 1, 22), width = 22, flag = "-"),
                     ##format(" ", 8),
-                    " &  & ",
-                    coef[index], " & ", 
-                    e.coef[index], " & ",
-                    se[index], " & ",
-                    ##formatC(" ", width = 9),
-                    formatC(wald.p[index],
-                            digits = digits,
-                            width = digits + 2,
-                            format = "f"),
+                    " &  & $ ",
+                    ##coef[index], " & ", 
+                    e.coef[index], "$ & $",
+                    lower[index], "$ & $",
+                    upper[index], "$ & $",
+                    formatC(" ", width = 9),
+                    ##formatC(wald.p[index],
+                
+                      ##      digits = digits,
+                        ##    width = digits + 2,
+                          ##  format = "f"),
                     ##signif(1 - pchisq((coef[index]/ se[index])^2, 1), digits - 1),
-                    "\\\\ \n")
+                    "$ \\\\ \n")
             }
         }
         
     }
     cat("\\hline \n")
     cat("Events & ", x$n.events, " & TTR & ", x$ttr, "\\\\ \n")
-    cat("Max. logLik. & $ ", x$loglik[2], " $ \\\\ \\hline \n")
+    cat("Max. logLik. & $ ", x$loglik[2], " $ & ", "Conf level & ",   conf,  "\\\\ \\hline \n")
+    
+    cat("\\hline \n")
+    ## Remove the rest?
+##    cat("\\end{tabular}\n")
+##    if (!is.null(label)) {
+##        cat("\\label{", label, "} \n", sep = "")
+##    }
+##    cat("\\normalsize \n")
+##    cat("\\end{center} \n")
+##    cat("\\end{table} \n\n\n")
+##    cat(" \n\n")
 }

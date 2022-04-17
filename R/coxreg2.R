@@ -8,7 +8,7 @@
 #' \code{survival}. The methods \code{mppl} and \code{ml} are maximum
 #' likelihood, discrete-model, based.
 #' 
-#' @usage coxreg(formula = formula(data), data = parent.frame(), weights,
+#' @usage coxreg2(formula = formula(data), data = parent.frame(), weights,
 #' subset, t.offset, na.action = getOption("na.action"), init = NULL, method =
 #' c("efron", "breslow", "mppl", "ml"), control = list(eps = 1e-08, maxiter =
 #' 25, trace = FALSE), singular.ok = TRUE, model = FALSE, center = NULL, x =
@@ -118,7 +118,7 @@
 #'  coxreg( Surv(time, status) ~ x, data = dat, rs = rs) #stratified model
 #'  
 #' @export
-coxreg <- function (formula = formula(data),
+coxreg2 <- function (formula = formula(data),
                     data = parent.frame(),
                     weights,
                     subset,
@@ -163,8 +163,8 @@ coxreg <- function (formula = formula(data),
     }else{
         cox.ph <- coxph # == TRUE
     }
-    if (FALSE){  ############################## NOTE!!!!###########
-    ##if (cox.ph){
+    ## if (FALSE){  ############################## NOTE!!!!###########
+    if (cox.ph){ ## 
         Call <- match.call()
         Call[[1]] <- quote(survival::coxph)
         ##return(Call)
