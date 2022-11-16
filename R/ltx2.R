@@ -70,8 +70,45 @@ ltx2.coxreg <- function(x, caption = NULL, label = NULL, dr = NULL,
 
     savedig <- options(digits = digits)
     on.exit(options(savedig))
-
-    ltxCoef3(x, dr, conf, keep, digits, caption) # Print regression coefficients
+    ord <- attr(x$terms, "order")
+    ## New, 2020-07-26:
+    cat("\\begin{table}[ht] \n")
+    if (!is.null(caption)){
+        cat(paste("\\caption{", caption, "} \n", sep = ""))
+    }
+    
+    
+    cat("\\begin{center} \n")
+    cat("\\footnotesize \n") # NOTE!!
+    cat("\\begin{tabular}{lrrrrr} \n")
+    cat("\\hline \n")
+    if (any(ord > 1)){
+        lp <- FALSE
+        ##cat("\\begin{tabular}{l|rrr} \n")
+        if (!is.null(dr)){
+            ##print(dr)
+            ##cat("\n")
+            cat("\\multicolumn{6}{l}{", "Single term deletions", "}\\\\\n")
+            cat("\\hline\n")
+            for (j in 1:4){
+                cat(" & ", colnames(dr)[j])
+            }
+            cat("\\\\\n")
+            cat("\\hline\n")
+            for (i in 1:NROW(dr)){
+                cat(rownames(dr)[i], " & ")
+                for (j in 1:3){
+                    cat(dr[i, j], " & ")
+                }
+                cat(dr[i, 4], "\\\\\n") 
+            }
+            cat("\\hline\n")
+            cat("\\\\\n")
+        }
+    }else lp <- TRUE
+    ####
+    
+    ltxCoef3(x, dr, conf, keep, digits, lp) # Print regression coefficients
 ### New 2020-11-26:    
     if (inherits(x, "summary.tpchreg")){
         ivl <- paste("(", min(x$cuts), ", ", max(x$cuts), "]", sep = "")
@@ -97,7 +134,7 @@ ltx2.coxreg <- function(x, caption = NULL, label = NULL, dr = NULL,
     cat("\\end{tabular}\n")
 
     if (!is.null(label)){
-        cat("\\label{", label, "} \n", sep = "")
+        cat(paste("\\label{", label, "} \n", sep = ""))
     }
     cat("\\normalsize \n")
     cat("\\end{center} \n")
@@ -145,7 +182,7 @@ ltx2.coxreg <- function(x, caption = NULL, label = NULL, dr = NULL,
 
 #' @export
 ltx2.phreg <- function(x, caption = NULL, label = NULL, dr = NULL, 
-          digits=max(options()$digits - 4, 3), conf, keep = NULL, ...){
+          digits=max(options()$digits - 4, 3), conf = 0.95, keep = NULL, ...){
     
     if (!("phreg" %in% class(x))) stop("Only for 'phreg' output")
     if (is.null(dr)){
@@ -181,14 +218,68 @@ ltx2.phreg <- function(x, caption = NULL, label = NULL, dr = NULL,
 
     savedig <- options(digits = digits)
     on.exit(options(savedig))
+    
+    ord <- attr(x$terms, "order")
+    ## New, 2020-07-26:
+        cat("\\begin{table}[ht] \n")
+    if (!is.null(caption)){
+        cat(paste("\\caption{", caption, "} \n", sep = ""))
+    }
+    
+    
+    cat("\\begin{center} \n")
+    cat("\\footnotesize \n") # NOTE!!
+    cat("\\begin{tabular}{lrrrrr} \n")
+    cat("\\hline \n")
 
-    ltxCoef3(x, dr, conf, keep, digits, caption) # Print regression coefficients.
+    if (any(ord > 1)){
+        lp <- FALSE
+        cat("\\begin{tabular}{l|rrr} \n")
+        if (!is.null(dr)){
+            ##print(dr)
+            cat("\n")
+            cat(attr(dr, "heading"), "\\\\\n")
+            for (i in 1:NROW(dr)){
+                cat(rownames(dr)[i], " & ")
+                for (j in 1:3){
+                   cat(dr[i, j], " & ")
+                   cat(dr[i, 4], "\\\\\n") 
+                } 
+            }
+            cat("\\end{tabular}\n")
+        }
+    } else lp <- TRUE
+    ####
+    
+
+    ltxCoef3(x, dr, conf, keep, digits, lp) # Print regression coefficients.
+    if (x$n.strata == 1){
+        cat("Baseline expectation: & ", x$baselineMean, "\\\\", "\\hline", "\n")
+    }else{
+        for (j in 1:x$n.strata){
+            cat("Baseline expectation", j, ": &", x$baselineMean[j], "\\\\", "\n")
+        }
+        cat("\\hline \n")
+    }
+    cat("\\hline \n")
+    cat("Events & ", x$n.events,"(",x$n,")", " & TTR & ", x$ttr, "\\\\ \n", sep = "")
+    logtest <- -2 * (x$loglik[1] - x$loglik[2])
+    df <- x$df
+    if (is.null(df)){
+        pvale <- 1
+    }else{
+        pvale <- pchisq(logtest, df, lower.tail = FALSE)
+        pvale <- round(pvale, digits = 6)
+    }
+    cat("Max. Log Likelihood & $ ", x$loglik[2], " $ & $p$-value & ", pvale,
+        "\\\\ \\hline \n")
+    cat("\\hline \n")
 
 
     cat("\\end{tabular}\n")
 
     if (!is.null(label)){
-        cat("\\label{", label, "} \n", sep = "")
+        cat(paste("\\label{", label, "} \n", sep = ""))
     }
 
     cat("\\end{center} \n")
@@ -203,33 +294,50 @@ ltx2.phreg <- function(x, caption = NULL, label = NULL, dr = NULL,
 
 }
 
-ltxCoef3 <- function(x, dr, conf, keep, digits, caption){
-    coef <- x$coef
-
-    se <- sqrt(diag(x$var))
-
-##    wald.p <- formatC(1 - pchisq((coef/ se)^2, 1),
-##                      digits = digits,
-##                      format = "f")
-    if(is.null(coef) | is.null(se))
-        stop("Input is not valid")
-    ## Check for dr:
-    lp <- TRUE
-    if (is.null(dr)) {
+#' @export
+ltx2.aftreg <- function(x, caption = NULL, label = NULL, dr = NULL, 
+          digits=max(options()$digits - 4, 3), conf = 0.95, keep = NULL, ...){
+    
+    if (!("aftreg" %in% class(x))) stop("Only for 'aftreg' output")
+    if (is.null(dr)){
         dr <- drop1(x, test = "Chisq")
     }
-    if (lp){
-        lpval <- formatC(dr[-1, 4], digits = digits, format = "f")
+
+    if (!is.null(cl<- x$call)) {
+	##cat("Call:\n")
+	##dput(cl)
+	##cat("\n")
+	}
+
+    if (!is.null(x$fail)) {
+        if (x$fail != 0){
+            cat(" aftreg failed with: ")
+            stop(x$fail)
+        }
     }
+
+    if (!length(x$coefficients)){
+        cat("Null log likelihood = ", x$loglik[2], "\n")
+        return()
+    }
+
+    if (x$pfixed){
+
+        n.slsh <- 1
+
+    }else{
+        n.slsh <- 2 * x$n.strata
+
+    }
+
+    savedig <- options(digits = digits)
+    on.exit(options(savedig))
     
-    qn <- qnorm(1 - (1 - conf) / 2)
-    lower <- exp(coef - qn * se)
-    upper <- exp(coef + qn * se)
-    
-#####################################
-    cat("\\begin{table}[ht] \n")
+    ord <- attr(x$terms, "order")
+    ## New, 2020-07-26:
+        cat("\\begin{table}[ht] \n")
     if (!is.null(caption)){
-        cat("\\caption{", caption, "} \n", sep = "")
+        cat(paste("\\caption{", caption, "} \n", sep = ""))
     }
     
     
@@ -237,12 +345,99 @@ ltxCoef3 <- function(x, dr, conf, keep, digits, caption){
     cat("\\footnotesize \n") # NOTE!!
     cat("\\begin{tabular}{lrrrrr} \n")
     cat("\\hline \n")
+
+    if (any(ord > 1)){
+        lp <- FALSE
+        cat("\\begin{tabular}{l|rrr} \n")
+        if (!is.null(dr)){
+            ##print(dr)
+            cat("\n")
+            cat(attr(dr, "heading"), "\\\\\n")
+            for (i in 1:NROW(dr)){
+                cat(rownames(dr)[i], " & ")
+                for (j in 1:3){
+                   cat(dr[i, j], " & ")
+                   cat(dr[i, 4], "\\\\\n") 
+                } 
+            }
+            cat("\\end{tabular}\n")
+        }
+    } else lp <- TRUE
+    ####
+    
+
+    ltxCoef3(x, dr, conf, keep, digits, lp) # Print regression coefficients.
+    if (x$n.strata == 1){
+        cat("Baseline expectation: & ", x$baselineMean, "\\\\", "\\hline", "\n")
+    }else{
+        for (j in 1:x$n.strata){
+            cat("Baseline expectation", j, ": &", x$baselineMean[j], "\\\\", "\n")
+        }
+        cat("\\hline \n")
+    }
+    cat("\\hline \n")
+    cat("Events & ", x$n.events,"(",x$n,")", " & TTR & ", x$ttr, "\\\\ \n", sep = "")
+    logtest <- -2 * (x$loglik[1] - x$loglik[2])
+    df <- x$df
+    if (is.null(df)){
+        pvale <- 1
+    }else{
+        pvale <- pchisq(logtest, df, lower.tail = FALSE)
+        pvale <- round(pvale, digits = 6)
+    }
+    cat("Max. Log Likelihood & $ ", x$loglik[2], " $ & $p$-value & ", pvale,
+        "\\\\ \\hline \n")
+    cat("\\hline \n")
+
+
+    cat("\\end{tabular}\n")
+
+    if (!is.null(label)){
+        cat(paste("\\label{", label, "} \n", sep = ""))
+    }
+
+    cat("\\end{center} \n")
+    cat("\\end{table} \n\n\n")
+    cat(" \n\n")
+#####################################
+
+    if (!is.null(x$frailty)){
+        cat("\nFrailty standard deviation = ", x$sigma, "\n")
+        cat("                      S.E. = ", x$sigma.sd, "\n\n")
+    }
+
+}
+
+ltxCoef3 <- function(x, dr, conf, keep, digits, lp){
+    coef <- x$coef
+
+    se <- sqrt(diag(x$var))
+
+    wald.p <- formatC(1 - pchisq((coef/ se)^2, 1), # Put back!
+                      digits = digits,
+                      format = "f")
+    if(is.null(coef) | is.null(se))
+        stop("Input is not valid")
+    ## Check for dr:
+    if (lp){
+        if (is.null(dr)) {
+            dr <- drop1(x, test = "Chisq")
+        }
+        lpval <- formatC(dr[-1, 4], digits = digits, format = "f")
+    }else lpval <- character(length(coef))
+    
+    qn <- qnorm(1 - (1 - conf) / 2)
+    lower <- exp(coef - qn * se)
+    upper <- exp(coef + qn * se)
+    
+#####################################
+  
     if (lp){
         if ("aftreg" %in% x$class){
             if (x$param == "default"){
-                cat("\\bf Covariate & \\bf Mean & \\bf Coef & \\bf Time accn. & \\bf S.E. & \\bf  L-R p \\\\ \\hline\n")
+                cat("\\bf Covariate & \\bf Mean & \\bf Time accn. & \\bf lowCI & \\bf highCI & \\bf  L-R p \\\\ \\hline\n")
             }else{
-                cat("\\bf Covariate & \\bf Mean & \\bf Coef & \\bf Life expn. & \\bf S.E. &   \\bf L-R p \\\\ \\hline\n")
+                cat("\\bf Covariate & \\bf Mean & \\bf Life expn. & \\bf lowCI & \\bf highCI &   \\bf L-R p \\\\ \\hline\n")
             }
         }else{
             cat("\\bf Covariate & \\bf Mean & \\bf H.R. & \\bf lowCI &  \\bf highCI & \\bf L-R p \\\\ \\hline\n")
@@ -255,7 +450,7 @@ ltxCoef3 <- function(x, dr, conf, keep, digits, caption){
                 cat("\\bf Covariate & \\bf Mean & \\bf Coef & \\bf Life expn. & \\bf S.E. &  \\bf Wald p \\\\ \\hline\n")
             }
         }else{
-            cat("\\bf Covariate & \\bf Mean & \\bf Coef & \\bf H.R. & \\bf S.E. &   \\bf Wald p \\\\ \\hline\n")
+            cat("\\bf Covariate & \\bf Mean & \\bf H.R. & \\bf lowCI & \\bf highCI & \\bf Wald p  \\\\ \\hline\n")
         }
     }
     e.coef <- formatC(exp(coef), digits = digits, format = "f")
@@ -316,14 +511,12 @@ ltxCoef3 <- function(x, dr, conf, keep, digits, caption){
                 x$levels[[covar.no]] <-
                     substring(x$levels[[covar.no]], 1, 16)
                 lb <- paste("\\em", x$levels[[covar.no]][1], sep = " ")
-                cat("\\multicolumn{1}{r}{", lb, "}",
-                ## cat(formatC(x$levels[[covar.no]][1], width = 16, flag = "+"),
+                cat(paste("\\multicolumn{1}{r}{", lb, "}",
                     " & ",
                     formatC(x$w.means[[covar.no]][1],
                             width = 8, digits = digits, format = "f"), " & ",
-                    
                     ett, " & ",
-                    "\\multicolumn{2}{c}{(reference)} \\\\ \n", sep = "")
+                    "\\multicolumn{2}{c}{(reference)} \\\\ \n", sep = ""))
                 for (lev in 2:no.lev){
             ##cat("lev = ", lev, "\n")
                     index <- index + 1
@@ -360,7 +553,7 @@ ltxCoef3 <- function(x, dr, conf, keep, digits, caption){
                 if (lp){
                     lpindx <- lpindx + 1
                     ppv <- lpval[lpindx]
-                }
+                } else ppv <- ""
                 cat(ppv, "$ \\\\ \n")
             }
         }else if (ord[term.no] > 1){ ## Interactions:
@@ -403,7 +596,7 @@ ltxCoef3 <- function(x, dr, conf, keep, digits, caption){
         
     }
     cat("\\hline \n")
-    cat("Events & ", x$n.events, " & TTR & ", x$ttr, "\\\\ \n")
+    cat("Events & ", x$n.events,"(",x$n,")", " & TTR & ", x$ttr, "\\\\ \n", sep = "")
     cat("Max. logLik. & $ ", x$loglik[2], " $ & ", "Conf level & ",   conf,  "\\\\ \\hline \n")
     
     cat("\\hline \n")
