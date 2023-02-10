@@ -71,7 +71,8 @@ plot.phreg <- function(x,
     ##    oldpar <- par(mfrow = c(2, 1))
     ##    on.exit(par(oldpar))
     ##}
-    ncov <- length(x$w.means)
+    ##ncov <- length(x$w.means) # Doesn't work with some factor covariates!!
+    ncov <- x$df # Better!
     ns <- x$n.strata
     if (!is.null(x$pfixed)){
         if (x$pfixed){
@@ -197,7 +198,7 @@ plot.phreg <- function(x,
         }
         ##if (min(p) < 1) ylim0[2] <- min(ylim0[2], max(haz[, -1]))
 
-        if (is.null(xlab)) xlab <- "Duration"
+        ##if (is.null(xlab)) xlab <- "Duration"
         if (is.null(ylab)) ylab <- "Hazard"
         if (is.null(main)){
             hmain <- paste(dist, "hazard function")
@@ -247,9 +248,9 @@ plot.phreg <- function(x,
             ylim0[2] <- max(ylim0[2], max(Haz))
         }
         ##if (is.null(xlab))
-        xlab <- "Duration"
+        ##xlab <- "Duration"
         ##if (is.null(ylab))
-        ylab <- "Cumulative Hazard"
+        ylab <- "Cumulative Hazards"
         if (is.null(main)){
             Hmain <- paste(dist, "cumulative hazard function")
         }else{
@@ -290,7 +291,7 @@ plot.phreg <- function(x,
         ##if (min(p) < 1) ylim[2] <- min(max(den[, -1]))
 
         ##if (is.null(xlab))
-        xlab <- "Duration"
+        ##xlab <- "Duration"
         ##if (is.null(ylab))
         ylab <- "Density"
         if (is.null(main)){
@@ -331,7 +332,7 @@ plot.phreg <- function(x,
         ylim <- c(0, 1)
 
         ##if (is.null(xlab))
-        xlab <- "Duration"
+        ##xlab <- "Duration"
         ##if (is.null(ylab))
         ylab <- "Survival"
         if (is.null(main)){
