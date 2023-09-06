@@ -1,7 +1,7 @@
 Encoding: UTF-8
 Package: eha
-Version: 2.10.3
-Date: 2023-02-10
+Version: 2.11.0
+Date: 2023-09-06
 Title: Event History Analysis
 Description: Parametric proportional hazards fitting with left truncation and
         right censoring for common families of distributions, piecewise constant 
@@ -25,8 +25,8 @@ Maintainer: Göran Broström <goran.brostrom@umu.se>
 RoxygenNote: 7.2.3
 Suggests: knitr, rmarkdown, bookdown
 VignetteBuilder: knitr, utils
-Packaged: 2023-02-09 23:17:23 UTC; gobr0002
+Packaged: 2023-09-06 14:43:08 UTC; gobr0002
 Author: Göran Broström [aut, cre],
   Jianming Jin [ctb]
 Repository: CRAN
-Date/Publication: 2023-02-10 08:40:02 UTC
+Date/Publication: 2023-09-06 16:10:02 UTC
