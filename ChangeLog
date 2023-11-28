@@ -1,3 +1,7 @@
+2.11.2 (November 28, 2023)
+	* coxfun.c: Rows 108 and 109: '%f' changed to '%d' (30 years old error,
+	now finally detected by CRAN and corrected!)
+
 2.11.1 (September 29, 2023)
     * weibreg: Arguments xlim, ylim, xlab, ylab, main are now "working".
     * Submitted to CRAN.
