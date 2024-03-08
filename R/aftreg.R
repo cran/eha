@@ -367,14 +367,14 @@ aftreg <- function (formula = formula(data),
     
     baselineMean <- numeric(fit$n.strata)
     for (j in 1:fit$n.strata){
-        scale <- exp(fit$coef[ncov + 2 * j - 1])
-        shape <- exp(fit$coef[ncov + 2 * j])
+        sc <- exp(fit$coef[ncov + 2 * j - 1])
+        sh <- exp(fit$coef[ncov + 2 * j])
         if (dist == "gompertz"){
             ## Simulation!
             baselineMean[j] <- mean(rgompertz(100000, param = "canonical",
-                                              scale = scale, shape = shape))
+                                              scale = sc, shape = sh))
         }else if (dist == "weibull"){
-            baselineMean[j] <- scale * gamma(1 + 1 / shape)
+            baselineMean[j] <- sc * gamma(1 + 1 / sh)
         }else{
             baselineMean[j] <- NA
         }
