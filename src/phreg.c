@@ -66,7 +66,7 @@ static void gph_fun(int n, double *beta, double *dloglik, void *vex){
 
     mb = *(ex->mb);
 
-    fp = Calloc(mb + 2, double);
+    fp = R_Calloc(mb + 2, double);
 
     for (j = 0; j < n; j++) dloglik[j] = 0.0;
     for (i = 0; i < *(ex->ns); i++){
@@ -82,7 +82,7 @@ static void gph_fun(int n, double *beta, double *dloglik, void *vex){
 	dloglik[mb + 2*i] += fp[mb];
 	dloglik[mb + 2*i + 1] += fp[mb + 1];
     }
-    Free(fp);
+    R_Free(fp);
 }
 	
 static void g2ph_fun(int n, double *beta, double *d2loglik, void *vex){
@@ -100,7 +100,7 @@ static void g2ph_fun(int n, double *beta, double *d2loglik, void *vex){
 
     mb = *(ex->mb);
 
-    fpp = Calloc((mb + 2) * (mb + 2), double);
+    fpp = R_Calloc((mb + 2) * (mb + 2), double);
 
     for (j = 0; j < bdim * bdim; j++) d2loglik[j] = 0.0;
     for (i = 0; i < *(ex->ns); i++){
@@ -131,7 +131,7 @@ static void g2ph_fun(int n, double *beta, double *d2loglik, void *vex){
 	d2loglik[mb + 2*i + 1 + (mb + 2 * i) * bdim] += 
 	    fpp[mb + 1 + mb * (mb + 2)];
     }
-    Free(fpp);
+    R_Free(fpp);
 }
 
 static void ph_nr(int iter, double eps, int printlevel,
@@ -155,13 +155,13 @@ static void ph_nr(int iter, double eps, int printlevel,
 
     lwork = bdim * bdim;
 
-    work = Calloc(lwork, double);
-    ipiv = Calloc(bdim, int);
+    work = R_Calloc(lwork, double);
+    ipiv = R_Calloc(bdim, int);
 
     vex = ex;
 
-    det = Calloc(2, double);
-    db = Calloc(bdim, double);
+    det = R_Calloc(2, double);
+    db = R_Calloc(bdim, double);
 
     itmax = iter;
     iter = 0;
@@ -266,10 +266,10 @@ static void ph_nr(int iter, double eps, int printlevel,
 	Rprintf("loglik = %f\n", *loglik);
     }
 
-    Free(db);
-    Free(det);
-    Free(ipiv);
-    Free(work);
+    R_Free(db);
+    R_Free(det);
+    R_Free(ipiv);
+    R_Free(work);
 }
 
 void phsup(int *iter, double *eps, int *printlevel,
@@ -297,7 +297,7 @@ void phsup(int *iter, double *eps, int *printlevel,
 
     double * det;
 
-    det = Calloc(2, double);
+    det = R_Calloc(2, double);
     dist = *dis;
 
     if (dist == 0){
@@ -541,5 +541,5 @@ void phsup(int *iter, double *eps, int *printlevel,
 	}
     }
 
-    Free(det);
+    R_Free(det);
 }

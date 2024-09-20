@@ -8,7 +8,7 @@ static void Sample_wtr(int k, int n, int *y)
     int i, j;
   
   
-    x = Calloc(n, int);
+    x = R_Calloc(n, int);
     
     for (i = 0; i < n; i++)
 	x[i] = y[i]; /* Note change!! */
@@ -19,7 +19,7 @@ static void Sample_wtr(int k, int n, int *y)
 	y[i] = x[j]; /* Note: '+ 1' removed */ 
 	x[j] = x[--n];
     }
-    Free(x);
+    R_Free(x);
 }
 
 static void riskset_fill(int p_start, 

@@ -260,7 +260,7 @@ void breslow_rs(int what, RiskSet *risk,
 
     /* Initialize: */
 
-    wsc = Calloc(risk->size, double);
+    wsc = R_Calloc(risk->size, double);
     sumscore = 0.0;
     if (what >= 1){
 	F77_CALL(dcopy)(&p, &zero, &izero, sumdscore, &ione);
@@ -304,7 +304,7 @@ void breslow_rs(int what, RiskSet *risk,
 			   d2loglik, &p FCONE);
 	}
     }
-    Free(wsc);
+    R_Free(wsc);
 }
 
 void efron_rs(int what, RiskSet *risk, 
@@ -355,11 +355,11 @@ C     Local (note the deviation from strict standard here!):
 
     /* Then the "expected" part: */
 
-    wsc = Calloc(risk->size, double);
-    edscore = Calloc(p, double);
-    ed2score = Calloc(p2, double);
+    wsc = R_Calloc(risk->size, double);
+    edscore = R_Calloc(p, double);
+    ed2score = R_Calloc(p2, double);
 
-    temp = Calloc(p, double);
+    temp = R_Calloc(p, double);
 		     
 
 /*     Reset to zero: */
@@ -467,10 +467,10 @@ C     Local (note the deviation from strict standard here!):
 	    }
 	}
     }
-    Free(temp);
-    Free(ed2score);
-    Free(ed2score);
-    Free(wsc);
+    R_Free(temp);
+    R_Free(ed2score);
+    R_Free(ed2score);
+    R_Free(wsc);
 }
 
 

@@ -35,13 +35,13 @@ static double aft_funGomp(int n, double *beta, void *vex){
     mb = *(ex->mb);
     nn = *(ex->nn);
 
-    bz = Calloc(nn, double);
+    bz = R_Calloc(nn, double);
 
     indiv = 1;
     for (i = 1; i < nn; i++){
 	if (ex->id[i] != ex->id[i-1]) indiv++;
     }
-    n_rec = Calloc(indiv, int);
+    n_rec = R_Calloc(indiv, int);
     for (i = 0; i < indiv; i++) n_rec[i] = 1;
     j = 0;
     for (i = 1; i < nn; i++){
@@ -123,8 +123,8 @@ static double aft_funGomp(int n, double *beta, void *vex){
 	rec++;
     }
 
-    Free(n_rec);
-    Free(bz);
+    R_Free(n_rec);
+    R_Free(bz);
 
     return( -(res1 + res2) ); /* Minimizing ... */
 }

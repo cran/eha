@@ -14,7 +14,7 @@ static double we_fun(int n, double *beta, void *vex){
     ex = vex;
     mb = *(ex->mb);
     w_n = mb + 2; 
-    w_beta = Calloc(mb + 2, double); 
+    w_beta = R_Calloc(mb + 2, double); 
 
     ord = 0;
     ipfixed = 0;
@@ -35,7 +35,7 @@ static double we_fun(int n, double *beta, void *vex){
 			&f, dummy, dummy, ex->iok);
 	ftot += f;
     }
-    Free(w_beta);
+    R_Free(w_beta);
     return(ftot);
 }
 	
@@ -53,8 +53,8 @@ static void gwe_fun(int n, double *beta, double *dloglik, void *vex){
     mb = *(ex->mb);
     w_n = mb + 2;
 
-    fp = Calloc(mb + 2, double);
-    w_beta = Calloc(mb + 2, double);
+    fp = R_Calloc(mb + 2, double);
+    w_beta = R_Calloc(mb + 2, double);
 
     ord = 1;
     ipfixed = 0;
@@ -76,8 +76,8 @@ static void gwe_fun(int n, double *beta, double *dloglik, void *vex){
 	dloglik[mb + 2*i] += fp[mb];
 	dloglik[mb + 2*i + 1] += fp[mb + 1];
     }
-    Free(fp);
-    Free(w_beta);
+    R_Free(fp);
+    R_Free(w_beta);
 }
     
 void sw_fun(int *order,
@@ -117,9 +117,9 @@ void sw_fun(int *order,
 
     w_bdim = *mb + 2;
 
-    w_fp = Calloc(w_bdim, double);
-    w_fpp = Calloc(w_bdim * w_bdim, double);
-    w_beta = Calloc(w_bdim, double);
+    w_fp = R_Calloc(w_bdim, double);
+    w_fpp = R_Calloc(w_bdim * w_bdim, double);
+    w_beta = R_Calloc(w_bdim, double);
 
     *f = 0.0;
     for (j = 0; j < *bdim; j++) fp[j] = 0.0;
@@ -168,9 +168,9 @@ void sw_fun(int *order,
 	}
     }
 
-    Free(w_fp);
-    Free(w_fpp);
-    Free(w_beta);
+    R_Free(w_fp);
+    R_Free(w_fpp);
+    R_Free(w_beta);
 }
 
 

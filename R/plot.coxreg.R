@@ -1,7 +1,7 @@
 #' Plot method for \code{coxreg} objects
 #' 
 #' A plot of a baseline function of a \code{coxreg} fit is produced, one curve
-#' for each stratum. A wrapper for \code{plot.survfit} in \code{\link{survival}}.
+#' for each stratum. A wrapper for \code{\link[survival]{plot.survfit}}.
 #' 
 #' @param x A \code{coxreg} object
 #' @param fn What should be plotted? Default is "cumhaz", and the other choices

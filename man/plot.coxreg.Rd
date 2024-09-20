@@ -59,5 +59,5 @@ curve(s).
 }
 \description{
 A plot of a baseline function of a \code{coxreg} fit is produced, one curve
-for each stratum. A wrapper for \code{plot.survfit} in \code{\link{survival}}.
+for each stratum. A wrapper for \code{\link[survival]{plot.survfit}}.
 }

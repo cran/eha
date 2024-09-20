@@ -67,9 +67,9 @@ void frail_ml(int *family,
     vm_trace = *trace;
     bdim = *p + *n_rs + 1;
 
-    det = Calloc(2, double);
+    det = R_Calloc(2, double);
     lwork = 11 * bdim;
-    work = Calloc(lwork, double);
+    work = R_Calloc(lwork, double);
 
     if (*family == 0){
 	P = &eha_P_logit;
@@ -90,10 +90,10 @@ void frail_ml(int *family,
     abstol = *epsilon;
     reltol = abstol;
 
-    b = Calloc(bdim, double);
-    gr = Calloc(bdim, double);
+    b = R_Calloc(bdim, double);
+    gr = R_Calloc(bdim, double);
 
-    ext = Calloc(1, Exts);
+    ext = R_Calloc(1, Exts);
 
     ext->family = *family; /* == 0 for binomial(logit) */
 
@@ -112,10 +112,10 @@ void frail_ml(int *family,
     ext->haz = haz;
     
     ext->offset = offset;
-    ext->weights = Calloc(*n_points, double);
-    ext->zeros = Calloc(*n_points, double);
+    ext->weights = R_Calloc(*n_points, double);
+    ext->zeros = R_Calloc(*n_points, double);
 
-    mask = Calloc(bdim, int );
+    mask = R_Calloc(bdim, int );
 
     F77_CALL(ghq)(n_points, ext->zeros, ext->weights, &modified); 
 
@@ -125,7 +125,7 @@ void frail_ml(int *family,
     }
 
 
-    ext->x_beta = Calloc(ext->n, double); 
+    ext->x_beta = R_Calloc(ext->n, double); 
 
     ext->gr = gr;
     ext->hessian = variance;
@@ -290,13 +290,13 @@ void frail_ml(int *family,
 /*    eha_mu_fun(bdim, b, mu, ext); */
 
     
-    Free(ext->x_beta);
-    Free(mask);
-    Free(ext->zeros);
-    Free(ext->weights);
-    Free(ext);
-    Free(gr);
-    Free(b);
-    Free(work);
-    Free(det);
+    R_Free(ext->x_beta);
+    R_Free(mask);
+    R_Free(ext->zeros);
+    R_Free(ext->weights);
+    R_Free(ext);
+    R_Free(gr);
+    R_Free(b);
+    R_Free(work);
+    R_Free(det);
  }

@@ -75,9 +75,9 @@ void breslow_rs2(int *what, /* RiskSet *risk, */
     /* Then the "expected" part: */
 
     /* Initialize: */
-    sumdscore = Calloc(*p, double);
-    sumd2score = Calloc(p2, double);
-    wsc = Calloc(*size, double);
+    sumdscore = R_Calloc(*p, double);
+    sumd2score = R_Calloc(p2, double);
+    wsc = R_Calloc(*size, double);
     sumscore = 0.0;
     if (*what >= 1){
 	F77_CALL(dcopy)(p, &zero, &izero, sumdscore, &ione);
@@ -120,9 +120,9 @@ void breslow_rs2(int *what, /* RiskSet *risk, */
 			   d2loglik, p FCONE);
 	}
     }
-    Free(wsc);
-    Free(sumd2score);
-    Free(sumdscore);
+    R_Free(wsc);
+    R_Free(sumd2score);
+    R_Free(sumdscore);
 }
 
 void efron_rs2(int *what, /* RiskSet *risk, */
@@ -190,13 +190,13 @@ C     Local (note the deviation from strict standard here!):
 
     /* Then the "expected" part: */
 
-    sumdscore = Calloc(*p, double);
-    sumd2score = Calloc(p2, double);
-    wsc = Calloc(*size, double);
-    edscore = Calloc(*p, double);
-    ed2score = Calloc(p2, double);
+    sumdscore = R_Calloc(*p, double);
+    sumd2score = R_Calloc(p2, double);
+    wsc = R_Calloc(*size, double);
+    edscore = R_Calloc(*p, double);
+    ed2score = R_Calloc(p2, double);
 
-    temp = Calloc(*p, double);
+    temp = R_Calloc(*p, double);
 		     
 
 /*     Reset to zero: */
@@ -303,10 +303,10 @@ C     Local (note the deviation from strict standard here!):
 	    }
 	}
     }
-    Free(temp);
-    Free(ed2score);
-    Free(ed2score);
-    Free(wsc);
+    R_Free(temp);
+    R_Free(ed2score);
+    R_Free(ed2score);
+    R_Free(wsc);
 }
 
 /* Maybe later ...

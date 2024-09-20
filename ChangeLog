@@ -1,4 +1,11 @@
-2.11.4 (March 8, 2014)
+2.11.5 (Sep 19, 2024)
+    * src: Change Calloc, Free to R_Calloc, R_Free.
+    * Submitted to CRAN.
+
+2.11.4.9000 (June 17, 2024)
+    * Makeham: Documentation corrected.
+
+2.11.4 (March 8, 2024)
     * aftreg: Add logLik method.
     * aftreg: Fix bug with plotting and fixed shape. 
 

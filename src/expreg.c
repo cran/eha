@@ -35,7 +35,7 @@ static void ge_fun(int n, double *beta, double *dloglik, void *vex){
     double *fp;
 /*    Rprintf("Into [ge_fun]\n"); */
 
-    fp = Calloc(n, double);
+    fp = R_Calloc(n, double);
 
     ex = vex;
     ord = 1;
@@ -46,7 +46,7 @@ static void ge_fun(int n, double *beta, double *dloglik, void *vex){
 		    &f, fp, dummy, ex->iok);
 
     for (i = 0; i < n; i++) dloglik[i] = fp[i];
-    Free(fp);
+    R_Free(fp);
 
     return;
 }

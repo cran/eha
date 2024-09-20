@@ -67,8 +67,8 @@ C     the correct procedure! Will be fixed (some day ...)
     int *perm;
     double *p;
 
-    perm = Calloc(size, int);
-    p = Calloc(size, double);
+    perm = R_Calloc(size, int);
+    p = R_Calloc(size, double);
     
     if (antevents >= size){
         for (i = 0; i < size; i++){
@@ -106,8 +106,8 @@ C     the correct procedure! Will be fixed (some day ...)
         }
         n--;
     }
-    Free(p);
-    Free(perm);
+    R_Free(p);
+    R_Free(perm);
 }
 
 /*     Start values:

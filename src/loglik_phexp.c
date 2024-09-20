@@ -283,7 +283,7 @@ void d2_loglik_phexp(int *dis,
 
     bdim = (*mb) + 1;
 
-    ezb = Calloc(*nn, double);
+    ezb = R_Calloc(*nn, double);
 
     /* ezb[i] = exp(sum(b_j * z_ij)), i = 0, (*nn - 1). (hopefully;-) */ 
     if (*mb){
@@ -404,5 +404,5 @@ void d2_loglik_phexp(int *dis,
     fpp[(*mb) + bdim * (*mb)] = tmp;
     
     
-    Free(ezb);
+    R_Free(ezb);
 }

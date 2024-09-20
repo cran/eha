@@ -168,12 +168,12 @@ static void eha_update(int level,
 
     sigma = beta[n_rs + p];
 
-    pip = Calloc(ext->n_points, double);
+    pip = R_Calloc(ext->n_points, double);
     if (level > 0){
-	xG = Calloc(bdim * ext->n_points, double);
-	hb = Calloc(bdim, double);
+	xG = R_Calloc(bdim * ext->n_points, double);
+	hb = R_Calloc(bdim, double);
 	if (level > 1)
-	    hbb = Calloc(bdim * bdim, double);
+	    hbb = R_Calloc(bdim * bdim, double);
     }
 
 
@@ -200,7 +200,7 @@ static void eha_update(int level,
 	    warning("*loglik = inf");
     }
     if (level == 0) {
-	Free(pip);
+	R_Free(pip);
 	return;
     }
 
@@ -302,9 +302,9 @@ static void eha_update(int level,
     }
 	
     if (level == 1){
-	Free(xG);
-	Free(pip);
-	Free(hb);
+	R_Free(xG);
+	R_Free(pip);
+	R_Free(hb);
 	return;
     }
 	
@@ -482,10 +482,10 @@ static void eha_update(int level,
 /*********************************************************************/
 /* We are done! Clean up 'the mess'! */
 
-    Free(xG);
-    Free(pip);
-    Free(hb);
-    Free(hbb);
+    R_Free(xG);
+    R_Free(pip);
+    R_Free(hb);
+    R_Free(hbb);
 }
 
 static double eha_frail_mean(double sigma,
@@ -811,7 +811,7 @@ void eha_nr_opt(int bdim, double *beta, double *loglik, int *mask,
     int pos_def;
     int maxiter = 10;
 
-    det = Calloc(2, double);
+    det = R_Calloc(2, double);
 
     /* p = ext->p; */
 
@@ -822,10 +822,10 @@ void eha_nr_opt(int bdim, double *beta, double *loglik, int *mask,
     if ( (true_bdim < (bdim - 1)) || (true_bdim > bdim) ) 
 	error("Error in [nr_opt]: true dimension wrong.");
 
-    db = Calloc(bdim, double);
-    ipiv = Calloc(bdim, int);
+    db = R_Calloc(bdim, double);
+    ipiv = R_Calloc(bdim, int);
     lwork = 11 * bdim;
-    work = Calloc(lwork, double);
+    work = R_Calloc(lwork, double);
 
     gr = ext->gr;
     hess = ext->hessian;
@@ -913,8 +913,8 @@ void eha_nr_opt(int bdim, double *beta, double *loglik, int *mask,
 	Rprintf("No inversion in [nr_opt]\n");
     }
 
-    Free(work);
-    Free(ipiv);
-    Free(db);
-    Free(det);
+    R_Free(work);
+    R_Free(ipiv);
+    R_Free(db);
+    R_Free(det);
 }
