@@ -56,7 +56,7 @@ plot.coxreg <- function(x,
    if (!conf.int){
       res <- plot.hazdata(x$hazards, fn = fn, fig = fig, xlim = xlim, ylim = ylim, 
                      main = main, xlab = xlab, ylab = ylab, col = col, 
-                      lty = lty, printLegend = printLegend)
+                      lty = lty, printLegend = printLegend, ...)
       par(op)
       return(invisible(res))
    }
@@ -85,7 +85,7 @@ plot.coxreg <- function(x,
          ##if (!is.null(x$nullModel) && x$nullModel){ # NOT NEEDED!!!
          ## Null model and from coxreg...
          plot(x$y ~ 1, fun = fn, xlab = xlab, ylab = ylab, main = main, 
-              xlim = xlim, col = col, lty = lty, conf.int = conf.int)
+              xlim = xlim, col = col, lty = lty, conf.int = conf.int, ...)
          if (printLegend && length(x$stratum)){
             legend("bottom", legend = x$stratum, lty = lty, col = col)
          }
@@ -94,7 +94,7 @@ plot.coxreg <- function(x,
          res <- survival::survfit(x)
          plot(res, fun = fn, xlab = xlab,
               ylab = ylab, main = main, xlim = xlim, col = col, lty = lty,
-              conf.int = conf.int)
+              conf.int = conf.int, ...)
          if (printLegend && length(x$stratum) >= 2){
             legend("bottom", legend = x$stratum, lty = lty, col = col)
          } 

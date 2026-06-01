@@ -407,8 +407,9 @@ phreg <- function (formula = formula(data),
           fit$model <- m
         if (x) {
             fit$x <- X
-            if (length(strats))
-              fit$strata <- strata.keep
+        }
+        if (length(strats)){
+           fit$strata <- levels(as.factor(strata.keep))
         }
         if (y)
           fit$y <- Y

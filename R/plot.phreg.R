@@ -285,8 +285,7 @@ plot.phreg <- function(x,
     if ("den" %in% fn){
 
         den <- haz * sur
-        ##if (is.null(ylim))
-        ylim <- c(0, max(den))
+        if (is.null(ylim)) ylim <- c(0, max(den))
 
         ##if (min(p) < 1) ylim[2] <- min(max(den[, -1]))
 
@@ -328,8 +327,7 @@ plot.phreg <- function(x,
     ## Survivor function
     if ("sur" %in% fn){
         
-        ##if (is.null(ylim))
-        ylim <- c(0, 1)
+        if (is.null(ylim)) ylim <- c(0, 1)
 
         ##if (is.null(xlab))
         ##xlab <- "Duration"

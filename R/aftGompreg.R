@@ -1,8 +1,8 @@
-#' Accelerated Failure Time Regression
+#' Accelerated Failure Time Regression for Gompertz distribution
 #' 
 #' The accelerated failure time model with parametric baseline hazard(s).
 #' Allows for stratification with different scale and shape in each stratum,
-#' and left truncated and right censored data.
+#' and left truncated and right censored data. Gompert
 #' 
 #' The parameterization is different from the one used by
 #' \code{\link[survival]{survreg}}, when \code{param = "lifeAcc"}. The result
@@ -11,7 +11,7 @@
 #' \deqn{S(t; a, b, \beta, z) = S_0((t / \exp(b - z\beta))^{\exp(a)})}{%
 #' S(t; a, b, beta, z) =  S_0((t/exp(b - z beta))^exp(a))}
 #' 
-#' where \eqn{S_0} is some standardized
+#' where \eqn{S_0} is the standardized Gompertz
 #' survivor function. The baseline parameters \eqn{a} and \eqn{b} are log shape
 #' and log scale, respectively. This is for the \code{default} parametrization.
 #' With the \code{lifeExp} parametrization, some signs are changed: \deqn{b - z
@@ -27,15 +27,8 @@
 #' @param na.action a missing-data filter function, applied to the model.frame,
 #' after any subset argument has been used.  Default is
 #' \code{options()$na.action}.
-#' @param dist Which distribution? Default is "weibull", with the alternatives
-#' "gompertz", "ev", "loglogistic" and "lognormal". A special case like the
-#' \code{exponential} can be obtained by choosing "weibull" in combination with
-#' \code{shape = 1}.
 #' @param init vector of initial values of the iteration.  Default initial
 #' value is zero for all variables.
-#' @param shape If positive, the shape parameter is fixed at that value.  If
-#' zero or negative, the shape parameter is estimated. Stratification is now
-#' regarded as a meaningful option even if \code{shape} is fixed.
 #' @param id If there are more than one spell per individual, it is essential
 #' to keep spells together by the id argument. This allows for time-varying
 #' covariates.
@@ -50,9 +43,9 @@
 #' @param model Not used.
 #' @param x Return the design matrix in the model object?
 #' @param y Return the response in the model object?
-#' @return A list of class \code{"aftreg"} with components
-#' \item{coefficients}{Fitted parameter estimates, including scale and shape.} 
-#' \item{var}{Covariance matrix of the estimates.} \item{loglik}{Vector of length two; first
+#' @return A list of class \code{"aftGompreg"} with components
+#' \item{coefficients}{Fitted parameter estimates.} \item{var}{Covariance
+#' matrix of the estimates.} \item{loglik}{Vector of length two; first
 #' component is the value at the initial parameter values, the second componet
 #' is the maximized value.} \item{score}{The score test statistic (at the
 #' initial value).} \item{linear.predictors}{The estimated linear predictors.}
@@ -69,24 +62,23 @@
 #' \item{formula}{The calling formula.} \item{call}{The call.}
 #' \item{method}{The method.} \item{convergence}{Did the optimization
 #' converge?} \item{fail}{Did the optimization fail? (Is \code{NULL} if not).}
-#' \item{pfixed}{TRUE if shape was fixed in the estimation.} \item{param}{The
-#' parametrization.}
+#' \item{param}{The parametrization.}
+#' \item{baselineMean}{Mean survival time by strata.}
+#' \item{nullModel}{TRUE if covariates in the model, otherwise FALSE.}
 #' @author Göran Broström
-#' @seealso \code{\link{coxreg}}, \code{\link{phreg}},
+#' @seealso \code{\link{coxreg}}, \code{\link{phreg}}, \code{\link{aftreg}},
 #' \code{\link[survival]{survreg}}
 #' @keywords survival regression
 #' @examples
 #' 
 #' data(mort)
-#' aftreg(Surv(enter, exit, event) ~ ses, param = "lifeExp", data = mort)
+#' aftGompreg(Surv(enter, exit, event) ~ ses, param = "lifeExp", data = mort)
 #' 
 #' @export
-aftreg <- function (formula = formula(data),
+aftGompreg <- function (formula = formula(data),
                     data = parent.frame(),
                     na.action = getOption("na.action"),
-                    dist = "weibull",
                     init,
-                    shape = 0,
                     id,
                     ##param = c("default", "survreg", "canonical"),
                     param = c("lifeAcc", "lifeExp"),
@@ -109,7 +101,8 @@ aftreg <- function (formula = formula(data),
         }
     }
     ## if (dist == "gompertz") shape <- 1
-    pfixed <- any(shape > 0)
+   ## pfixed <- any(shape > 0)
+    pfixed <- FALSE
     call <- match.call()
     m <- match.call(expand.dots = FALSE)
 
@@ -238,18 +231,15 @@ aftreg <- function (formula = formula(data),
         stop("control must be a list")
     }
     
-    ##cat("\nEntering aftreg.fit ...")
-    fit <- aftreg.fit(X,
-                      Y,
-                      dist,
-                      param,
-                      strats,
-                      offset,
-                      init,
-                      shape,
-                      id,
-                      control,
-                      pfixed)
+    ##cat("\nEntering aftreg.fit ...length(id) = ", length(id), "\n")
+    fit <- aftGompreg.fit(X,
+                          Y,
+                          param,
+                          strats,
+                          offset,
+                          init,
+                          id,
+                          control)
     ##cat("and back!\n\n")
     if (!is.null(fit$overlap)) return(fit$overlap)
     
@@ -320,6 +310,8 @@ aftreg <- function (formula = formula(data),
         
         if (length(strats)) {
             fit$strata <- levels(as.factor(strata.keep))
+            names(fit$scale) <- fit$strata  # NEW
+            names(fit$shape) <- fit$strata  # NEW
         }
         if (y)
             fit$y <- Y
@@ -360,41 +352,37 @@ aftreg <- function (formula = formula(data),
     fit$levels <- levels
     fit$formula <- formula(Terms)
     fit$call <- call
-    fit$dist <- dist
+    fit$dist <- "gompertz"  ## NOTE!
     fit$n.events <- n.events
 
     ##class(fit) <- c("aftreg", "phreg")
-    class(fit) <- c("aftreg") # Try 21 sep 2022
+    class(fit) <- c("aftGompreg", "aftreg") # Try 21 sep 2022
     fit$param <- param # New in 2.1-1:
-    scale <- numeric(fit$n.strata)
-    shape <- numeric(fit$n.strata)
+    
     baselineMean <- numeric(fit$n.strata)
     for (j in 1:fit$n.strata){
-        sc <- exp(fit$coef[ncov + 2 * j - 1])
-        scale[j] <- sc # NEW
-        sh <- exp(fit$coef[ncov + 2 * j])
-        shape[j] <- sh # NEW 25 Jun 2025
-        if (dist == "gompertz"){
-            ## Simulation!
-            ##baselineMean[j] <- mean(rgompertz(100000, param = "canonical",
-              ##                                scale = sc, shape = sh))
-            ## Integration:
-            funk <- function(x) pgompertz(x, param = "canonical",
-                                          scale = sc, shape = sh, 
-                                          lower.tail = FALSE)
-            baselineMean[j] <- integrate(funk, 0, Inf)$value
-        }else if (dist == "weibull"){
-            baselineMean[j] <- sc * gamma(1 + 1 / sh)
-        }else{
-            baselineMean[j] <- NA
-        }
+        ##sc <- exp(fit$coef[ncov + 2 * j - 1])
+        ##sh <- exp(fit$coef[ncov + 2 * j])
+        ## Simulation!
+        ##baselineMean[j] <- mean(rgompertz(100000, param = "canonical",
+          ##                                scale = fit$scale[j], 
+            ##                              shape = fit$shape[j]))
+        ## Integration (preferred):                              
+        funk <- function(x) pgompertz(x, param = "canonical", 
+                                      scale = fit$scale[j],
+                                      shape = fit$shape[j],
+                                      lower.tail = FALSE)
+        baselineMean[j] <- integrate(funk, 0, Inf)$value
     }
-    fit$scale <- scale
-    fit$shape <- shape
+    if (fit$n.strata == 1){         ## New 2025-06-18.
+        names(baselineMean) <- "All"
+    }else{
+        names(baselineMean) <- fit$strata
+    }
     fit$baselineMean <- baselineMean
     fit$nullModel <- nullModel # Added 2020-07-26.
     ##  
-    fit$pfixed <- pfixed
-    if (pfixed) fit$shape <- shape ## Added 2 Aug 2017.
+    fit$pfixed <- FALSE # To please the environment...
+    ##if (pfixed) fit$shape <- shape ## Added 2 Aug 2017.
     fit
 }

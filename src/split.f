@@ -1,4 +1,4 @@
-      subroutine split(xx, nn, colx, yy, nny, coly, 
+      subroutine splitt(xx, nn, colx, yy, nny, coly, 
      &     nn_out, ind_iv, cuts, n_years)
 
       implicit none

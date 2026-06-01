@@ -132,7 +132,7 @@ make.communal <-
         nn.out <- ind.iv[, 2] - ind.iv[, 1] + 1
         cur.row <- 0
         com.dat <- as.matrix(com.dat)
-        split <- function(i) {
+        splitt <- function(i) {
             n.rows <- nn.out[i]
             if (n.rows == 1) {
                 return(list(c(xx[i, ], ind.iv[i, 1])))
@@ -164,14 +164,14 @@ make.communal <-
             for (j in 1:nn) {
                 beg.row <- end.row + 1
                 end.row <- end.row + nn.out[j]
-                yy[beg.row:end.row, ] <- split(j)
+                yy[beg.row:end.row, ] <- splitt(j)
                 if (j%/%100 * 100 == j) 
                   cat("j = ", j, "\n")
                 NULL
             }
         }
         if (fortran) {
-            yy <- .Fortran("split",
+            yy <- .Fortran("splitt",
                            as.double(xx),
                            as.integer(nn), 
                            as.integer(ncol(xx)),

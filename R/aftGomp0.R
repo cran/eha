@@ -1,4 +1,4 @@
-aftp0g <- function(printlevel, ns, nn, id,
+aftGomp0 <- function(printlevel, ns, nn, id,
                    strata, Y, X, offset, means, param){
     pfixed <- FALSE # Never fix 'shape' with Gompertz (why?)
     ## Gompertz aft-reg!

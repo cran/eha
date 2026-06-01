@@ -46,8 +46,11 @@ plot.tpchreg <- function(x,
 
     if (!(all(fn %in% c("haz", "cum", "sur"))))
         stop(paste(fn[1], "is an illegal value of 'fn'"))
-
-
+    ## New 8 Nov 2025: (allow 'axes' in call to plot.tpchreg)
+    lLines <- function(..., axes){
+        lines(...)
+    }
+    ##
     if (length(fn) >= 3){
         oldpar <- par(mfrow = c(2, 2))
         on.exit(par(oldpar))
@@ -56,6 +59,10 @@ plot.tpchreg <- function(x,
         on.exit(par(oldpar))
     }
     if (is.null(xlim)){
+        xlim <- range(x$cuts)
+        lXlim <- xlim
+    }else{
+        lXlim <- xlim
         xlim <- range(x$cuts)
     }
     npts <- 4999
@@ -86,7 +93,7 @@ plot.tpchreg <- function(x,
         }
         if (log != ""){
             ylim0 <- NULL # ??
-            xlim <- NULL
+            lXlim <- NULL
         }
         ##if (min(p) < 1) ylim0[2] <- min(ylim0[2], max(haz[, -1]))
 
@@ -97,12 +104,12 @@ plot.tpchreg <- function(x,
         }else{
             hmain <- main
         }
-        plot(xx, haz[1, ], type = "l", xlim = xlim, ylim = ylim0,
+        plot(xx, haz[1, ], type = "l", xlim = lXlim, ylim = ylim0,
              col = col[1], lty = lty[1], log = log,
              xlab = xlab, ylab = ylab, main = hmain, ...)
         if (ns > 1){
             for (i in 2:ns){
-                lines(xx, haz[i, ], type = "l", lty = lty[i],
+                lLines(xx, haz[i, ], type = "l", lty = lty[i],
                       col = col[i], ...) # ', ...' added in 2.4-4
             }
         }
@@ -146,12 +153,12 @@ plot.tpchreg <- function(x,
         }else{
             Hmain <- main
         }
-        plot(xx, Haz[1, ], type = "l", xlim = xlim, ylim = ylim0,
+        plot(xx, Haz[1, ], type = "l", xlim = lXlim, ylim = ylim0,
              xlab = xlab, ylab = ylab, main = Hmain, col = col[1],
              lty = lty[1], ...)
         if (ns > 1){
             for (i in 2:ns){
-                lines(xx, Haz[i, ], type = "l", lty = lty[i],
+                lLines(xx, Haz[i, ], type = "l", lty = lty[i],
                       col = col[i], ...) # ', ...' added in 2.4-4
             }
         }
@@ -186,12 +193,12 @@ plot.tpchreg <- function(x,
         }else{
             smain <- main
         }
-        plot(xx, sur[1, ], type = "l", xlim = xlim, ylim = ylim,
+        plot(xx, sur[1, ], type = "l", xlim = lXlim, ylim = ylim,
              xlab = xlab, ylab = ylab, main = smain, lty = lty[1],
              col = col[1], ...)
         if (ns > 1){
             for (i in 2:ns){
-                lines(xx, sur[i, ], type = "l", lty = lty[i],
+                lLines(xx, sur[i, ], type = "l", lty = lty[i],
                       col = col[i], ...) # ', ...' added in 2.4-4
             }
         }

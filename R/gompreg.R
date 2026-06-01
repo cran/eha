@@ -5,10 +5,16 @@ gompreg <- function(X, Y, strata, offset, init, control, center){
     ## NOTE: Y is nn x 3!
 
     ## This is the canonical version.
-    
-    if (!is.matrix(X)) X <- matrix(X, ncol = 1)
-    nn <- NROW(X)
-    ncov <- NCOL(X)
+
+    if (!missing(X)){
+        if (!is.matrix(X)) X <- matrix(X, ncol = 1)
+        nn <- NROW(X)
+        ncov <- NCOL(X)
+    }else{
+        nn <- NROW(Y)
+        ncov <- 0
+    }
+
     if (NROW(Y) != nn) stop("Y NROW error")
     if (NCOL(Y) != 3) stop("Y NCOL error", )
     if (ncov){

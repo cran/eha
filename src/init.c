@@ -185,7 +185,7 @@ extern void F77_NAME(phfuncnull)(void *, void *, void *, void *, void *,
 				 void *, void *, void *, void *, void *,
 				 void *, void *, void *);
 */
-extern void F77_NAME(split)(double *, int *, int *, double *, int *,
+extern void F77_NAME(splitt)(double *, int *, int *, double *, int *,
 			    int *, int *, int *, double *, int *);
 extern void F77_NAME(wfunc)(int *, int *, double *, int *, int *, double *,
 			    int *, double *, double *, double *, int *, double *,
@@ -221,7 +221,7 @@ static const R_FortranMethodDef FortranEntries[] = {
     {"ghq",        (DL_FUNC) &F77_NAME(ghq),         4},
     {"hazards",    (DL_FUNC) &F77_NAME(hazards),    10},
     {"martres",    (DL_FUNC) &F77_NAME(martres),    11},
-    {"split",      (DL_FUNC) &F77_NAME(split),      10},
+    {"splitt",      (DL_FUNC) &F77_NAME(splitt),      10},
     {"wfunc",      (DL_FUNC) &F77_NAME(wfunc),      16},
     {"wfuncnull",  (DL_FUNC) &F77_NAME(wfuncnull),  13},
     {NULL, NULL, 0}

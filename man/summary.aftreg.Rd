@@ -2,7 +2,7 @@
 % Please edit documentation in R/summary.aftreg.R
 \name{summary.aftreg}
 \alias{summary.aftreg}
-\title{Prints aftreg objects}
+\title{Summarizes aftreg objects}
 \usage{
 \method{summary}{aftreg}(object, ...)
 }
@@ -12,7 +12,7 @@
 \item{\dots}{Additional ...}
 }
 \description{
-Prints aftreg objects
+Summarizes aftreg objects
 }
 \examples{
 

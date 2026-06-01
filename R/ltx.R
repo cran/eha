@@ -161,6 +161,7 @@ ltx.phreg <- function(x, caption = NULL, label = NULL, dr = NULL,
         return()
     }
 
+    if (is.null(x$pfixed)) x$pfixed <- FALSE
     if (x$pfixed){
 
         n.slsh <- 1

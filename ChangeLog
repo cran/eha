@@ -1,3 +1,18 @@
+2.12.0 (June 1, 2026)
+    * ltx, ltx2: Fixed bug with undefined 'pfixed'.
+    * plot.tpchreg: Allow 'axes' and 'xlim' to go with argument '...'. 
+    * aftreg: Add scale and shape to output.
+    * aftGompreg: Add "aftreg" to 'class'.
+    * ltx2.aftreg: Change header 'H:R.' to 'MSR' = "Mean Survival Rate" 
+    (compared to Baseline mean).
+    * plot.(all): Fix general plot arguments like lwd, lty, etc.
+    * Add function 'rmsGomp': For Restricted Mean Survival, Gompertz.
+    * aftGompreg: New function, AFT model specialized on the Gompertz 
+    distribution.
+    * aftreg:  Add strata names as a component in output.
+    * plot.aftreg: Allow color and line type in plot.aftreg. Bug in ylim fixed.
+    * phreg: Add strata names as a component in output.
+
 2.11.5 (Sep 19, 2024)
     * src: Change Calloc, Free to R_Calloc, R_Free.
     * Submitted to CRAN.

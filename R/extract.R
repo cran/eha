@@ -23,6 +23,14 @@ extractAIC.aftreg <- function(fit, scale, k = 2, ...)
 }
 
 #' @export
+extractAIC.aftGompreg <- function(fit, scale, k = 2, ...) 
+{
+    edf <- sum(fit$df)
+    loglik <- fit$loglik[length(fit$loglik)]
+    c(edf, -2 * loglik + k * edf)
+}
+
+#' @export
 nobs.coxreg <- function(object, ...){
     object$n.events
 }
@@ -34,5 +42,10 @@ nobs.phreg <- function(object, ...){
 
 #' @export
 nobs.aftreg <- function(object, ...){
+    object$n
+}
+
+#' @export
+nobs.aftGompreg <- function(object, ...){
     object$n
 }

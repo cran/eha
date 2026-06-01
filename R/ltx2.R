@@ -317,7 +317,7 @@ ltx2.aftreg <- function(x, caption = NULL, label = NULL, dr = NULL,
         cat("Null log likelihood = ", x$loglik[2], "\n")
         return()
     }
-
+    if (is.null(x$pfixed)) x$pfixed <- FALSE
     if (x$pfixed){
 
         n.slsh <- 1
@@ -437,7 +437,7 @@ ltxCoef3 <- function(x, dr, conf, keep, digits, lp){
                 cat("\\bf Covariate & \\bf Mean & \\bf Life expn. & \\bf lowCI & \\bf highCI &   \\bf L-R p \\\\ \\hline\n")
             }
         }else{
-            cat("\\bf Covariate & \\bf Mean & \\bf H.R. & \\bf lowCI &  \\bf highCI & \\bf L-R p \\\\ \\hline\n")
+            cat("\\bf Covariate & \\bf Mean & \\bf MSR & \\bf lowCI &  \\bf highCI & \\bf L-R p \\\\ \\hline\n")
         }
     }else{
         if ("aftreg" %in% x$class){
@@ -447,7 +447,7 @@ ltxCoef3 <- function(x, dr, conf, keep, digits, lp){
                 cat("\\bf Covariate & \\bf Mean & \\bf Coef & \\bf Life expn. & \\bf S.E. &  \\bf Wald p \\\\ \\hline\n")
             }
         }else{
-            cat("\\bf Covariate & \\bf Mean & \\bf H.R. & \\bf lowCI & \\bf highCI & \\bf Wald p  \\\\ \\hline\n")
+            cat("\\bf Covariate & \\bf Mean & \\bf MSR & \\bf lowCI & \\bf highCI & \\bf Wald p  \\\\ \\hline\n")
         }
     }
     e.coef <- formatC(exp(coef), digits = digits, format = "f")

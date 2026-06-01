@@ -1,11 +1,11 @@
-#' Summarizes aftreg objects
+#' Creates a summary of aftGompreg objects
 #' 
 #' 
-#' @param object A \code{aftreg} object
+#' @param object A \code{aftGompreg} object
 #' @param \dots Additional ...
 #' @author Göran Broström
-#' @seealso \code{\link{print.coxreg}}
-#' @keywords survival print
+#' @seealso \code{\link{summary.aftreg}}
+#' @keywords survival summary
 #' @examples
 #' 
 #' ## The function is currently defined as
@@ -13,21 +13,21 @@
 #' print(object)
 #' 
 #' @export
-summary.aftreg <- function(object, ...){
+summary.aftGompreg <- function(object, ...){
     dr <- drop1(object, test = "Chisq")
     object$dr <- dr
     ncoef <- object$df
     ## Split coefficients into regression parameters and hazard ditto.
-    if (!(object$dist == "pch")){
-        hazards <- object$coefficients[-(1:ncoef)]
-    }
+    
+    hazards <- object$coefficients[-(1:ncoef)]
+    
     coefficients <- object$coefficients[1:ncoef]
     
     ## Regression parameters:
     rawnames <- names(coefficients)
     varcoef <- diag(object$var[1:ncoef, 1:ncoef, drop = FALSE])
     varhaz <- diag(object$var[-(1:ncoef), -(1:ncoef), drop = FALSE])
-    class(object) <- "summary.aftreg"
+    class(object) <- "summary.aftGompreg"
     coefficients <- cbind(coefficients, 
                           exp(coefficients),
                           sqrt(varcoef))
@@ -39,15 +39,14 @@ summary.aftreg <- function(object, ...){
     rownames(coefficients) <- rawnames
     
     ## Hazard parameters:
-    if (!(object$dist == "pch")){
-        haznames <- names(hazards)
-        hazards <- cbind(hazards, sqrt(varhaz))
-        colnames(hazards) <- c("par", "se(par)")
-        rownames(hazards) <- haznames
-    }
+    haznames <- names(hazards)
+    hazards <- cbind(hazards, sqrt(varhaz))
+    colnames(hazards) <- c("par", "se(par)")
+    rownames(hazards) <- haznames
+    
     ##list(fit = object, coefficients = coefficients)
     object$coefficients <- coefficients
     object$hazards <- hazards
+    class(object) <- c("summary.aftGompreg")
     object
-    
 }
